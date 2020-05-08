@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS `usuario`(
     `nome` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `senha` VARCHAR(255) NOT NULL,
-    `ativo` bit(1) DEFAULT NULL,
+    `num_tel` CHAR(11),
+    `ativo` bit(1) NOT NULL DEFAULT b'1',
     PRIMARY KEY(`id`),
     UNIQUE KEY `uk_email`(`email`)
 )ENGINE=InnoDB;

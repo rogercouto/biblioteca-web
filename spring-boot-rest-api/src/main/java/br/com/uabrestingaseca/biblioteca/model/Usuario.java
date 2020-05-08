@@ -35,6 +35,9 @@ public class Usuario implements UserDetails {
     @JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
+    @Column(name = "num_tel",nullable = true)
+    private String numTel;
+
     @JsonIgnore
     private Boolean ativo;
 
@@ -76,6 +79,14 @@ public class Usuario implements UserDetails {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getNumTel() {
+        return numTel;
+    }
+
+    public void setNumTel(String numTel) {
+        this.numTel = numTel;
     }
 
     public Boolean getAtivo() {
