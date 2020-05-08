@@ -1,7 +1,5 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -21,7 +19,7 @@ public class Livro implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @NotBlank(message = "Título dever ser informado")
     private String titulo;
@@ -66,19 +64,14 @@ public class Livro implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Categoria> categorias;
 
-    @OneToMany
-    @JoinColumn(name = "livro_id")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<Exemplar> exemplares;
-
     public Livro() {
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -176,14 +169,6 @@ public class Livro implements Serializable {
 
     public void setCategorias(List<Categoria> categorias) {
         this.categorias = categorias;
-    }
-
-    public void setExemplares(List<Exemplar> exemplares) {
-        this.exemplares = exemplares;
-    }
-
-    public List<Exemplar> getExemplares() {
-        return exemplares;
     }
 
     @Override

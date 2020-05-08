@@ -1,11 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.Fetch;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -18,39 +14,40 @@ public class Exemplar implements Serializable {
 
     @Id
     @Column(name = "num_registro")
-    @NotBlank(message = "Número do registro do exemplar deve ser informado")
-    private Long numRegistro;
+    private Integer numRegistro;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @NotBlank(message = "Livro do exemplar deve ser informado")
-    @JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToOne
+    @NotNull(message = "Livro deve ser selecionado")
     private Livro livro;
 
     @ManyToOne
-    @NotBlank(message = "Seção do exemplar deve ser informada")
+    @NotNull(message = "Seção deve ser informda")
     private Secao secao;
 
     @Column(name = "data_aquisicao")
-    @NotBlank(message = "Data de aquisição do exemplar deve ser informada")
+    @NotNull(message = "Data de aquisição deve ser informda")
     private LocalDate dataAquisicao;
 
-    @NotBlank(message = "Origem do exemplar deve ser informada")
     @ManyToOne
+    @NotNull(message = "Origem deve ser informada")
     private Origem origem;
 
     private Boolean fixo;
+
     private Boolean disponivel;
+
     private Boolean reservado;
+
     private Boolean emprestado;
 
     public Exemplar() {
     }
 
-    public Long getNumRegistro() {
+    public Integer getNumRegistro() {
         return numRegistro;
     }
 
-    public void setNumRegistro(Long numRegistro) {
+    public void setNumRegistro(Integer numRegistro) {
         this.numRegistro = numRegistro;
     }
 

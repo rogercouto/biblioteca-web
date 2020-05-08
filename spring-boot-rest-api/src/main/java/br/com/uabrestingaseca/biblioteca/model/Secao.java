@@ -37,6 +37,7 @@ public class Secao implements Serializable {
         this.descricao = descricao;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -50,4 +51,5 @@ public class Secao implements Serializable {
     public int hashCode() {
         return Objects.hash(id, descricao);
     }
+
 }

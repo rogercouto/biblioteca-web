@@ -1,7 +1,7 @@
 CREATE TABLE `livro` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `titulo` VARCHAR(255) NOT NULL,
-  `resumo` TEXT,
+  `resumo` TEXT DEFAULT NULL,
   `isbn` BIGINT DEFAULT NULL,
   `cutter` VARCHAR(255) DEFAULT NULL,
   `editora_id` INT DEFAULT NULL,
