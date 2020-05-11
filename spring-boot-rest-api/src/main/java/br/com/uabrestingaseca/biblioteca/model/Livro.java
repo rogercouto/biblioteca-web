@@ -1,5 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -64,7 +65,16 @@ public class Livro implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Categoria> categorias;
 
+    @OneToMany
+    @JoinColumn(name = "livro_id", insertable = false, updatable = false)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Exemplar> exemplares;
+
     public Livro() {
+    }
+
+    public Livro(Integer id){
+        this.id = id;
     }
 
     public Integer getId() {
@@ -171,6 +181,14 @@ public class Livro implements Serializable {
         this.categorias = categorias;
     }
 
+    public List<Exemplar> getExemplares() {
+        return exemplares;
+    }
+
+    public void setExemplares(List<Exemplar> exemplares) {
+        this.exemplares = exemplares;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -188,11 +206,12 @@ public class Livro implements Serializable {
                 Objects.equals(assunto, livro.assunto) &&
                 Objects.equals(anoPublicacao, livro.anoPublicacao) &&
                 Objects.equals(autores, livro.autores) &&
-                Objects.equals(categorias, livro.categorias);
+                Objects.equals(categorias, livro.categorias) &&
+                Objects.equals(exemplares, livro.exemplares);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, titulo, resumo, isbn, cutter, editora, edicao, volume, numPaginas, assunto, anoPublicacao, autores, categorias);
+        return Objects.hash(id, titulo, resumo, isbn, cutter, editora, edicao, volume, numPaginas, assunto, anoPublicacao, autores, categorias, exemplares);
     }
 }

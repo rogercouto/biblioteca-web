@@ -24,6 +24,7 @@ public class UsuarioService implements UserDetailsService {
         return findUserByEmail(username);
     }
 
+    @Deprecated
     public Usuario findUserByEmail(String email) throws  UsernameNotFoundException{
         Usuario usuario = repository.findByUsername(email);
         if (usuario == null)

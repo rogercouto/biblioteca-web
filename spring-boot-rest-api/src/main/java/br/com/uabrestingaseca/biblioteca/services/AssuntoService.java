@@ -15,13 +15,14 @@ public class AssuntoService {
 
     public Assunto findById(Integer id){
         Optional<Assunto> assunto = repository.findById(id);
-        if (assunto.isPresent())
-            return assunto.get();
-        return null;
+        return assunto.orElse(null);
     }
 
-    public Assunto findByDescricao(String descricao){
-        return repository.findByDescricao(descricao.trim());
+    public Assunto findFirstByDescricao(String descricao){
+       return repository.findByDescricao(descricao.trim())
+               .stream()
+               .findFirst()
+               .orElse(null);
     }
 
     public Assunto save(Assunto assunto){

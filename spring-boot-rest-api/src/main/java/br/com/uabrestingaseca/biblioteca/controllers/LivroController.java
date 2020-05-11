@@ -1,12 +1,18 @@
 package br.com.uabrestingaseca.biblioteca.controllers;
 
+import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
 import br.com.uabrestingaseca.biblioteca.model.Livro;
 import br.com.uabrestingaseca.biblioteca.services.LivroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -17,15 +23,41 @@ public class LivroController {
     private LivroService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(){
-        List<Livro> livros = service.findAll();
-        return ResponseEntity.ok(livros);
+    public ResponseEntity<List<Livro>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find)
+    {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Livro> livros = (find.isBlank()) ?
+                service.findPage(pageable) :
+                service.findPage(find, pageable);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("X-Total-Count", String.valueOf(livros.getTotalElements()));
+        return ResponseEntity.ok().headers(responseHeaders).body(livros.toList());
+    }
+
+    @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public Livro findById(@PathVariable("id")int id){
+        return service.findById(id);
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@RequestBody Livro livro){
+    public ResponseEntity<?> create(@Valid @RequestBody Livro livro){
+        if (livro.getId() != null)
+            throw new ValidationException("Erro na criação do livro","Id do livro é gerado pela API");
+        return ResponseEntity.ok(service.save(livro));
+    }
+
+    @PutMapping(value = "/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> update(@PathVariable("id")int id,@Valid @RequestBody Livro livro){
+        if (livro.getId() != null && livro.getId() != id)
+            throw new ValidationException("Erro na criação do livro","Id do livro deve ser informado na URL");
+        livro.setId(id);
         return ResponseEntity.ok(service.save(livro));
     }
 

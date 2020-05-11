@@ -1,5 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -17,28 +19,29 @@ public class Exemplar implements Serializable {
     private Integer numRegistro;
 
     @ManyToOne
-    @NotNull(message = "Livro deve ser selecionado")
+    @NotNull(message = "Livro do exemplar deve ser selecionado")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Livro livro;
 
     @ManyToOne
-    @NotNull(message = "Seção deve ser informda")
+    @NotNull(message = "Seção do exemplar deve ser informda")
     private Secao secao;
 
     @Column(name = "data_aquisicao")
-    @NotNull(message = "Data de aquisição deve ser informda")
+    @NotNull(message = "Data de aquisição do exemplar deve ser informda")
     private LocalDate dataAquisicao;
 
     @ManyToOne
-    @NotNull(message = "Origem deve ser informada")
+    @NotNull(message = "Origem do exemplar deve ser informada")
     private Origem origem;
 
-    private Boolean fixo;
+    private boolean fixo = false;
 
-    private Boolean disponivel;
+    private boolean disponivel = true;
 
-    private Boolean reservado;
+    private boolean reservado = false;
 
-    private Boolean emprestado;
+    private boolean emprestado = false;
 
     public Exemplar() {
     }
@@ -83,35 +86,35 @@ public class Exemplar implements Serializable {
         this.origem = origem;
     }
 
-    public Boolean getFixo() {
+    public boolean getFixo() {
         return fixo;
     }
 
-    public void setFixo(Boolean fixo) {
+    public void setFixo(boolean fixo) {
         this.fixo = fixo;
     }
 
-    public Boolean getDisponivel() {
+    public boolean getDisponivel() {
         return disponivel;
     }
 
-    public void setDisponivel(Boolean disponivel) {
+    public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
 
-    public Boolean getReservado() {
+    public boolean getReservado() {
         return reservado;
     }
 
-    public void setReservado(Boolean reservado) {
+    public void setReservado(boolean reservado) {
         this.reservado = reservado;
     }
 
-    public Boolean getEmprestado() {
+    public boolean getEmprestado() {
         return emprestado;
     }
 
-    public void setEmprestado(Boolean emprestado) {
+    public void setEmprestado(boolean emprestado) {
         this.emprestado = emprestado;
     }
 
@@ -135,4 +138,43 @@ public class Exemplar implements Serializable {
     public int hashCode() {
         return Objects.hash(numRegistro, livro, secao, dataAquisicao, origem, fixo, disponivel, reservado, emprestado);
     }
+
+    public boolean onlyNumRegistro(){
+        return numRegistro != null
+                && livro == null
+                &&  secao == null
+                &&  dataAquisicao == null
+                &&  origem == null
+                &&  !fixo
+                &&  disponivel
+                &&  !reservado
+                &&  !emprestado;
+    }
+
+    public boolean onlyLivroAndNumRegistro(){
+        return numRegistro != null
+                && livro != null
+                &&  secao == null
+                &&  dataAquisicao == null
+                &&  origem == null
+                &&  !fixo
+                &&  disponivel
+                &&  !reservado
+                &&  !emprestado;
+    }
+
+    public Exemplar copy(){
+        Exemplar e = new Exemplar();
+        e.numRegistro = numRegistro;
+        e.livro = livro;
+        e.secao = secao;
+        e.dataAquisicao = dataAquisicao;
+        e.origem = origem;
+        e.fixo = fixo;
+        e.disponivel = disponivel;
+        e.reservado = reservado;
+        e.emprestado = emprestado;
+        return e;
+    }
+
 }

@@ -73,4 +73,8 @@ public class Autor implements Serializable {
     public int hashCode() {
         return Objects.hash(id, nome, sobrenome, info);
     }
+
+    public boolean onlyIdSet(){
+        return id != null && nome == null && sobrenome == null && info == null;
+    }
 }

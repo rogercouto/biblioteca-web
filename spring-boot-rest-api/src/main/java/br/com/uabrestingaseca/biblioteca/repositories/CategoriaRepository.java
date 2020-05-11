@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 
     @Query("select c from Categoria c where lower(c.descricao) = lower(:descricao)")
-    Categoria findByDescricao(@Param("descricao") String descricao);
+    List<Categoria> findByDescricao(@Param("descricao") String descricao);
 
 }

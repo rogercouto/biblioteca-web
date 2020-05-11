@@ -50,4 +50,8 @@ public class Editora implements Serializable {
     public int hashCode() {
         return Objects.hash(id, nome);
     }
+
+    public boolean onlyIdSet(){
+        return (id != null && (nome == null || nome.isBlank()));
+    }
 }

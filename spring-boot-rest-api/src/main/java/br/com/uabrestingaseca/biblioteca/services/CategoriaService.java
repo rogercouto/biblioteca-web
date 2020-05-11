@@ -14,14 +14,14 @@ public class CategoriaService {
     private CategoriaRepository repository;
 
     public Categoria findById(Integer id){
-        Optional<Categoria> categoria = repository.findById(id);
-        if (categoria.isPresent())
-            return categoria.get();
-        return null;
+        return repository.findById(id).orElse(null);
     }
 
-    public Categoria findByDescricao(String descricao){
-        return repository.findByDescricao(descricao.trim());
+    public Categoria findFirstByDescricao(String descricao){
+        return repository.findByDescricao(descricao.trim())
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 
     public Categoria save(Categoria categoria){

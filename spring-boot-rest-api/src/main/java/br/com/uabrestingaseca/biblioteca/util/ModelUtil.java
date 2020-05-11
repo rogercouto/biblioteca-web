@@ -1,15 +1,12 @@
 package br.com.uabrestingaseca.biblioteca.util;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
 import br.com.uabrestingaseca.biblioteca.model.Editora;
-import br.com.uabrestingaseca.biblioteca.model.Usuario;
-import org.springframework.hateoas.Link;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ModelUtil {
 
@@ -20,25 +17,6 @@ public class ModelUtil {
         }catch (java.lang.IllegalAccessException e){
             return null;
         }
-    }
-
-    @SuppressWarnings("unused")
-    public static void printObject(Object object){
-        StringBuilder builder = new StringBuilder();
-        Field[] fields = object.getClass().getDeclaredFields();
-        builder.append("{\n");
-        for (Field field : fields) {
-            if (field.getName().compareTo("serialVersionUID") != 0){
-                builder.append("\t\"");
-                builder.append(field.getName());
-                builder.append("\": \"");
-                Object value = getValue(field, object);
-                builder.append(value != null ? value.toString(): "null");
-                builder.append("\",\n");
-            }
-        }
-        builder.append("}");
-        System.out.println(builder.toString());
     }
 
     public static boolean isNullOrEmpty(String string){
@@ -89,15 +67,18 @@ public class ModelUtil {
         return  idSet;
     }
 
-    public static void main(String[] args) {
-        Editora e1 = new Editora();
-        e1.setId(1);
-        e1.setNome("Editora Teste");
-        Editora e2 = new Editora();
-        e2.setId(1);
-        System.out.println(isEqualsIgnoringNull(e1, e2));
-        System.out.println(onlyIdSet(e1));
-        System.out.println(onlyIdSet(e2));
+    public static String toJson(Object object){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(object);
+        }catch (IOException e){
+            return object != null ? object.toString() : null;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static void printJson(Object object){
+        System.out.println(toJson(object));
     }
 
 }
