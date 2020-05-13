@@ -15,15 +15,24 @@ public class Autor implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Nome deve ser informado")
+    @NotBlank(message = "Nome(s) do(s) autor(es) deve(m) ser informado(s)")
     private String nome;
 
-    @NotBlank(message = "Sobrenome deve ser informado")
+    @NotBlank(message = "Sobrenome(s) do(s) autor(es) deve(m) ser informado(s)")
     private String sobrenome;
 
     private String info;
 
     public Autor() {
+    }
+
+    public Autor(Integer id) {
+        this.id = id;
+    }
+
+    public Autor(String nome, String sobrenome) {
+        this.nome = nome;
+        this.sobrenome = sobrenome;
     }
 
     public Integer getId() {

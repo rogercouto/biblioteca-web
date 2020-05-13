@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.List;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ValidationException extends RuntimeException{
+public class ModelValidationException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
     private List<String> errors;
 
-    public ValidationException(String message, String ...errors) {
+    public ModelValidationException(String message, String ...errors) {
         super(message);
         this.errors = Arrays.asList(errors);
     }
 
-    public ValidationException(String message, List<String> errors) {
+    public ModelValidationException(String message, List<String> errors) {
         super(message);
         this.errors = errors;
     }

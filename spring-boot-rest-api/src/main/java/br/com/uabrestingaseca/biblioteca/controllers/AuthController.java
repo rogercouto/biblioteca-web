@@ -1,6 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.controllers;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
+import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.security.jwt.JwtTokenProvider;
 import br.com.uabrestingaseca.biblioteca.services.UsuarioService;
@@ -40,7 +40,7 @@ public class AuthController {
         authenticationManager.authenticate(authentication);
         Usuario usuario = service.findUserByEmail(authentication.getName());
         if (credenciais.getNome() != null && usuario.getEmail().compareTo(credenciais.getNome())!= 0)
-            throw new ValidationException("Erro de validação", "Nome de usuário incorreto");
+            throw new ModelValidationException("Erro de validação", "Nome de usuário incorreto");
         String token = tokenProvider.createToken(usuario.getUsername(), usuario.getRoles());
         Map<Object, Object> model = new LinkedHashMap<>();
         model.put("usuario", usuario);

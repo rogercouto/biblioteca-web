@@ -21,6 +21,19 @@ public class Editora implements Serializable {
     public Editora() {
     }
 
+    public Editora(Integer id) {
+        this.id = id;
+    }
+
+    public Editora(String nome) {
+        this.nome = nome;
+    }
+
+    public Editora(Integer id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
     public Integer getId() {
         return id;
     }

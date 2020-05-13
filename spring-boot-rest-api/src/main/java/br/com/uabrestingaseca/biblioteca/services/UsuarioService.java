@@ -1,6 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.services;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
+import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario create(Usuario usuario){
         if (repository.findByUsername(usuario.getEmail()) != null)
-            throw new ValidationException("Erro de validação nos dados","E-mail já cadastrado");
+            throw new ModelValidationException("Erro de validação nos dados","E-mail já cadastrado");
         usuario.setAtivo(true);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return repository.save(usuario);

@@ -17,10 +17,19 @@ public class Assunto implements Serializable {
 
     @NotBlank(message = "Descrição do assunto deve ser informada")
     private String descricao;
+
     private String cores;
     private String cdu;
 
     public Assunto() {
+    }
+
+    public Assunto(Integer id) {
+        this.id = id;
+    }
+
+    public Assunto(String descricao) {
+        this.descricao = descricao;
     }
 
     public Integer getId() {
@@ -69,5 +78,12 @@ public class Assunto implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, descricao, cores, cdu);
+    }
+
+    public boolean onlyIdSet(){
+        return id != null
+                && (descricao == null || descricao.isBlank())
+                && (cores == null || cores.isBlank())
+                && (cdu == null || cdu.isBlank());
     }
 }

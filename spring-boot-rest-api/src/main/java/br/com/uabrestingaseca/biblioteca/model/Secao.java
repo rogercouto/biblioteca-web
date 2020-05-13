@@ -16,9 +16,17 @@ public class Secao implements Serializable {
     private Integer id;
 
     @NotBlank(message = "Descrição da seção deve ser informada")
-    private String descricao;
+    private String nome;
 
     public Secao() {
+    }
+
+    public Secao(Integer id) {
+        this.id = id;
+    }
+
+    public Secao(String nome) {
+        this.nome = nome;
     }
 
     public Integer getId() {
@@ -29,12 +37,12 @@ public class Secao implements Serializable {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getNome() {
+        return nome;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
 
@@ -44,12 +52,12 @@ public class Secao implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Secao secao = (Secao) o;
         return Objects.equals(id, secao.id) &&
-                Objects.equals(descricao, secao.descricao);
+                Objects.equals(nome, secao.nome);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, descricao);
+        return Objects.hash(id, nome);
     }
 
 }

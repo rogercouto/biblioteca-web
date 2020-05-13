@@ -1,10 +1,8 @@
 package br.com.uabrestingaseca.biblioteca.exceptions.handler;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 

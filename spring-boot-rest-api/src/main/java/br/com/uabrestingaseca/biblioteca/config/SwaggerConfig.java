@@ -23,14 +23,14 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("br.com.erudio"))
+				.apis(RequestHandlerSelectors.basePackage("br.com.uabrestingaseca.biblioteca"))
 				.paths(PathSelectors.any())
 				.build()
 				.apiInfo(apiInfo());
 	}
 
 	private ApiInfo apiInfo() {
-		return new ApiInfo("Restful API with Spring Boot", "API for learning spring boot", "v1", "www.termsofuse.com", 
+		return new ApiInfo("Biblioteca REST", "API para administração de bibliotecas", "v1", "",
 				new Contact("Roger Couto", "https://github.com/rogercouto", "rogerecouto@gmail.com"), "Common licence", "www.lincence.com", Collections.emptyList());
 	}
 	

@@ -1,5 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -19,20 +20,24 @@ public class Exemplar implements Serializable {
     private Integer numRegistro;
 
     @ManyToOne
-    @NotNull(message = "Livro do exemplar deve ser selecionado")
+    @NotNull(message = "Livro do(s) exemplar(es) deve(m) ser selecionado(s)")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Livro livro;
 
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Integer livroId;
+
     @ManyToOne
-    @NotNull(message = "Seção do exemplar deve ser informda")
+    @NotNull(message = "Seção do(s) exemplar(es) deve(m) ser selecionado(s)")
     private Secao secao;
 
     @Column(name = "data_aquisicao")
-    @NotNull(message = "Data de aquisição do exemplar deve ser informda")
+    @NotNull(message = "Data de aquisição do(s) exemplar(es) deve(m) ser selecionado(s)")
     private LocalDate dataAquisicao;
 
     @ManyToOne
-    @NotNull(message = "Origem do exemplar deve ser informada")
+    @NotNull(message = "Origem do exemplar do(s) exemplar(es) deve(m) ser selecionado(s)")
     private Origem origem;
 
     private boolean fixo = false;
@@ -44,6 +49,17 @@ public class Exemplar implements Serializable {
     private boolean emprestado = false;
 
     public Exemplar() {
+    }
+
+    public Exemplar(Integer numRegistro) {
+        this.numRegistro = numRegistro;
+    }
+
+    public Exemplar(Integer numRegistro, Secao secao,LocalDate dataAquisicao, Origem origem) {
+        this.numRegistro = numRegistro;
+        this.secao = secao;
+        this.dataAquisicao = dataAquisicao;
+        this.origem = origem;
     }
 
     public Integer getNumRegistro() {
@@ -60,6 +76,14 @@ public class Exemplar implements Serializable {
 
     public void setLivro(Livro livro) {
         this.livro = livro;
+    }
+
+    public Integer getLivroId() {
+        return livroId;
+    }
+
+    public void setLivroId(Integer livroId) {
+        this.livroId = livroId;
     }
 
     public Secao getSecao() {

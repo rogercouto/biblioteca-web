@@ -9,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -166,6 +167,8 @@ public class Livro implements Serializable {
     }
 
     public List<Autor> getAutores() {
+        if (autores == null)
+            autores = new LinkedList<>();
         return autores;
     }
 
@@ -174,6 +177,8 @@ public class Livro implements Serializable {
     }
 
     public List<Categoria> getCategorias() {
+        if (categorias == null)
+            categorias = new LinkedList<>();
         return categorias;
     }
 
@@ -182,6 +187,8 @@ public class Livro implements Serializable {
     }
 
     public List<Exemplar> getExemplares() {
+        if (exemplares == null)
+            exemplares = new LinkedList<>();
         return exemplares;
     }
 

@@ -21,6 +21,14 @@ public class Origem implements Serializable {
     public Origem() {
     }
 
+    public Origem(Integer id) {
+        this.id = id;
+    }
+
+    public Origem(@NotBlank(message = "Descrição da origem deve ser informada") String descricao) {
+        this.descricao = descricao;
+    }
+
     public Integer getId() {
         return id;
     }

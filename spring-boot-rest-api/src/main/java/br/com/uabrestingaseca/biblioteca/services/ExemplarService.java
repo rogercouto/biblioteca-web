@@ -1,12 +1,15 @@
 package br.com.uabrestingaseca.biblioteca.services;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.ValidationException;
+import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Livro;
 import br.com.uabrestingaseca.biblioteca.repositories.ExemplarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,18 +19,26 @@ public class ExemplarService {
     @Autowired
     private ExemplarRepository repository;
 
-    public List<Exemplar> findAll(){
-        return repository.findAll();
+    public Page<Exemplar> findAll(Pageable pageable){
+        return repository.findAll(pageable);
     }
 
     public Exemplar findByNumRegistro(Integer numRegistro){
         return repository.findByNumRegistro(numRegistro)
                 .stream()
+                .map(e -> {
+                        if (e.getLivro() != null)
+                            e.setLivroId(e.getLivro().getId());
+                        return e;
+                    })
                 .findFirst()
                 .orElse(null);
     }
 
     public Exemplar save(Exemplar exemplar){
+        if (exemplar.getLivro() == null && exemplar.getLivroId() != null){
+            exemplar.setLivro(new Livro(exemplar.getLivroId()));
+        }
         return repository.save(exemplar);
     }
 
@@ -38,11 +49,11 @@ public class ExemplarService {
                     if (e.onlyNumRegistro()){
                         Exemplar exemplar = findByNumRegistro(e.getNumRegistro());
                         if (exemplar == null){
-                            throw new ValidationException(messageIfError,
-                                    "Nenhum exemplar com esse número de registro");
+                            throw new ModelValidationException(messageIfError,
+                                    String.format("Nenhum exemplar com o número de registro = %d",e.getNumRegistro()));
                         }else if (!exemplar.getLivro().getId().equals(livro.getId())) {
-                            throw new ValidationException(messageIfError,
-                                    "Número do(s) exemplar(es) já cadastrado(s) para outro livro");
+                            throw new ModelValidationException(messageIfError,
+                                    String.format("Exemplar já cadastrado com o número de registro = %d",e.getNumRegistro()));
                         }
                         return exemplar;
                     }else{
@@ -52,6 +63,11 @@ public class ExemplarService {
                 })
                 .collect(Collectors.toList())
         );
+    }
+
+    @Transactional
+    public boolean delete(int numRegistro){
+        return repository.delete(numRegistro) > 0;
     }
 
 }

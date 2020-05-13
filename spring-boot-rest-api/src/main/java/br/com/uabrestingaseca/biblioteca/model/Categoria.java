@@ -15,10 +15,18 @@ public class Categoria implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Descrição deve ser informada")
+    @NotBlank(message = "Descrição da(s) categoria(s) deve(m) ser informada(s)")
     private String descricao;
 
     public Categoria() {
+    }
+
+    public Categoria(Integer id) {
+        this.id = id;
+    }
+
+    public Categoria(String descricao) {
+        this.descricao = descricao;
     }
 
     public Integer getId() {
@@ -49,5 +57,9 @@ public class Categoria implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, descricao);
+    }
+
+    public boolean onlyIdSet(){
+        return id != null && (descricao == null || descricao.isBlank());
     }
 }

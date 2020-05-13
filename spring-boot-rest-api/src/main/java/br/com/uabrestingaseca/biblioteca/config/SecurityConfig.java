@@ -43,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/").permitAll()
 				.antMatchers("/info").hasAuthority("ADMIN")
 				.antMatchers("/livros/**").permitAll()
+				.antMatchers("/exemplares/**").permitAll()
+				.antMatchers("/autores/**").permitAll()
 				.antMatchers("/users").denyAll()
 			.and()
 			.apply(new JwtConfigurer(tokenProvider));
