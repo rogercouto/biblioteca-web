@@ -1,6 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.services;
 
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
+import br.com.uabrestingaseca.biblioteca.model.Baixa;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Livro;
 import br.com.uabrestingaseca.biblioteca.repositories.ExemplarRepository;
@@ -19,18 +20,30 @@ public class ExemplarService {
     @Autowired
     private ExemplarRepository repository;
 
+    @Autowired
+    private BaixaService baixaService;
+
+    private Exemplar setLivroIdAndBaixa(Exemplar e){
+        if (e.getLivro() != null)
+            e.setLivroId(e.getLivro().getId());
+        if (!e.getDisponivel()){
+            Baixa b = baixaService.findBaixaFromExemplar(e);
+            b.setExemplar(null);
+            e.setBaixa(b);
+        }
+        return e;
+    }
+
     public Page<Exemplar> findAll(Pageable pageable){
-        return repository.findAll(pageable);
+        Page<Exemplar> page =  repository.findAll(pageable);
+        page.forEach(this::setLivroIdAndBaixa);
+        return page;
     }
 
     public Exemplar findByNumRegistro(Integer numRegistro){
         return repository.findByNumRegistro(numRegistro)
                 .stream()
-                .map(e -> {
-                        if (e.getLivro() != null)
-                            e.setLivroId(e.getLivro().getId());
-                        return e;
-                    })
+                .map(this::setLivroIdAndBaixa)
                 .findFirst()
                 .orElse(null);
     }
@@ -46,7 +59,7 @@ public class ExemplarService {
         livro.setExemplares(
                 exemplares.stream()
                 .map(e -> {
-                    if (e.onlyNumRegistro()){
+                    if (e.onlyNumRegistroSet()){
                         Exemplar exemplar = findByNumRegistro(e.getNumRegistro());
                         if (exemplar == null){
                             throw new ModelValidationException(messageIfError,

@@ -181,7 +181,7 @@ public class LivroService {
             if ((livro.getId() == null && existent != null)
             || (livro.getId() != null && existent != null && !livro.getId().equals(existent.getLivro().getId()))){
                 errors.add(String.format("Exemplar já cadastrado com o número de registro = %d", e.getNumRegistro()));
-            }else if (!exemplar.onlyLivroAndNumRegistro()){
+            }else if (!exemplar.onlyLivroAndNumRegistroSet()){
                 Set<ConstraintViolation<Exemplar>> violations = validator.validate(exemplar);
                 violations.forEach(v ->{
                     errors.add(v.getMessage());

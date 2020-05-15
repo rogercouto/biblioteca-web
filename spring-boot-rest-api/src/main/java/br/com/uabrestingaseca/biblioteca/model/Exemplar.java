@@ -48,6 +48,10 @@ public class Exemplar implements Serializable {
 
     private boolean emprestado = false;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    private Baixa baixa;
+
     public Exemplar() {
     }
 
@@ -142,6 +146,30 @@ public class Exemplar implements Serializable {
         this.emprestado = emprestado;
     }
 
+    public boolean isFixo() {
+        return fixo;
+    }
+
+    public boolean isDisponivel() {
+        return disponivel;
+    }
+
+    public boolean isReservado() {
+        return reservado;
+    }
+
+    public boolean isEmprestado() {
+        return emprestado;
+    }
+
+    public Baixa getBaixa() {
+        return baixa;
+    }
+
+    public void setBaixa(Baixa baixa) {
+        this.baixa = baixa;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -163,7 +191,7 @@ public class Exemplar implements Serializable {
         return Objects.hash(numRegistro, livro, secao, dataAquisicao, origem, fixo, disponivel, reservado, emprestado);
     }
 
-    public boolean onlyNumRegistro(){
+    public boolean onlyNumRegistroSet(){
         return numRegistro != null
                 && livro == null
                 &&  secao == null
@@ -175,7 +203,7 @@ public class Exemplar implements Serializable {
                 &&  !emprestado;
     }
 
-    public boolean onlyLivroAndNumRegistro(){
+    public boolean onlyLivroAndNumRegistroSet(){
         return numRegistro != null
                 && livro != null
                 &&  secao == null
@@ -200,5 +228,7 @@ public class Exemplar implements Serializable {
         e.emprestado = emprestado;
         return e;
     }
+
+
 
 }

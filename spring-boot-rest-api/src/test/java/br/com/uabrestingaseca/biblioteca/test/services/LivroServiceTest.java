@@ -44,6 +44,9 @@ public class LivroServiceTest extends BibliotecaApplicationTests {
     @Autowired
     private ExemplarService exemplarService;
 
+    @Autowired
+    private BaixaService baixaService;
+
     @Before
     public void setUp(){
     }
@@ -261,5 +264,51 @@ public class LivroServiceTest extends BibliotecaApplicationTests {
         List<Livro> livros = livroService.findPage(pageable).toList();
         Assert.assertTrue("livroService.getPage() deve retornar uma lista não vazia", livros.size() > 0);
     }
+
+    public Map<String, Integer> createLivroWithExemplaresAgain(){
+        Map<String, Integer> map = saveAux();
+        findAux(map);
+        Livro livro = new Livro();
+        livro.setTitulo("Livro teste 4");
+        livro.setResumo("Resumo teste do livro 1");
+        livro.setIsbn((long) 123456);
+        livro.setCutter("Cutter Teste");
+        livro.setEditora(new Editora("Editora Teste 1"));
+        livro.setEdicao("1a edição");
+        livro.setVolume("único");
+        livro.setNumPaginas(300);
+        livro.setAssunto(new Assunto(map.get("assuntoId")));
+        livro.setAnoPublicacao((short) 2009);
+        livro.getAutores().add(new Autor("Fulano","de Tal"));
+        livro.getAutores().add(new Autor("Ciclano","de Tal"));
+        livro.getCategorias().add(new Categoria("Categoria Teste 1"));
+        livro.getCategorias().add(new Categoria("Categoria Teste 2"));
+        livro.getExemplares().add(new Exemplar(1007, new Secao(map.get("secaoId")), LocalDate.now(), new Origem(map.get("origemId"))));
+        livro.getExemplares().add(new Exemplar(1008, new Secao(map.get("secaoId")), LocalDate.now(), new Origem(map.get("origemId"))));
+        livro.getExemplares().add(new Exemplar(1009, new Secao(map.get("secaoId")), LocalDate.now(), new Origem(map.get("origemId"))));
+        try{
+            livro = livroService.save(livro);
+        }catch (ModelValidationException e){
+            livro = null;
+            System.err.println(e.getMessage());
+            e.getErrors().forEach(System.out::println);
+        }
+        map.put("livroId", livro.getId());
+        map.put("exemplarNumRegistro0", livro.getExemplares().get(0).getNumRegistro());
+        map.put("exemplarNumRegistro1", livro.getExemplares().get(1).getNumRegistro());
+        map.put("exemplarNumRegistro2", livro.getExemplares().get(2).getNumRegistro());
+        return map;
+    }
+
+    @Test
+    public void baixaTest(){
+        Map<String, Integer> map = createLivroWithExemplaresAgain();
+        Baixa baixa = new Baixa();
+        baixa.setExemplar(new Exemplar(map.get("exemplarNumRegistro0")));
+        baixa.setCausa("Pegoou fogo");
+        baixa = baixaService.save(baixa);
+        ModelUtil.printJson(baixa);
+    }
+
 
 }
