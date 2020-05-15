@@ -40,6 +40,12 @@ public class ExemplarService {
         return page;
     }
 
+    public Page<Exemplar> findDisponiveis(Pageable pageable){
+        Page<Exemplar> page =  repository.findByDisponibilidade(true, pageable);
+        page.forEach(this::setLivroIdAndBaixa);
+        return page;
+    }
+
     public Exemplar findByNumRegistro(Integer numRegistro){
         return repository.findByNumRegistro(numRegistro)
                 .stream()

@@ -25,9 +25,12 @@ public class ExemplarController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> index(
     @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit){
+    @RequestParam(value="limit", defaultValue = "10") int limit,
+    @RequestParam(value="all", defaultValue = "false")boolean all){
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Exemplar> exemplares = service.findAll(pageable);
+        Page<Exemplar> exemplares = all ?
+                service.findAll(pageable) :
+                service.findDisponiveis(pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("X-Total-Count", String.valueOf(exemplares.getTotalElements()));
         List<Exemplar> list = exemplares.toList();

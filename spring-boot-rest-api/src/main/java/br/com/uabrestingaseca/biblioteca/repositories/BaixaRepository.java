@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BaixaRepository extends JpaRepository<Baixa, Integer> {
 
     @Query("SELECT b FROM Baixa b WHERE b.exemplar = exemplar")
-    Optional<Baixa> findBaixaFromExemplar(@Param("exemplar") Exemplar exemplar);
+    List<Baixa> findBaixaFromExemplar(@Param("exemplar") Exemplar exemplar);
 
 }

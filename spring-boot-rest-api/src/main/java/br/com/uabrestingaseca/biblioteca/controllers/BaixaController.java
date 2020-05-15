@@ -44,7 +44,7 @@ public class BaixaController {
     @PostMapping(
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE)
-    public Baixa create(@Valid @RequestBody Baixa baixa){
+    public Baixa create(@RequestBody Baixa baixa){
         return service.save(baixa);
     }
 
