@@ -85,13 +85,13 @@ public class Baixa implements Serializable {
         Baixa baixa = (Baixa) o;
         return Objects.equals(id, baixa.id) &&
                 Objects.equals(exemplar, baixa.exemplar) &&
+                Objects.equals(exemplarNumRegistro, baixa.exemplarNumRegistro) &&
                 Objects.equals(dataHora, baixa.dataHora) &&
                 Objects.equals(causa, baixa.causa);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, exemplar, dataHora, causa);
+        return Objects.hash(id, exemplar, exemplarNumRegistro, dataHora, causa);
     }
-
 }

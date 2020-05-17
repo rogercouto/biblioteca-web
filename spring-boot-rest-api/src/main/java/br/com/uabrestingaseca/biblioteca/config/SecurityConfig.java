@@ -1,5 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.config;
 
+import br.com.uabrestingaseca.biblioteca.exceptions.handler.RestAuthenticationEntryPoint;
 import br.com.uabrestingaseca.biblioteca.security.jwt.JwtConfigurer;
 import br.com.uabrestingaseca.biblioteca.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private JwtTokenProvider tokenProvider;
-	
+
+	@Autowired
+	private RestAuthenticationEntryPoint authenticationEntryPoint;
+
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -45,8 +49,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 				.antMatchers("/livros/**").permitAll()
 				.antMatchers("/exemplares/**").permitAll()
 				.antMatchers("/autores/**").permitAll()
+				.antMatchers("/baixas/**").permitAll()
+				.antMatchers("/reservas/**").permitAll()
 				.antMatchers("/users").denyAll()
 			.and()
-			.apply(new JwtConfigurer(tokenProvider));
+				.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+			.and()
+				.apply(new JwtConfigurer(tokenProvider));
 	}
 }

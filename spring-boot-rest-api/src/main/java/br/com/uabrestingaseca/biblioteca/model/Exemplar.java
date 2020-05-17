@@ -1,5 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -40,13 +41,21 @@ public class Exemplar implements Serializable {
     @NotNull(message = "Origem do exemplar do(s) exemplar(es) deve(m) ser selecionado(s)")
     private Origem origem;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean fixo = false;
 
+    @JsonIgnore
     private boolean disponivel = true;
 
+    @JsonIgnore
     private boolean reservado = false;
 
+    @JsonIgnore
     private boolean emprestado = false;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Transient
+    private String situacao;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Transient
@@ -168,6 +177,25 @@ public class Exemplar implements Serializable {
 
     public void setBaixa(Baixa baixa) {
         this.baixa = baixa;
+    }
+
+    public String getSituacao() {
+        if (!disponivel){
+            setSituacao("Indisponível");
+        }else if (fixo){
+            setSituacao("Fixo");
+        }else if (!emprestado && !reservado){
+            setSituacao("Disponível");
+        }else if (emprestado && !reservado){
+            setSituacao("Emprestado");
+        }else{
+            setSituacao("Reservado");
+        }
+        return situacao;
+    }
+
+    private void setSituacao(String situacao) {
+        this.situacao = situacao;
     }
 
     @Override

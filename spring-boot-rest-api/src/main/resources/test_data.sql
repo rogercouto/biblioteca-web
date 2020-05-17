@@ -2,6 +2,7 @@ drop database biblioteca;
 create database biblioteca;
 use biblioteca;
 
+drop database biblioteca_test;
 create database biblioteca_test;
 use biblioteca_test;
 
@@ -16,6 +17,8 @@ select * from autor_livro;
 select * from secao;
 select * from origem;
 select * from exemplar;
+select * from baixa;
+select * from reserva;
 
 insert into editora(nome) values('Editora teste');
 
@@ -35,4 +38,3 @@ insert into autor_livro values(1,1),(2,1);
 insert into secao(nome) values('Seção A'),('Seção B');
 
 insert into exemplar(num_registro, livro_id, secao_id, data_aquisicao, origem_id) values(1001, 1,  1, '2009-3-30', 1);
-

@@ -1,11 +1,8 @@
 package br.com.uabrestingaseca.biblioteca.exceptions.handler;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import br.com.uabrestingaseca.biblioteca.exceptions.InvalidJwtAuthenticationException;
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
+import br.com.uabrestingaseca.biblioteca.exceptions.ResourceNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,10 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import br.com.uabrestingaseca.biblioteca.exceptions.InvalidJwtAuthenticationException;
-import br.com.uabrestingaseca.biblioteca.exceptions.ResourceNotFoundException;
-
-import javax.validation.ConstraintViolationException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 @RestController

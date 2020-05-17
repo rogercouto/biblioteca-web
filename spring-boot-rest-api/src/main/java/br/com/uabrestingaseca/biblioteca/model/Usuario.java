@@ -2,7 +2,9 @@ package br.com.uabrestingaseca.biblioteca.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -21,7 +23,7 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
+    @JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
     private Integer id;
 
     @NotBlank(message = "Campo nome é requerido")
@@ -48,6 +50,17 @@ public class Usuario implements UserDetails {
     )
     @JsonIgnore
     public List<Permissao> permissoes;
+
+    //@JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
+    @Transient
+    private boolean gerente = false;
+
+    public Usuario() {
+    }
+
+    public Usuario(Integer id) {
+        this.id = id;
+    }
 
     public Integer getId() {
         return id;
@@ -111,7 +124,7 @@ public class Usuario implements UserDetails {
         return permissoes;
     }
 
-    @JsonProperty( access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     public List<String> getRoles(){
         return permissoes.stream()
                 .map(Permissao::getDescricao)
@@ -154,15 +167,26 @@ public class Usuario implements UserDetails {
         return ativo;
     }
 
+    public boolean isGerente() {
+        gerente = getRoles().contains("GERENTE");
+        return gerente;
+    }
+
+    public void setGerente(boolean gerente) {
+        this.gerente = gerente;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
-        return Objects.equals(id, usuario.id) &&
+        return gerente == usuario.gerente &&
+                Objects.equals(id, usuario.id) &&
                 Objects.equals(nome, usuario.nome) &&
                 Objects.equals(email, usuario.email) &&
                 Objects.equals(senha, usuario.senha) &&
+                Objects.equals(numTel, usuario.numTel) &&
                 Objects.equals(ativo, usuario.ativo) &&
                 Objects.equals(permissoes, usuario.permissoes);
     }
@@ -171,4 +195,55 @@ public class Usuario implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, nome, email, senha, ativo, permissoes);
     }
+
+    public boolean onlyIdSet(){
+        return id != null
+                && nome == null
+                && email == null
+                && senha == null
+                && numTel == null;
+    }
+
+    public static Usuario getUsuarioLogado(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() != null && authentication.getPrincipal() instanceof Usuario){
+            return (Usuario)authentication.getPrincipal();
+        }
+        return null;
+    }
+
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("{");
+        int count = 0;
+        if (id != null){
+            builder.append("id: ");
+            builder.append(id);
+            count++;
+        }
+        if (nome != null){
+            if (count > 0)
+                builder.append(", ");
+            builder.append("nome: ");
+            builder.append(nome);
+            count++;
+        }
+        if (email != null){
+            if (count > 0)
+                builder.append(", ");
+            builder.append("email: ");
+            builder.append(email);
+            count++;
+        }
+        if (senha != null){
+            if (count > 0)
+                builder.append(", ");
+            builder.append("senha: ");
+            builder.append(senha);
+            count++;
+        }
+        builder.append("}");
+        return builder.toString();
+    }
+
 }
