@@ -1,6 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,7 +54,8 @@ public class Usuario implements UserDetails {
 
     //@JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
     @Transient
-    private boolean gerente = false;
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Boolean gerente;
 
     public Usuario() {
     }
@@ -167,12 +169,12 @@ public class Usuario implements UserDetails {
         return ativo;
     }
 
-    public boolean isGerente() {
-        gerente = getRoles().contains("GERENTE");
+    public Boolean isGerente() {
+        //gerente = getRoles().contains("GERENTE");
         return gerente;
     }
 
-    public void setGerente(boolean gerente) {
+    public void setGerente(Boolean gerente) {
         this.gerente = gerente;
     }
 

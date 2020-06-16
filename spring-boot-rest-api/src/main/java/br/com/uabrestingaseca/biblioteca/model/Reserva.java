@@ -21,7 +21,7 @@ public class Reserva implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "num_registro", referencedColumnName = "num_registro")
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Exemplar exemplar;
