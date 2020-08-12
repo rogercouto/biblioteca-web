@@ -22,8 +22,9 @@ public class BaixaController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Baixa>> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit){
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit
+    ){
         Pageable pageable = PageRequest.of(page, limit);
         Page<Baixa> baixas = service.findAll(pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -34,15 +35,15 @@ public class BaixaController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Baixa findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Baixa> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE)
-    public Baixa create(@RequestBody Baixa baixa){
-        return service.save(baixa);
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Baixa> create(@RequestBody Baixa baixa){
+        return ResponseEntity.ok(service.save(baixa));
     }
 
     @DeleteMapping(value = "/{id}")

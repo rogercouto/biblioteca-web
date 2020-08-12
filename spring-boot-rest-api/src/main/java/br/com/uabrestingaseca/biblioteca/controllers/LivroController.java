@@ -28,9 +28,10 @@ public class LivroController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Recupera uma lista de livros")
     public ResponseEntity<List<Livro>> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String find){
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find
+    ){
         Pageable pageable = PageRequest.of(page, limit);
         Page<Livro> livros = (find.isBlank()) ?
                 service.findPage(pageable) :
@@ -42,15 +43,15 @@ public class LivroController {
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Recupera um livro com o id informado")
-    public Livro findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Livro> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Inclui um livro")
-    public ResponseEntity<?> create(@Valid @RequestBody Livro livro){
+    public ResponseEntity<Livro> create(@Valid @RequestBody Livro livro){
         if (livro.getId() != null)
             throw new ModelValidationException("Erro na criação do livro","Id do livro é gerado pela API");
         return ResponseEntity.ok(service.save(livro));
@@ -60,7 +61,7 @@ public class LivroController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Atualiza o registro de um livro")
-    public ResponseEntity<?> update(@PathVariable("id")int id,@Valid @RequestBody Livro livro){
+    public ResponseEntity<Livro> update(@PathVariable("id")int id,@Valid @RequestBody Livro livro){
         if (livro.getId() != null && !livro.getId().equals(id))
             throw new ModelValidationException("Erro na atualização do livro",
                     "Id do livro não pode ser alterado no corpo da requisição");

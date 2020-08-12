@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
@@ -23,10 +24,11 @@ public class CategoriaController {
     private CategoriaService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String text) {
+    public ResponseEntity<List<Categoria>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String text
+    ) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Categoria> categorias = (text.isBlank()) ?
                 service.findAll(pageable):
@@ -37,13 +39,13 @@ public class CategoriaController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Categoria findById(@PathVariable(value="id") int id) {
-        return service.findById(id);
+    public ResponseEntity<Categoria> findById(@PathVariable(value="id") int id) {
+        return  ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Categoria categoria){
+    public ResponseEntity<Categoria> create(@Valid @RequestBody Categoria categoria){
         if (categoria.getId() != null) {
             throw new ModelValidationException("Erro na criação da categoria",
                     "Id da categoria é gerada pela API");
@@ -54,7 +56,7 @@ public class CategoriaController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Categoria categoria){
+    public ResponseEntity<Categoria> update(@PathVariable("id")int id, @Valid @RequestBody Categoria categoria){
         if (categoria.getId() != null && !categoria.getId().equals(id)) {
             throw new ModelValidationException("Erro na atualização da categoria",
                     "Id da categoria não pode ser alterada no corpo da requisição");

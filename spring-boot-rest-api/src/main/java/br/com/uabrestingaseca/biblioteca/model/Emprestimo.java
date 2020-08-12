@@ -1,5 +1,6 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -22,11 +23,11 @@ public class Emprestimo implements Serializable {
     private Integer id;
 
     @Column(name = "data_hora")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHora;
 
     @ManyToOne
     @JoinColumn(name = "num_registro", referencedColumnName = "num_registro")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Exemplar exemplar;
 
     @Transient
@@ -41,6 +42,7 @@ public class Emprestimo implements Serializable {
     private int numRenovacoes;
 
     @Column(name = "data_hora_devolucao")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHoraDevolucao;
 
     private BigDecimal multa;

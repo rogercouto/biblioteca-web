@@ -1,5 +1,6 @@
 drop database biblioteca;
 create database biblioteca;
+create database biblioteca_test;
 use biblioteca;
 
 select * from usuario;
@@ -31,7 +32,7 @@ select * from autor_livro;
 insert into autor_livro values(1,1),(2,1);
 
 select * from secao;
-insert into secao(descricao) values('Seção A'),('Seção B');
+insert into secao(nome) values('Seção A'),('Seção B');
 
 select * from origem;
 insert into origem(descricao) values('Aquisição'),('Doação');

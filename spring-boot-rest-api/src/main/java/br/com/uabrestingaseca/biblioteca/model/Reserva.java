@@ -35,7 +35,8 @@ public class Reserva implements Serializable {
     private Usuario usuario;
 
     @Column(name = "data_hora")
-    private LocalDate dataHora;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dataHora;
 
     @Column(name = "data_limite")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -86,11 +87,11 @@ public class Reserva implements Serializable {
         this.usuario = usuario;
     }
 
-    public LocalDate getDataHora() {
+    public LocalDateTime getDataHora() {
         return dataHora;
     }
 
-    public void setDataHora(LocalDate dataHora) {
+    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
 

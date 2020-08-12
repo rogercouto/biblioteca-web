@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/editoras")
@@ -22,10 +23,11 @@ public class EditoraController {
     private EditoraService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String find) {
+    public ResponseEntity<List<Editora>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find
+    ) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Editora> editoras = (find.isBlank()) ?
                 service.findAll(pageable):
@@ -36,14 +38,14 @@ public class EditoraController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Editora findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Editora> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Editora editora){
+    public ResponseEntity<Editora> create(@Valid @RequestBody Editora editora){
         if (editora.getId() != null) {
             throw new ModelValidationException("Erro na criação do editora",
                     "Id do editora é gerada pela API");
@@ -58,7 +60,7 @@ public class EditoraController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Editora editora){
+    public ResponseEntity<Editora> update(@PathVariable("id")int id, @Valid @RequestBody Editora editora){
         if (editora.getId() != null && !editora.getId().equals(id)) {
             throw new ModelValidationException("Erro na atualização da editora",
                     "Id da editora não pode ser alterada no corpo da requisição");

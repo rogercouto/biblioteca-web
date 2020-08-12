@@ -1,6 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.services;
 
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
+import br.com.uabrestingaseca.biblioteca.model.Emprestimo;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
@@ -15,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +51,13 @@ public class ReservaService {
 
     public List<Reserva> findAtivasFromExemplar(Exemplar exemplar){
         return repository.findFromExemplar(exemplar);
+    }
+
+    public Page<Reserva> findFromExemplar(Exemplar exemplar, Pageable pageable){
+        return repository.findFromExemplar(exemplar, pageable);
+    }
+    public Page<Reserva> findFromUsuario(Usuario usuario, Pageable pageable){
+        return repository.findFromUsuario(usuario, pageable);
     }
 
     public Exemplar validateNew(Reserva reserva){
@@ -115,7 +124,7 @@ public class ReservaService {
         exemplar.setReservado(true);
         exemplar = exemplarService.save(exemplar);
         if (reserva.getDataHora() == null)
-            reserva.setDataHora(LocalDate.now());
+            reserva.setDataHora(LocalDateTime.now());
         reserva.setDataLimite(LocalDate.now().plusDays(settingService.getDiasReserva()));
         reserva.setExemplar(exemplar);
         return repository.save(reserva);

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/origens")
@@ -22,10 +23,11 @@ public class OrigemController {
     private OrigemService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String find) {
+    public ResponseEntity<List<Origem>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find
+    ) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Origem> origens = (find.isBlank()) ?
                 service.findAll(pageable):
@@ -36,14 +38,14 @@ public class OrigemController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Origem findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Origem> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Origem origem){
+    public ResponseEntity<Origem> create(@Valid @RequestBody Origem origem){
         if (origem.getId() != null) {
             throw new ModelValidationException("Erro na criação do origem",
                     "Id do origem é gerada pela API");
@@ -58,7 +60,7 @@ public class OrigemController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Origem origem){
+    public ResponseEntity<Origem> update(@PathVariable("id")int id, @Valid @RequestBody Origem origem){
         if (origem.getId() != null && !origem.getId().equals(id)) {
             throw new ModelValidationException("Erro na atualização do origem",
                     "Id do origem não pode ser alterada no corpo da requisição");

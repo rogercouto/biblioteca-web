@@ -127,7 +127,7 @@
 				<configuration>
 					<url>jdbc:mysql://localhost:3306/biblioteca?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</url>
 					<user>root</user>
-					<password></password>
+					<password>admin</password>
 					<locations>
 						<location>classpath:db/migration</location>
 					</locations>

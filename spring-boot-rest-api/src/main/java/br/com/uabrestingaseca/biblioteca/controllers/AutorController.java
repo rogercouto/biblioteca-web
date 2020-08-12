@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/autores")
@@ -22,7 +23,7 @@ public class AutorController {
     private AutorService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
+    public ResponseEntity<List<Autor>> index(
     @RequestParam(value="page", defaultValue = "0") int page,
     @RequestParam(value="limit", defaultValue = "10") int limit,
     @RequestParam(value="find", defaultValue = "") String find) {
@@ -36,14 +37,14 @@ public class AutorController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Autor findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Autor> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Autor autor){
+    public ResponseEntity<Autor> create(@Valid @RequestBody Autor autor){
         if (autor.getId() != null) {
             throw new ModelValidationException("Erro na criação do autor",
                     "Id do autor é gerada pela API");
@@ -58,7 +59,7 @@ public class AutorController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Autor autor){
+    public ResponseEntity<Autor> update(@PathVariable("id")int id, @Valid @RequestBody Autor autor){
         if (autor.getId() != null && !autor.getId().equals(id)){
             throw new ModelValidationException("Erro na atualização do autor",
                     "Id do autor não pode ser alterada no corpo da requisição");

@@ -23,9 +23,10 @@ public class AssuntoController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String find) {
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find
+    ) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Assunto> assuntos = (find.isBlank()) ?
                 service.findAll(pageable):
@@ -36,14 +37,14 @@ public class AssuntoController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Assunto findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Assunto> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Assunto assunto){
+    public ResponseEntity<Assunto> create(@Valid @RequestBody Assunto assunto){
         if (assunto.getId() != null) {
             throw new ModelValidationException("Erro na criação do assunto",
                     "Id do assunto é gerada pela API");
@@ -58,7 +59,7 @@ public class AssuntoController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Assunto assunto){
+    public ResponseEntity<Assunto> update(@PathVariable("id")int id, @Valid @RequestBody Assunto assunto){
         if (assunto.getId() != id && !assunto.getId().equals(id)) {
             throw new ModelValidationException("Erro na atualização do assunto",
                     "Id do assunto não pode ser alterada no corpo da requisição");

@@ -23,10 +23,11 @@ public class ExemplarController {
     private ExemplarService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="all", defaultValue = "false")boolean all){
+    public ResponseEntity<List<Exemplar>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="all", defaultValue = "false")boolean all
+    ){
         Pageable pageable = PageRequest.of(page, limit);
         Page<Exemplar> exemplares = all ?
                 service.findAll(pageable) :
@@ -42,14 +43,14 @@ public class ExemplarController {
     }
 
     @GetMapping(value = "/{numRegistro}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Exemplar findByNumRegistro(@PathVariable("numRegistro")int numRegistro){
-        return service.findByNumRegistro(numRegistro);
+    public ResponseEntity<Exemplar> findByNumRegistro(@PathVariable("numRegistro")int numRegistro){
+        return ResponseEntity.ok(service.findByNumRegistro(numRegistro));
     }
 
     @PostMapping(
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Exemplar exemplar){
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Exemplar> create(@Valid @RequestBody Exemplar exemplar){
         Exemplar existent = service.findByNumRegistro(exemplar.getNumRegistro());
         if (existent != null){
             throw new ModelValidationException("Erro na criação do exemplar",
@@ -61,7 +62,7 @@ public class ExemplarController {
     @PutMapping(value="/{numRegistro}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(
+    public ResponseEntity<Exemplar> update(
     @PathVariable("numRegistro")int numRegistro,
     @Valid @RequestBody Exemplar exemplar){
         if (exemplar.getNumRegistro() != null && !exemplar.getNumRegistro().equals(numRegistro)){

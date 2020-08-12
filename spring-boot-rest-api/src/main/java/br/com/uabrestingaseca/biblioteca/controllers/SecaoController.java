@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/secoes")
@@ -22,10 +23,11 @@ public class SecaoController {
     private SecaoService service;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> index(
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit,
-    @RequestParam(value="find", defaultValue = "") String find) {
+    public ResponseEntity<List<Secao>> index(
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="find", defaultValue = "") String find
+    ) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Secao> secoes = (find.isBlank()) ?
                 service.findAll(pageable):
@@ -36,14 +38,14 @@ public class SecaoController {
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public Secao findById(@PathVariable("id")int id){
-        return service.findById(id);
+    public ResponseEntity<Secao> findById(@PathVariable("id")int id){
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> create(@Valid @RequestBody Secao secao){
+    public ResponseEntity<Secao> create(@Valid @RequestBody Secao secao){
         if (secao.getId() != null) {
             throw new ModelValidationException("Erro na criação da secao",
                     "Id da secao é gerada pela API");
@@ -58,7 +60,7 @@ public class SecaoController {
     @PutMapping(value = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> update(@PathVariable("id")int id, @Valid @RequestBody Secao secao){
+    public ResponseEntity<Secao> update(@PathVariable("id")int id, @Valid @RequestBody Secao secao){
         if (secao.getId() != null && !secao.getId().equals(id)) {
             throw new ModelValidationException("Erro na atualização da secao",
                     "Id da secao não pode ser alterada no corpo da requisição");
