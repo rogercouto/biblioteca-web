@@ -15,6 +15,10 @@ import CategoryIcon from '@material-ui/icons/Category';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import BookmarksIcon from '@material-ui/icons/Bookmarks';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import HistoryIcon from '@material-ui/icons/History';
 
 import './styles.css';
 
@@ -57,6 +61,14 @@ export default function Header(){
         if (canEdit){
             return (
                 <Fragment>
+                    <div className="dropdown">
+                        <button className="dropbtn"><CompareArrowsIcon />Movimentação</button>
+                        <div className="dropdown-content">
+                            <a href="/"><ArrowForwardIcon />Empréstimos</a>
+                            <a href="/"><ArrowBackIcon />Devoluções</a>
+                            <a href="/"><HistoryIcon />Reservas</a>
+                        </div>
+                    </div>
                     <div className="dropdown">
                         <button className="dropbtn"><SettingsEthernetIcon />Gerenciar</button>
                         <div className="dropdown-content">
