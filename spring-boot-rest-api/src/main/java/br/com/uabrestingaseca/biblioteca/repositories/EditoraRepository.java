@@ -15,7 +15,13 @@ public interface EditoraRepository extends JpaRepository<Editora, Integer> {
     @Query("SELECT e FROM Editora e WHERE LOWER(e.nome) = LOWER(TRIM(:nome))")
     List<Editora> findByNome(@Param("nome") String nome);
 
+    /*
     @Query("SELECT e FROM Editora e WHERE LOWER(e.nome) = LOWER(CONCAT('%',TRIM(:text),'%'))")
+    Page<Editora> find(@Param("text") String text, Pageable pageable);
+    */
+
+    @Query("SELECT e FROM Editora e WHERE " +
+            "LOWER(e.nome) LIKE CONCAT('%',TRIM(LOWER(:text)),'%')")
     Page<Editora> find(@Param("text") String text, Pageable pageable);
 
     @Modifying

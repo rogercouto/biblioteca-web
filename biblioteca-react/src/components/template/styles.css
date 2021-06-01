@@ -1,0 +1,27 @@
+.appContainer{
+    margin: 0.5rem 10rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.mainContainer{
+    background-color: #FFF;
+    min-height: calc(87.5vh - 150px);;
+}
+ 
+.content{
+    padding: 2rem;
+}
+
+@media(max-width: 768px){
+    .appContainer{
+        margin: 0;
+    }
+    .mainContainer{
+        max-height: 0;
+    }
+    .content{
+        padding: 2rem;
+        min-height: 20rem;
+    }
+}

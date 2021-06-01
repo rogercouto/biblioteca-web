@@ -49,6 +49,7 @@ public class ReservaController {
             reservas = service.findAll(pageable);
         }
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(reservas.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -68,6 +69,7 @@ public class ReservaController {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Reserva> reservas = service.findFromUsuario(usuario, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(reservas.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -87,6 +89,7 @@ public class ReservaController {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Reserva> reservas = service.findFromExemplar(exemplar, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(reservas.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)

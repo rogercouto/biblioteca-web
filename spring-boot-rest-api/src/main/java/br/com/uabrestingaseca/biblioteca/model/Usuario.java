@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty( access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
     @NotBlank(message = "Campo nome é requerido")
@@ -41,7 +42,6 @@ public class Usuario implements UserDetails {
     @Column(name = "num_tel",nullable = true)
     private String numTel;
 
-    @JsonIgnore
     private Boolean ativo;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -49,13 +49,18 @@ public class Usuario implements UserDetails {
             joinColumns = { @JoinColumn( name= "usuario_id") },
             inverseJoinColumns = { @JoinColumn( name="permissao_id") }
     )
+
     @JsonIgnore
     public List<Permissao> permissoes;
 
-    //@JsonProperty( access = JsonProperty.Access.WRITE_ONLY)
+
     @Transient
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    private Boolean gerente;
+    private Boolean gerente = false;
+
+    @Transient
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Boolean admin = false;
 
     public Usuario() {
     }
@@ -104,7 +109,7 @@ public class Usuario implements UserDetails {
         this.numTel = numTel;
     }
 
-    public Boolean getAtivo() {
+    public Boolean isAtivo() {
         return ativo;
     }
 
@@ -113,6 +118,8 @@ public class Usuario implements UserDetails {
     }
 
     public List<Permissao> getPermissoes() {
+        if (permissoes == null)
+            permissoes = new LinkedList<>();
         return permissoes;
     }
 
@@ -128,6 +135,9 @@ public class Usuario implements UserDetails {
 
     @JsonIgnore
     public List<String> getRoles(){
+        if (permissoes == null){
+            return new LinkedList<String>();
+        }
         return permissoes.stream()
                 .map(Permissao::getDescricao)
                 .collect(Collectors.toList());
@@ -170,12 +180,19 @@ public class Usuario implements UserDetails {
     }
 
     public Boolean isGerente() {
-        //gerente = getRoles().contains("GERENTE");
         return gerente;
     }
 
     public void setGerente(Boolean gerente) {
         this.gerente = gerente;
+    }
+
+    public Boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 
     @Override

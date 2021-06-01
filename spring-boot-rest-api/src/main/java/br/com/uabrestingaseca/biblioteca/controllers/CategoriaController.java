@@ -34,6 +34,7 @@ public class CategoriaController {
                 service.findAll(pageable):
                 service.find(text, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(categorias.getTotalElements()));
         return ResponseEntity.ok().headers(responseHeaders).body(categorias.toList());
     }

@@ -1,0 +1,295 @@
+function _renderColumns(exemplar : Exemplar){
+        if (edtNumReg !== exemplar.numRegistro){
+            return (
+                <Fragment>
+                    <td>{exemplar.numRegistro}</td>
+                    <td>{exemplar.secao?.nome}</td>
+                    <td>{exemplar.dataAquisicao?.toLocaleDateString()}</td>
+                    <td>{exemplar.origem?.descricao}</td>
+                    <td>{exemplar.situacao}</td>
+                </Fragment>
+            );
+        }else{
+            return (
+                <Fragment>
+                    <td>{exemplar.numRegistro}</td>
+                    <td>
+                        <Autocomplete
+                            options={secoes.map((s)=>{
+                                return s.nome;
+                            })}
+                            value={edtSecao}
+                            onChange={(e, value)=>{
+                                setEdtSecao(value || '');
+                            }}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroSecao}
+                                    helperText={erroSecao}
+                                    onChange={(e)=>{
+                                        setEdtSecao(e.target.value);
+                                    }}
+                                />
+                            )}
+                        /> 
+                    </td>
+                    <td>
+                        <TextField
+                            type="date"
+                            value={edtDataAquisicao}
+                            onChange={(e)=>{
+                                setEdtDataAquisicao(e.target.value);
+                            }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </td>
+                    <td>
+                        <Autocomplete
+                            options={origens.map((s)=>{
+                                return s.descricao;
+                            })}
+                            value={edtOrigem}
+                            onChange={(e, value)=>{
+                                setEdtOrigem(value || '');
+                            }}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroOrigem}
+                                    helperText={erroOrigem}
+                                    onChange={(e)=>{
+                                        setEdtOrigem(e.target.value);
+                                    }}
+                                />
+                            )}
+                        />
+                    </td>
+                    <td>
+                    <FormControlLabel
+                        label="Fixo"
+                        control={
+                            <Checkbox
+                                checked={edtFixo}
+                                onChange={(e)=>{
+                                    setEdtFixo(e.target.checked);
+                                }}
+                                name="checkedB"
+                                color="primary"
+                            />
+                            }
+                    />
+                    </td>
+                </Fragment>
+            );
+        }
+    }
+    
+/*
+     * Insert column
+     */
+    function _renderLastColumn(){
+        if (edtNumReg < 0){
+            return (
+                <tr>
+                    <td>
+                        <TextField
+                            type="number"
+                            value={newNumReg}
+                            onChange={(e)=>{
+                                setNewNumReg(e.target.value);
+                            }}
+                        />
+                    </td>
+                    <td>
+                        <Autocomplete
+                            options={secoes.map((s)=>{
+                                return s.nome;
+                            })}
+                            value={edtSecao}
+                            onChange={(e, value)=>{
+                                setEdtSecao(value || '');
+                            }}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroSecao}
+                                    helperText={erroSecao}
+                                    onChange={(e)=>{
+                                        setEdtSecao(e.target.value);
+                                    }}
+                                />
+                            )}
+                        /> 
+                    </td>
+                    <td>
+                        <TextField
+                            type="date"
+                            value={edtDataAquisicao}
+                            onChange={(e)=>{
+                                setEdtDataAquisicao(e.target.value);
+                            }}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </td>
+                    <td>
+                        <Autocomplete
+                            options={origens.map((s)=>{
+                                return s.descricao;
+                            })}
+                            value={edtOrigem}
+                            onChange={(e, value)=>{
+                                setEdtOrigem(value || '');
+                            }}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroOrigem}
+                                    helperText={erroOrigem}
+                                    onChange={(e)=>{
+                                        setEdtOrigem(e.target.value);
+                                    }}
+                                />
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <FormControlLabel
+                            label="Fixo"
+                            control={
+                                <Checkbox
+                                    checked={edtFixo}
+                                    onChange={(e)=>{
+                                        setEdtFixo(e.target.checked);
+                                    }}
+                                    name="checkedB"
+                                    color="primary"
+                                />
+                                }
+                        />
+                    </td>
+                    <td>
+                        <Button variant="contained" onClick={_handleSave}>
+                            <SaveIcon />
+                        </Button>
+                        <Button variant="contained" onClick={_handleCancel}>
+                            <CancelIcon />
+                        </Button>
+                    </td>
+                </tr>
+            );
+        }
+        return <Fragment />;
+    }
+
+
+
+    .content{
+    padding: 2rem;
+}
+
+.content > .row{
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 0;
+    padding: 1rem;
+}
+
+.content > .row > .text{
+    width: 100%;
+    margin-right: 0.25rem;
+}
+
+.content > .row > :last-child{
+    margin-left: 1.0rem;
+}
+
+.livrosContainer{
+    padding-bottom: 2rem;
+}
+
+.livrosContainer > h2{
+    margin: 1rem;
+}
+
+.livrosContainer > h3{
+    margin: 1rem;
+}
+
+.livrosContainer > table{
+    width: 100%;
+}
+
+.livrosContainer > table> thead > th{
+    min-width: 6rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.livrosContainer > table > tbody > td{
+    min-width: 6rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.livrosContainer > table:last-child{
+    min-width: 2rem;
+}
+
+.livrosContainer > table > thead > tr > th{
+    text-transform: uppercase;
+    font: 800 0.8rem Lexend, sans-serif;
+    text-align: left;
+}
+
+.livrosContainer > table > tbody > tr > td{
+    font-size: 0.875rem;
+}
+
+.livrosContainer > table tbody > tr > td > img{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.livrosContainer > table tbody > tr > td > a{
+    color: var(--gray-800);
+    font-family: Lexend, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.4rem;
+    font-size: 1rem;
+}
+
+.livrosContainer > table tbody > tr > td > a:hover{
+    text-decoration: underline;
+}
+
+.livrosContainer > table tbody > tr > td > button{
+    
+    bottom: 2rem;
+    width: 2rem;
+    height: 2rem;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    font-size: 0;
+    transition: filter 0.2s;
+
+}
+
+.livrosContainer > table tbody > tr > td > button > img{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.livrosContainer > table tbody > tr > td > button> img:hover{
+    filter: brightness(0.9);
+}
+
+.paginationContainer{
+    display: flex;
+    margin: 1rem 0;
+    justify-content: center;
+}
+

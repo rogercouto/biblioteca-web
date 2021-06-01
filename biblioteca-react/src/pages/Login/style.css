@@ -1,0 +1,38 @@
+.loginContainer{
+    padding: 2rem;
+
+}
+
+.loginContainer > form{
+    margin: 0 25rem;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.loginContainer > form > .formControl{
+    margin-top: 1rem;
+}
+
+.errorSpan{
+    margin: 0.5rem 0;
+    text-align: center;
+    color: red;
+}
+
+@media(max-width: 768px){
+
+    .loginContainer{
+        padding: 0rem;
+
+    }
+    
+    .loginContainer > form{
+        margin: 0 1rem;
+        
+    }
+
+    .formControl{
+        margin-top: 0.5rem;
+    }
+}

@@ -56,7 +56,10 @@ public class LivroService {
 
     private void saveEditora(Livro livro){
         if (!livro.getEditora().onlyIdSet()){
-            Editora editora = editoraService.save(livro.getEditora());
+            Editora editora = editoraService.findFirstByNome(livro.getEditora().getNome());
+            if (editora == null) {
+                editora = editoraService.save(livro.getEditora());
+            }
             livro.setEditora(editora);
         }
     }
@@ -84,7 +87,11 @@ public class LivroService {
                 .stream()
                 .map(c ->{
                     if (!c.onlyIdSet()){
-                        return categoriaService.save(c);
+                        Categoria cat = categoriaService.findFirstByDescricao(c.getDescricao());
+                        if (cat == null){
+                            return categoriaService.save(c);
+                        }
+                        return cat;
                     }
                     return c;
                 })

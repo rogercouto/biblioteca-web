@@ -1,0 +1,144 @@
+import { Fragment, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
+import { TextField, Button } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
+
+import SearchIcon from '@material-ui/icons/Search';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+
+import { BreadcrumbsMaker } from '../../components/breadcrumbs'
+import { Livro } from '../../model';
+import { LivroService } from '../../services';
+
+import './style.css';
+
+export default function LivrosPage(){
+
+    const canEdit = Cookies.get('isGerente');
+
+    const history = useHistory();
+
+    const [textoBusca, setTextoBusca] = useState('');
+    const [pagNum, setPagNum] = useState(1);
+    const [totalPag, setTotalPag] = useState(1);
+    const [livros, setLivros] = useState(new Array<Livro>());
+
+    const bcMaker = new BreadcrumbsMaker('Livros');
+
+    async function _handleFind(){
+        setPagNum(1);
+        const livrosResp = await LivroService.findLivros(pagNum, textoBusca);
+        setLivros(livrosResp.list);
+        setTotalPag(livrosResp.totalPag);
+    }
+
+    async function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+        setPagNum(value);
+        const livrosResp = await LivroService.findLivros(pagNum, textoBusca);
+        setLivros(livrosResp.list);
+        setTotalPag(livrosResp.totalPag);
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function _handleShow(livro : Livro){
+        history.push({
+            pathname: '/livros/show',
+            state: livro
+        });
+    }
+
+    function _renderCreateButtonIfManager(){
+        if (canEdit){
+            return (
+                <Button variant="contained" type="submit" href="/livros/insert">
+                    <AddCircleOutlineIcon />
+                    Inserir
+                </Button>
+            );
+        }else{
+            return (<Fragment />);
+        }
+    }
+
+    function renderLivros(){
+        return (
+            <Fragment>
+                <h2>Livros</h2>
+                    <table cellSpacing={0}>
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Editora</th>
+                                <th>Edição</th>
+                                <th>Volume</th>
+                                <th>Páginas</th>
+                                <th>Assunto</th>
+                                <th>Autores</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {livros.map(l=>{
+                                const strAutores = l.autores?.map(a => {
+                                    return `${a.sobrenome?.toUpperCase()}, ${a.nome}`          
+                                }).join('; ');
+                                return(
+                                    <tr key={l.id}>
+                                        <td>{l.titulo}</td>
+                                        <td>{l.editora?.nome}</td>
+                                        <td>{l.edicao}</td>
+                                        <td>{l.volume}</td>
+                                        <td>{l.numPaginas}</td>
+                                        <td>{l.assunto?.descricao}</td>
+                                        <td>{strAutores}</td>
+                                        <td>
+                                            <Button onClick={e =>{
+                                                    e.preventDefault();
+                                                    _handleShow(l);
+                                                }}>
+                                                <VisibilityIcon />
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    <div className="paginationContainer">
+                        <Pagination color="primary" 
+                                    count={totalPag} page={pagNum} onChange={_handlePageChange}/>
+                    </div>
+            </Fragment>
+        );
+    }
+
+    bcMaker.addHrefBreadcrumb('Home', '/');
+
+    return(
+        <div className="content">
+            {bcMaker.render()}
+            <div className="row">
+                <TextField label="Buscar" variant="outlined" 
+                            className="text" 
+                            value={textoBusca}
+                            onChange={(e)=>setTextoBusca(e.target.value)}
+                            onKeyUp={(e)=>{
+                                if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                                    _handleFind();
+                                }
+                            }}
+                            />
+                <Button variant="contained" onClick={_handleFind}>
+                    <SearchIcon />
+                </Button>
+                {_renderCreateButtonIfManager()}
+            </div>
+            <section className="livrosContainer">
+                { livros.length > 0 ? renderLivros() : <h3>Utilize o campo acima pra fazer uma busca</h3>}
+            </section>
+        </div>
+    );
+}

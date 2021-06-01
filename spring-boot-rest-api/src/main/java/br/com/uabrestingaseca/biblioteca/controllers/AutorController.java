@@ -32,6 +32,7 @@ public class AutorController {
                 service.findAll(pageable):
                 service.find(find, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(autores.getTotalElements()));
         return ResponseEntity.ok().headers(responseHeaders).body(autores.toList());
     }

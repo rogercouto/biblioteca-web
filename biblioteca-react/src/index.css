@@ -1,0 +1,97 @@
+:root {
+  --white: #FFF;
+
+  --gray-50: #F7F8FA;
+  --gray-100: #E6E8EB;
+  --gray-200: #AFB2B1;
+  --gray-500: #808080;
+  --gray-800: #494D4B;
+
+  --blue-main: #00006a;
+}
+
+@media(max-width: 1080px){
+  html{
+    font-size: 93.75%;
+  }
+}
+
+@media(max-width: 728px){
+  html{
+    font-size: 87.5%;
+  }
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font: 500 1rem Inter, sans-serif;
+  background: var(--gray-50);
+}
+
+input, textarea, button{
+  font: 500 1rem Inter, sans-serif;
+  color: var(--gray-500);
+}
+
+h1, h2, h3, h4, h5, h6{
+  font-weight: 600;
+  font-family: Roboto, sans-serif;
+  color: var(--gray-500);
+}
+
+h1{
+  font-size: 2rem;
+}
+
+h2{
+  font-size: 1.5rem;
+}
+
+button{
+  cursor: pointer;
+}
+
+.breadcrumbs{
+  background-color: var(--gray-100);
+  margin-bottom: 2rem;
+  border-radius: 5px;
+}
+
+.breadcrumbs span{
+  color: black;
+}
+
+.breadcrumbs button span{
+  color: var(--gray-800);
+  text-transform: none;
+}
+
+.breadcrumbs button:hover{
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+.breadcrumbs a span{
+  color: var(--gray-800);
+  text-transform: none;
+}
+
+.breadcrumbs span:last-child{
+  margin: 0 1rem;
+}
+
+.breadcrumbs a:hover{
+  text-decoration: underline;
+  background-color: transparent;
+}
+
+.paginationContainer{
+  display: flex;
+  margin: 1rem 0;
+  justify-content: center;
+}

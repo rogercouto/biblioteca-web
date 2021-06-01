@@ -28,6 +28,7 @@ public class BaixaController {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Baixa> baixas = service.findAll(pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(baixas.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)

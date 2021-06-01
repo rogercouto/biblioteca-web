@@ -1,0 +1,102 @@
+.assuntosContainer{
+    padding: 2rem;
+}
+
+.assuntosContainer > h2{
+    margin: 1rem;
+}
+
+.assuntosContainer > h3{
+    margin: 1rem;
+}
+
+.assuntosContainer > table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.assuntosContainer > table > tbody > tr > td {
+    height: 3.5rem;
+}
+
+.assuntosContainer > table > tbody > tr:nth-child(odd) {
+    background: #eee;
+}
+
+.assuntosContainer > table> thead > tr > th{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-200);
+}
+
+.assuntosContainer > table> thead > tr > th:last-child{
+    max-width: 10px;
+}
+
+.assuntosContainer > table> tbody > tr > td{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-100);
+    width: 20%;
+}
+
+.assuntosContainer > table> tbody > tr > td:first-child{
+    width: 45%;
+}
+
+.assuntosContainer > table> tbody > tr > td:last-child{
+    width: 15%;
+}
+
+.assuntosContainer > table > thead > tr > th{
+    text-transform: uppercase;
+    font: 600 0.75rem Lexend, sans-serif;
+    text-align: left;
+}
+
+.assuntosContainer > table > tbody > tr > td{
+    font-size: 0.875rem;
+    min-height: 23rem;
+}
+
+.assuntosContainer > table > tbody  > tr > td > img{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.assuntosContainer > table > tbody > tr > td > a{
+    color: var(--gray-800);
+    font-family: Lexend, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.4rem;
+    font-size: 1rem;
+}
+
+.assuntosContainer > table > tbody  > td > a:hover{
+    text-decoration: underline;
+}
+
+.assuntosContainer > table > tbody > tr > td > button{
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 2px;
+}
+
+.assuntosContainer > table > tbody > td > button > img{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.assuntosContainer > table > tbody > td > button> img:hover{
+    filter: brightness(0.9);
+}
+
+.assuntosContainer > button{
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 5px;
+}

@@ -24,17 +24,26 @@ public class ExemplarController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Exemplar>> index(
+        @RequestParam(value="livroId", defaultValue = "0") int livroId,
         @RequestParam(value="page", defaultValue = "0") int page,
         @RequestParam(value="limit", defaultValue = "10") int limit,
         @RequestParam(value="all", defaultValue = "false")boolean all
     ){
+        HttpHeaders responseHeaders = new HttpHeaders();
+        List<Exemplar> list;
+        if (livroId > 0){
+            list = service.findByLivroId(livroId);
+            responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
+            responseHeaders.set("X-Total-Count", String.valueOf(list.size()));
+            return ResponseEntity.ok().headers(responseHeaders).body(list);
+        }
         Pageable pageable = PageRequest.of(page, limit);
         Page<Exemplar> exemplares = all ?
                 service.findAll(pageable) :
                 service.findDisponiveis(pageable);
-        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(exemplares.getTotalElements()));
-        List<Exemplar> list = exemplares.toList();
+        list = exemplares.toList();
         list.forEach(e ->{
             if (e.getLivro() != null)
                 e.setLivroId(e.getLivro().getId());

@@ -47,6 +47,7 @@ public class EmprestimoController {
             emprestimos = service.findAll(pageable);
         }
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(emprestimos.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -66,6 +67,7 @@ public class EmprestimoController {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Emprestimo> emprestimos = service.findFromUsuario(usuario, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(emprestimos.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -85,6 +87,7 @@ public class EmprestimoController {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Emprestimo> emprestimos = service.findFromExemplar(exemplar, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(emprestimos.getTotalElements()));
         return ResponseEntity.ok()
                 .headers(responseHeaders)

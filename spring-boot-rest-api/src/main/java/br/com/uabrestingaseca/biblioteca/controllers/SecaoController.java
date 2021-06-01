@@ -33,6 +33,7 @@ public class SecaoController {
                 service.findAll(pageable):
                 service.find(find, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(secoes.getTotalElements()));
         return ResponseEntity.ok().headers(responseHeaders).body(secoes.toList());
     }

@@ -11,6 +11,12 @@ public class Permissao implements GrantedAuthority {
 
     private static final long serialVersionUID = 1L;
 
+    public Permissao(){}
+
+    public Permissao(int id){
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

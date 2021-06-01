@@ -1,0 +1,46 @@
+.livroContainer{
+    padding: 2rem;
+    margin-right: 10%;
+}
+
+.livroContainer > table{
+    width: 100%;
+    margin: 1rem;
+}
+
+.livroContainer > table > tbody > tr > td{
+    padding: 0.5rem;
+}
+
+.rowLabel{
+    width: 20%;
+    text-align: right;
+    border: 0;
+}
+
+.rowLabelSmall{
+    width: 10%;
+    text-align: right;   
+    border: 0;
+}
+
+.rowValue{
+    width: 80%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.rowValueHalf{
+    width: 40%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.editContainer{
+    display: flex; 
+    justify-content: flex-end
+}
+
+.btnExemplares{
+    border: 0px solid #ddd;
+}

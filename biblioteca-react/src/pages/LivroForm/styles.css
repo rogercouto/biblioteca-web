@@ -1,0 +1,65 @@
+.formContainer{
+    padding: 2rem;
+}
+
+.formContainer > hr{
+    margin: 0.25rem 0 1.25rem 0;
+}
+
+.formContainer > form{
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.formContainer > form > .formControl{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.formContainer > form > div.row{
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.formContainer > form > div > .formControl{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-grow: 1;
+}
+
+.formContainer > form > div > .formControl:last-child{
+    margin-left: 1rem;
+}
+.formContainer > form > div > .formControl:first-child{
+    margin-left: 0;
+}
+
+.formContainer > form > button{
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.errorSpan{
+    margin: 0.5rem 0;
+    text-align: center;
+    color: red;
+}
+
+@media(max-width: 768px){
+
+    .formContainer{
+        padding: 0rem;
+
+    }
+    
+    .formContainer > form{
+        margin: 0 1rem;
+        
+    }
+
+    .formControl{
+        margin-top: 0.5rem;
+    }
+}

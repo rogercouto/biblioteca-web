@@ -1,0 +1,564 @@
+    1  sudo apt-get install mysql-server
+    2  sudo mysql_secure_installation utility
+    3  sudo add-apt-repository ppa:linuxprising/java
+    4  sudo add-apt-repository ppa:linuxuprising/java
+    5  java -version
+    6  sudo apt-get remove --purge openjdk
+    7  sudo apt-get remove --purge openjdk-*
+    8  sudo apt-get install oracle-java11
+    9  sudo apt install oracle-java11
+   10  sudo add-apt-repository ppa:linuxuprising/java
+   11  sudo apt update
+   12  sudo apt install oracle-java14-installer 
+   13  sudo apt-get install insomnia
+   14  sudo apt-get install maven
+   15  echo "deb https://dl.bintray.com/getinsomnia/Insomnia /"     | sudo tee -a /etc/apt/sources.list.d/insomnia.list
+   16  wget --quiet -O - https://insomnia.rest/keys/debian-public.key.asc     | sudo apt-key add -
+   17  sudo apt-get update
+   18  sudo apt-get install insomnia
+   19  sudo apt-get install dropbox 
+   20  sudo snap install mysql-workbench-community
+   21  sudo apt install mysql-workbench-community
+   22  sudo rm /etc/apt/preferences.d/nosnap.pref
+   23  sudo apt update
+   24  sudo apt install snapd
+   25  sudo snap install mysql-workbench-community
+   26  gedit
+   27  sudo apt-get install gedit
+   28  disks
+   29  sudo gedit /boot/grub/grub.cfg 
+   30  sudo gedit /boot/grub/grubenv 
+   31  sudo gedit /etc/default/grub
+   32  sudo add-apt-repository ppa:danielrichter2007/grub-customizer
+   33  sudo apt-get install grub-customizer 
+   34  grub-customizer 
+   35  sudo apt remove --purge gnome-keyring
+   36  mysql
+   37  mysql --help
+   38  mysql --host
+   39  clear
+   40  mysql -V
+   41  mysql -u root -p
+   42  mysql -u root
+   43  mysql -u root -p
+   44  sudo mysql_secure_installation utility
+   45  mysql -u root -p
+   46  sudo mysql_secure_installation utility
+   47  mysql -u root -p
+   48  mysql
+   49  mysql -u root
+   50  mysql -u root -p tiadmin
+   51  sudo dpkg-reconfigure mysql-server
+   52  mysql -uroot -p
+   53  sudo apt-get remove --purge mysql-server mysql-client-8.0 mysql-common 
+   54  sudo apt-get autoremove 
+   55  sudo apt-get autoclean
+   56  sudo apt-get install mysql-server
+   57  mysql -u root -p
+   58  mysql -uroot
+   59  service mysql stop
+   60  mysqld_safe --skip-grant-tables &
+   61  sudo mysqld_safe --skip-grant-tables &
+   62  mysql
+   63  sudo mysql
+   64  mysql
+   65  sudo mysqld_safe --skip-grant-tables &
+   66  clear
+   67  service mysql start
+   68  mysql -u root
+   69  mysql -u root -p
+   70  msqyl -u root password 'admin'
+   71  mysql -u root password 'admin'
+   72  sudo service mysql stop
+   73  sudo mysqld_safe --skip-grant-tables &
+   74  sudo apt-get uninstall purge mysql
+   75  sudo apt-get remove -purge mysql
+   76  sudo apt-get remove  mysql
+   77  sudo apt-get remove mysql-server
+   78  sudo apt-get install mysql-server-8.0 
+   79  sudo apt-get remove  mysql-server-8.0 
+   80  sudo apt-get install mysql-server-8.0 
+   81  mysql
+   82  mysql -u root -p admin
+   83  mysql -u root -p tiadmin
+   84  clear
+   85  sudo su
+   86  mysql -u root -p
+   87  sudo apt-get install gnome-keyring
+   88  xkill
+   89  ls
+   90  ./idea.sh 
+   91  sudo apt-get install git
+   92  clear
+   93  ls
+   94  mkdir DEV
+   95  cd DEV
+   96  git config --global user.name "Fulano de Tal"
+   97  git config --global user.name "Roger Eduardo de Couto"
+   98  git config --global user.email rogerecouto@gmail.com
+   99  git config --global core.editor gedit
+  100  git clone https://github.com/rogercouto/biblioteca-web.git
+  101  ls
+  102  cd DEV/
+  103  ls
+  104  cd biblioteca-web/
+  105  ls
+  106  sudo apt-get install gimp
+  107  sudo mv node /opt/node
+  108  gedit
+  109  cd /opt/node/
+  110  ls
+  111  sudo gedit /etc/environment
+  112  sudo nano /etc/environment
+  113  node -v
+  114  source /etc/environment
+  115  node -v
+  116  cd /home/tecnico/DEV/
+  117  ls
+  118  mkdir curso-react-redux
+  119  cd mkdir curso-react-redux/
+  120  cd curso-react-redux/
+  121  ls
+  122  npx  create-react-app redux-simples
+  123  ls
+  124  cd redux-simples/
+  125  npm i redux react-redux
+  126  cd DEV/
+  127  ls
+  128  cd biblioteca-web/
+  129  ls
+  130  create-react-app biblioteca-front
+  131  npm install -g create-react-app
+  132  create-react-app biblioteca-front
+  133  ls
+  134  cd biblioteca-front/
+  135  npm start
+  136  cd DEV
+  137  ls
+  138  cd curso-react-redux/
+  139  ls
+  140  cd redux-simples/
+  141  ls
+  142  npm i redux react-redux
+  143  cd ..
+  144  vscode redux-simples/
+  145  cd DEV/
+  146  ls
+  147  cd curso-react-redux/
+  148  ls
+  149  cd redux-simples/
+  150  ls
+  151  npm start
+  152  clear
+  153  cd ..
+  154  npx create-react-app redux-simples
+  155  ls
+  156  cd ..
+  157  ls
+  158  mkdir curso-react-redux
+  159  cd curso-react-redux
+  160  npx create-react-app redux-simples
+  161  npm start
+  162  ls
+  163  cd redux-simples/
+  164  npm start
+  165  sudo apt-get install vlc
+  166  sudo apt-get install avidemux
+  167  sudo add-apt-repository ppa:rebuntu16/avidemux+unofficialsudo add-apt-repository ppa:rebuntu16/avidemux+unofficial
+  168  npm start
+  169  cd redux-simples/
+  170  npm start
+  171  ls -li
+  172  npm install --save react-scripts
+  173  npm start
+  174  echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  175  npm start
+  176  clear
+  177  npm i redux react-redux
+  178  clear
+  179  npm start
+  180  cd DEV/
+  181  ls
+  182  mkdir tutorial-material-ui
+  183  cd tutorial-material-ui/
+  184  ls
+  185  cd ..
+  186  rmdir tutorial-material-ui/
+  187  npx create-react-app material-ui-react-tutorial
+  188  ls
+  189  code material-ui-react-tutorial
+  190  npm add @material-ui/core
+  191  npm start
+  192  npm add @material-ui/icons
+  193  npm start
+  194  clear
+  195  npm add fontsource-roboto
+  196  npm start
+  197  cd ..
+  198  ls
+  199  cd biblioteca-web/
+  200  npx create-react-app biblioteca-front
+  201  cd biblioteca-front
+  202  npm i redux react-redux
+  203  npm add fontsource-roboto
+  204  npm add @material-ui/core
+  205  npm add @material-ui/icons
+  206  sudo apt-get install spotify-client 
+  207  npm i axios
+  208  code
+  209  clear
+  210  mkdir backend
+  211  npm init -y
+  212  npm install -g npm
+  213  npm init -y
+  214  ls
+  215  ls -la
+  216  rm package.json 
+  217  ls
+  218  cd backend/
+  219  npm init -y
+  220  ls
+  221  clear
+  222  npm i --save jason-server@0.13.0 -E
+  223  npm i --save json-server@0.13.0 -E
+  224  clear
+  225  npm start
+  226  clear
+  227  ls
+  228  cd backend/
+  229  npm start
+  230  clear
+  231  create-react-app frontend
+  232  cd frontend/
+  233  ls
+  234  clear
+  235  npm i
+  236  npm start
+  237  ls
+  238  cd backend/
+  239  npm start
+  240  cd frontend/
+  241  npm start
+  242  npm i font-awesome
+  243  npm start
+  244  sudo gedit /etc/default/grub
+  245  sudo update-grub
+  246  cd backend/
+  247  npm start
+  248  ls
+  249  npm start
+  250  ls
+  251  cd frontend/
+  252  npm start
+  253  cd backend/
+  254  npm start
+  255  cd frontend/
+  256  npm start
+  257  cd frontend/
+  258  npm start
+  259  cd backend/
+  260  npm start
+  261  cd backend/
+  262  npm start
+  263  cd frontend/
+  264  npm start
+  265  sudo apt-get install teamviewer
+  266  teamviwer
+  267  xkill
+  268  xkill
+  269  mysql
+  270  mysql -u root -p
+  271  cd frontend/
+  272  npm start
+  273  cd backend/
+  274  npm start
+  275  cd frontend/
+  276  npm start
+  277  cd backend/
+  278  npm start
+  279  cd ..
+  280  ls
+  281  clear
+  282  git pull https://github.com/rogercouto/react_redux_udemy.git
+  283  git clone https://github.com/rogercouto/react_redux_udemy.git
+  284  ls
+  285  cd todoapp/
+  286  ls
+  287  cd backend/
+  288  nmp start
+  289  npm start
+  290  clear
+  291  ls
+  292  npm run production
+  293  npm run dev
+  294  clear
+  295  npm install
+  296  npm run production
+  297  cd ..
+  298  cd frontend/
+  299  npm start
+  300  npm install
+  301  npm start
+  302  npm run dev
+  303  cd ..
+  304  mkdir newfront
+  305  cd newfront/
+  306  clear
+  307  ls
+  308  npm init -y
+  309  ls
+  310  cd ..
+  311  cd my-money-app/
+  312  cd backend/
+  313  npm install
+  314  npm run prodction
+  315  npm run production
+  316  npm run prod
+  317  cd ..
+  318  cd frontend/
+  319  npm install
+  320  npm run dev
+  321  cd ..
+  322  mkdir newfront
+  323  cd newfront/
+  324  npm init -y
+  325  npm i --save-dev webpack
+  326  npm i --save-dev webpack-dev-server
+  327  cd ..
+  328  rm -rf newfront/
+  329  ls
+  330  mkdir newfront
+  331  cd newfront/
+  332  npm init -y
+  333  npm i --save-dev webpack@1.14.0
+  334  npm i --save-dev webpack-dev-server@1.16.2
+  335  clear
+  336  npm -i --save-dev babe-core@6.22.1
+  337  npm i --save-dev babe-core@6.22.1
+  338  npm i --save-dev babel-core@6.22.1
+  339  npm i --save-dev babel-loader@6.2.10
+  340  npm i --save-dev babel-plugin-react-html-attrs@2.0.0
+  341  npm i --save-dev babel-plugin-transform-object-rest-spread@6.22.0
+  342  npm i --save-dev babel-preset-es2015@6.22.0
+  343  npm i --save-dev babel-preset-react@6.22.0
+  344  npm i --save-dev extract-text-webpack-plugin@1.0,1
+  345  npm i --save-dev extract-text-webpack-plugin@1.0.1
+  346  npm i --save-dev css-loader@0.26.1
+  347  npm i --save-dev style-loader@0.13.1 file-loader@0.9.0
+  348  npm start
+  349  cd DEV
+  350  ls
+  351  mkdir novo-curso-react
+  352  cd novo-curso-react/
+  353  git clone https://github.com/rogercouto/material-kit-react.git
+  354  ls
+  355  clear
+  356  npm install
+  357  ls
+  358  cd material-kit-react/
+  359  npm install
+  360  npm start
+  361  cd ..
+  362  code material-kit-react/
+  363  cd DEV
+  364  ls
+  365  mkdir rocketseat
+  366  cd rocketseat/
+  367  clear
+  368  npx create-react-app moveit --template typescript
+  369  ls
+  370  npm start
+  371  ifconfig
+  372  cd DEV
+  373  mkdir Alura
+  374  cd Alura
+  375  mkdir React
+  376  cd React/
+  377  clear
+  378  node -v
+  379  npx create-react-app ceep
+  380  code ceep
+  381  npm start
+  382  echo "# estudos-alura" >> README.md
+  383  git init
+  384  git add README.md 
+  385  git commit -m "first commit"
+  386  git branch -M main
+  387  ls -la
+  388  rm -rs .git
+  389  rm -rf .git
+  390  rm -rf .gitignore 
+  391  ls
+  392  rm README.md 
+  393  cd ..
+  394  npm start
+  395  clear
+  396  cd ..
+  397  ls
+  398  echo "# estudos-alura" >> README.md
+  399  git init
+  400  git status
+  401  git add .
+  402  clear
+  403  git status
+  404  git add README.md 
+  405  git status
+  406  git add .gitignore 
+  407  git satus
+  408  git status
+  409  git add .
+  410  git status
+  411  git commit -m "Primeiro commit"
+  412  git branch -M main
+  413  git remote add origin https://github.com/rogercouto/estudos-alura.git
+  414  git push -u origin main
+  415  npm start
+  416  cd ..
+  417  ls
+  418  git status
+  419  git add .
+  420  git commit -m "Dia 2"
+  421  git push -u origin main
+  422  npm start
+  423  git add .
+  424  git commit -m "Dia 3"
+  425  git push -u origin main
+  426  npm start
+  427  traceroute video.alura.com.br
+  428  sudo apt-get install traceroute 
+  429  traceroute video.alura.com.br
+  430  npm start
+  431  ls
+  432  npm start
+  433  sudo disks
+  434  sudo gnome-disks 
+  435  fdisk -l
+  436  sudo fdisk -l
+  437  sudo cfdisk /dev/sdc3 
+  438  sudo fdisk /dev/sdc3 
+  439  clear
+  440  sudo apt-get install gparted
+  441  sudo gparted
+  442  cd ..
+  443  cd /home/tecnico/
+  444  cd DEV/
+  445  ls
+  446  cd biblioteca-web/
+  447  ls
+  448  cd ..
+  449  cd Alura/
+  450  ls
+  451  cd React/
+  452  ls
+  453  create-react-app reactfc
+  454  ls
+  455  code reactfc/
+  456  npm start
+  457  cd /home/tecnico/DEV/
+  458  ls
+  459  cd biblioteca-web/
+  460  ls
+  461  clear
+  462  ls
+  463  mkdir react-front
+  464  cd react-front/
+  465  npm init -y
+  466  npm i --save-dev webpack webpack-dev-server
+  467  npm i --save-dev babel-core babel-loader babel-plugin-react-html-attrs babel-plugin-transform-object-rest-spread babel-preset-es2015 babel-preset-react
+  468  npm i --save-dev extract-text-webpack-plugin css-loader style-loader file-loader
+  469  npm i --save-dev admin-lte font-awesome ionicons
+  470  npm i --save-dev react react-dom react-router redux react-redux redux-form redux-multi redux-promise redux-thunk react-redux-toastr axios lodash
+  471  cd ..
+  472  cd react-front/
+  473  cd ..
+  474  code react-front
+  475  clear
+  476  npm run dev
+  477  ls
+  478  cd DEV
+  479  cd Alura/
+  480  ls
+  481  cd React/
+  482  ls
+  483  code reactfc
+  484  npm start
+  485  npm install @material-ui/core
+  486  npm audit fix
+  487  npm install @material-ui/icons
+  488  npm install fontsource roboto
+  489  npm install fontsource-roboto
+  490  npm start
+  491  cd DEV/
+  492  ls
+  493  cd rocketseat/
+  494  ls
+  495  mkdir podcastr
+  496  ls
+  497  cd podcastr/
+  498  clear
+  499  npx create-react-app frontend
+  500  code frontend/
+  501  clear
+  502  npm start
+  503  cd ..
+  504  clear
+  505  npx create-next-app podcastr
+  506  npm start
+  507  next start
+  508  npm run dev
+  509  cd ..
+  510  ls
+  511  cd ..
+  512  cd Alura/
+  513  ls
+  514  cd React/
+  515  ls
+  516  cd cod reactfc/
+  517  npm start
+  518  cd DEV/
+  519  ls
+  520  cd rocketseat/
+  521  ls
+  522  code podcastr
+  523  npm add typescript @types/react @types/node -D
+  524  npm run dev
+  525  clear
+  526  npm run dev
+  527  npm add sass
+  528  cd DEV/
+  529  cd rocketseat/
+  530  npx create-next-app podcastr
+  531  code podcastr
+  532  npm run dev
+  533  clear
+  534  npm build
+  535  npm run-script build
+  536  npm run prod
+  537  npm start
+  538  npm add json-server
+  539  npm run server
+  540  cd DEV/
+  541  cd Alura/
+  542  ls
+  543  cd React/
+  544  ls
+  545  code reactfc/
+  546  npm start
+  547  npm add axios
+  548  npm run server
+  549  npm run dev
+  550  xkill
+  551  npm run server
+  552  npm run server
+  553  npm run dev
+  554  clear
+  555  npm run dev
+  556  npm run server
+  557  npm run dev
+  558  cd DEV/
+  559  ls
+  560  cd biblioteca-web/
+  561  ls
+  562* npx create-next-app biblioteca-front
+  563  hostory > h2.txt
+  564  history > h2.txt

@@ -1,0 +1,98 @@
+.editorasContainer{
+    padding: 2rem;
+}
+
+.editorasContainer > h2{
+    margin: 1rem;
+}
+
+.editorasContainer > h3{
+    margin: 1rem;
+}
+
+.editorasContainer > table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.editorasContainer > table > tbody > tr > td {
+    height: 3.5rem;
+}
+
+.editorasContainer > table > tbody > tr:nth-child(odd) {
+    background: #eee;
+}
+
+.editorasContainer > table> thead > tr > th{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-200);
+}
+
+.editorasContainer > table> thead > tr > th:last-child{
+    max-width: 10px;
+}
+
+.editorasContainer > table> tbody > tr > td{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-100);
+    width: 85%;
+}
+
+.editorasContainer > table> tbody > tr > td:last-child{
+    width: 15%;
+}
+
+.editorasContainer > table > thead > tr > th{
+    text-transform: uppercase;
+    font: 600 0.75rem Lexend, sans-serif;
+    text-align: left;
+}
+
+.editorasContainer > table > tbody > tr > td{
+    font-size: 0.875rem;
+    min-height: 23rem;
+}
+
+.editorasContainer > table > tbody  > tr > td > img{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.editorasContainer > table > tbody > tr > td > a{
+    color: var(--gray-800);
+    font-family: Lexend, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.4rem;
+    font-size: 1rem;
+}
+
+.editorasContainer > table > tbody  > td > a:hover{
+    text-decoration: underline;
+}
+
+.editorasContainer > table > tbody > tr > td > button{
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 2px;
+}
+
+.editorasContainer > table > tbody > td > button > img{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.editorasContainer > table > tbody > td > button> img:hover{
+    filter: brightness(0.9);
+}
+
+.editorasContainer > button{
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 5px;
+}

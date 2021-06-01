@@ -40,6 +40,12 @@ public class ExemplarService {
         return page;
     }
 
+    public List<Exemplar> findByLivroId(int livroId){
+        Livro livro = new Livro();
+        livro.setId(livroId);
+        return repository.findByLivroId(livro);
+    }
+
     public Page<Exemplar> findDisponiveis(Pageable pageable){
         Page<Exemplar> page =  repository.findByDisponibilidade(true, pageable);
         page.forEach(this::setLivroIdAndBaixa);

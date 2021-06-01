@@ -37,6 +37,7 @@ public class LivroController {
                 service.findPage(pageable) :
                 service.findPage(find, pageable);
         HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(livros.getTotalElements()));
         return ResponseEntity.ok().headers(responseHeaders).body(livros.toList());
     }
@@ -52,7 +53,7 @@ public class LivroController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Inclui um livro")
     public ResponseEntity<Livro> create(@Valid @RequestBody Livro livro){
-        if (livro.getId() != null)
+        if (livro.getId() != null && livro.getId() != 0)
             throw new ModelValidationException("Erro na criação do livro","Id do livro é gerado pela API");
         return ResponseEntity.ok(service.save(livro));
     }
