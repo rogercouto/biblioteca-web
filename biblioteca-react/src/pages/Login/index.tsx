@@ -7,7 +7,7 @@ import { TextField, Button } from '@material-ui/core';
 
 import api from '../../services/api';
 
-import Loader from '../../components/Loader';
+import Loader from '../../components/loader';
 
 import './style.css';
 
@@ -25,12 +25,10 @@ export default function LoginPage(){
         try {
             setIsLoading(true);
             const response =  await api.post('auth/signin',{ email, senha});
-            const username = response.data.usuario.nome;
-            const isGerente = response.data.usuario.gerente;
-            const token = response.data.token;
-            Cookie.set('username' , username);
-            Cookie.set('token', token);
-            Cookie.set('isGerente', isGerente);
+            Cookie.set('userId', response.data.usuario.id)
+            Cookie.set('username' , response.data.usuario.nome);
+            Cookie.set('token', response.data.token);
+            Cookie.set('isGerente', response.data.usuario.gerente);
             setErrorMessage('');
             setIsLoading(false);
             history.push('/');

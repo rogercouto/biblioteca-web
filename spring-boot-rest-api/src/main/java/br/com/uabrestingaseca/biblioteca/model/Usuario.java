@@ -25,7 +25,6 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty( access = JsonProperty.Access.READ_ONLY)
     private Integer id;
 
     @NotBlank(message = "Campo nome é requerido")
@@ -49,7 +48,6 @@ public class Usuario implements UserDetails {
             joinColumns = { @JoinColumn( name= "usuario_id") },
             inverseJoinColumns = { @JoinColumn( name="permissao_id") }
     )
-
     @JsonIgnore
     public List<Permissao> permissoes;
 

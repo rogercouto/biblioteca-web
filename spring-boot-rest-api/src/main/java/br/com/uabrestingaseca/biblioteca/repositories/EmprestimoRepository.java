@@ -13,11 +13,14 @@ import java.util.List;
 
 public interface EmprestimoRepository extends JpaRepository<Emprestimo, Integer> {
 
-    @Query("SELECT e FROM Emprestimo e WHERE e.dataHoraDevolucao IS NULL")
+    @Query("SELECT e FROM Emprestimo e WHERE e.dataHoraDevolucao IS NULL ORDER BY e.dataHoraDevolucao ASC, e.prazo ASC")
     Page<Emprestimo> findAtivos(Pageable pageable);
 
-    @Query("SELECT e FROM Emprestimo e WHERE e.dataHoraDevolucao IS NOT NULL")
+    @Query("SELECT e FROM Emprestimo e ORDER BY e.dataHoraDevolucao ASC, e.prazo ASC")
     Page<Emprestimo> findDevolvidos(Pageable pageable);
+
+    @Query("SELECT e FROM Emprestimo e ORDER BY e.dataHoraDevolucao ASC, e.prazo ASC")
+    Page<Emprestimo> findAll(Pageable pageable);
 
     @Query("SELECT e FROM Emprestimo e WHERE e.exemplar = :exemplar")
     Page<Emprestimo> findFromExemplar(@Param("exemplar") Exemplar exemplar, Pageable pageable);

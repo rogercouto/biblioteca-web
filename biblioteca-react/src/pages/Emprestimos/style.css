@@ -1,0 +1,104 @@
+.emprestimosContainer{
+    padding: 2rem;
+}
+
+.emprestimosContainer > h2{
+    margin: 1rem;
+}
+
+.emprestimosContainer > h3{
+    margin: 1rem;
+}
+
+.emprestimosContainer > table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.emprestimosContainer > table > tbody > tr > td {
+    height: 3.5rem;
+}
+
+.emprestimosContainer > table > tbody > tr:nth-child(odd) {
+    background: #eee;
+}
+
+.emprestimosContainer > table> thead > tr > th{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-200);
+}
+
+.emprestimosContainer > table> thead > tr > th:last-child{
+    width: 12px;
+}
+
+.emprestimosContainer > table> tbody > tr > td{
+    padding: 0.25rem;
+    border: 1px solid var(--gray-100);
+    width: 10%;
+}
+
+.emprestimosContainer > table> tbody > tr > td:last-child{
+    width: 12%;
+}
+
+.emprestimosContainer > table > thead > tr > th{
+    text-transform: uppercase;
+    font: 600 0.75rem Lexend, sans-serif;
+    text-align: left;
+}
+
+.emprestimosContainer > table > tbody > tr > td{
+    font-size: 0.875rem;
+    min-height: 23rem;
+}
+
+.emprestimosContainer > table > tbody  > tr > td > img{
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.emprestimosContainer > table > tbody > tr > td > a{
+    color: var(--gray-800);
+    font-family: Lexend, sans-serif;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.4rem;
+    font-size: 1rem;
+}
+
+.emprestimosContainer > table > tbody  > td > a:hover{
+    text-decoration: underline;
+}
+
+.emprestimosContainer > table > tbody > tr > td > span > button{
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 2px;
+}
+
+.emprestimosContainer > table > tbody > td > span > button > img{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.emprestimosContainer > table > tbody > td > span > button> img:hover{
+    filter: brightness(0.9);
+}
+
+.emprestimosContainer > button{
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    transition: filter 0.2s;
+    margin: 1rem 0;
+}
+
+.formEmprestimo .formControl{
+    margin: 0.5rem 1rem;
+    width: 25rem;
+    flex-grow: 1;
+}

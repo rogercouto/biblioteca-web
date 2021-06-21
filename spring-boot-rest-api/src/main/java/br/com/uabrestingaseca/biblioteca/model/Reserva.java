@@ -34,12 +34,15 @@ public class Reserva implements Serializable {
     @NotNull(message = "Usuário deve ser informado")
     private Usuario usuario;
 
+    @Transient
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer usuarioId = null;
+
     @Column(name = "data_hora")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHora;
 
     @Column(name = "data_limite")
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate dataLimite;
 
     @Column(name = "data_hora_retirada")
@@ -117,6 +120,14 @@ public class Reserva implements Serializable {
 
     public void setAtiva(boolean ativa) {
         this.ativa = ativa;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     @Override

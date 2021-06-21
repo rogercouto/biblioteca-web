@@ -35,11 +35,22 @@
 .exemplaresContainer > table> tbody > tr > td{
     padding: 0.25rem;
     border: 1px solid var(--gray-100);
-    width: 17.5%;
 }
 
-.exemplaresContainer > table> tbody > tr > td:last-child{
-    max-width: 12%;
+.exemplaresContainer > table> tbody > tr > td.gerente{
+    width: 16.2%;
+}
+
+.exemplaresContainer > table> tbody > tr > td:last-child.gerente{
+    width: 20%;
+}
+
+.exemplaresContainer > table> tbody > tr > td.aluno{
+    width: 25%;
+}
+
+.exemplaresContainer > table> tbody > tr > td:last-child.aluno{
+    width: 5%;
 }
 
 .exemplaresContainer > table > thead > tr > th{
@@ -72,7 +83,7 @@
     text-decoration: underline;
 }
 
-.exemplaresContainer > table > tbody > tr > td > button{
+.exemplaresContainer > table > tbody > tr > td > span > button{
     background: var(--white);
     border: 1px solid var(--gray-100);
     border-radius: 0.5rem;

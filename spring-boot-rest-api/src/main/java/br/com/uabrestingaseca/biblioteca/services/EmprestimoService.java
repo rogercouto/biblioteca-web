@@ -15,6 +15,7 @@ import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,9 @@ public class EmprestimoService {
 
     @Autowired
     private ReservaService reservaService;
+
+    @Autowired
+    private ParametroService parametroService;
 
     public Emprestimo findById(int id){
         return repository.findById(id).orElse(null);
@@ -112,8 +116,8 @@ public class EmprestimoService {
 
     @Transactional
     public Emprestimo create(Emprestimo emprestimo){
-        if (emprestimo.getUsuario() == null){
-            emprestimo.setUsuario(Usuario.getUsuarioLogado());
+        if (emprestimo.getUsuario() == null && emprestimo.getUsuarioId() != null){
+            emprestimo.setUsuario(usuarioService.findById(emprestimo.getUsuarioId()));
         }
         if (emprestimo.getExemplar() == null && emprestimo.getExemplarNumRegistro() != null){
             emprestimo.setExemplar(new Exemplar(emprestimo.getExemplarNumRegistro()));
@@ -135,6 +139,9 @@ public class EmprestimoService {
             emprestimo.setDataHora(LocalDateTime.now());
         }
         emprestimo.setExemplar(exemplar);
+        int diasEmprestimo = parametroService.getDiasEmprestimo();
+        LocalDate prazo = emprestimo.getDataHora().plusDays(diasEmprestimo * (emprestimo.getNumRenovacoes()+1)).toLocalDate();
+        emprestimo.setPrazo(prazo);
         return repository.save(emprestimo);
     }
 
@@ -179,6 +186,9 @@ public class EmprestimoService {
             exemplar = exemplarService.save(exemplar);
             emprestimo.setExemplar(exemplar);
         }
+        int diasEmprestimo = parametroService.getDiasEmprestimo();
+        LocalDate prazo = emprestimo.getDataHora().plusDays(diasEmprestimo * (emprestimo.getNumRenovacoes()+1)).toLocalDate();
+        emprestimo.setPrazo(prazo);
         return repository.save(emprestimo);
     }
 

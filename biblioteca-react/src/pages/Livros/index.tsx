@@ -1,9 +1,10 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Snackbar } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import SearchIcon from '@material-ui/icons/Search';
 import VisibilityIcon from '@material-ui/icons/Visibility';
@@ -15,10 +16,12 @@ import { LivroService } from '../../services';
 
 import './style.css';
 
-export default function LivrosPage(){
+export default function LivrosPage( props: any ){
 
     const canEdit = Cookies.get('isGerente');
 
+    const state = props.location.state;
+    
     const history = useHistory();
 
     const [textoBusca, setTextoBusca] = useState('');
@@ -26,8 +29,30 @@ export default function LivrosPage(){
     const [totalPag, setTotalPag] = useState(1);
     const [livros, setLivros] = useState(new Array<Livro>());
 
+    const [confOpen, setConfOpen] = useState(false);
+    const [confMessage, setConfMessage] = useState('');
+    
     const bcMaker = new BreadcrumbsMaker('Livros');
 
+    useEffect(()=>{
+        if (state && state.message && state.message !== ''){
+            setConfOpen(true);
+            setConfMessage(state.message);
+        }
+    },[state]); 
+
+    function Alert(props: AlertProps) {
+        return <MuiAlert elevation={6} variant="filled" {...props} />;
+    }
+
+    const handleConfClose = (event: React.SyntheticEvent | React.MouseEvent, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setConfMessage('');
+        setConfOpen(false);
+    };
+    
     async function _handleFind(){
         setPagNum(1);
         const livrosResp = await LivroService.findLivros(pagNum, textoBusca);
@@ -139,6 +164,11 @@ export default function LivrosPage(){
             <section className="livrosContainer">
                 { livros.length > 0 ? renderLivros() : <h3>Utilize o campo acima pra fazer uma busca</h3>}
             </section>
+            <Snackbar open={confOpen} autoHideDuration={10000} onClose={handleConfClose}>
+                <Alert onClose={handleConfClose} severity="success">
+                    {confMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

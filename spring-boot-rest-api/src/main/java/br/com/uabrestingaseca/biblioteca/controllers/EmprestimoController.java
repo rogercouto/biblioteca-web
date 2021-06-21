@@ -1,13 +1,9 @@
 package br.com.uabrestingaseca.biblioteca.controllers;
 
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
-import br.com.uabrestingaseca.biblioteca.model.Emprestimo;
-import br.com.uabrestingaseca.biblioteca.model.Exemplar;
-import br.com.uabrestingaseca.biblioteca.model.Reserva;
-import br.com.uabrestingaseca.biblioteca.model.Usuario;
-import br.com.uabrestingaseca.biblioteca.services.EmprestimoService;
-import br.com.uabrestingaseca.biblioteca.services.ExemplarService;
-import br.com.uabrestingaseca.biblioteca.services.UsuarioService;
+import br.com.uabrestingaseca.biblioteca.model.*;
+import br.com.uabrestingaseca.biblioteca.services.*;
+import br.com.uabrestingaseca.biblioteca.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @RestController
 @RequestMapping("/emprestimos")
@@ -31,6 +32,12 @@ public class EmprestimoController {
 
     @Autowired
     private ExemplarService exemplarService;
+
+    @Autowired
+    private ParametroService parametroService;
+
+    @Autowired
+    private PendenciaService pendenciaService;
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Emprestimo>> index(
@@ -120,6 +127,45 @@ public class EmprestimoController {
         }
         emprestimo.setId(id);
         return ResponseEntity.ok(service.update(emprestimo));
+    }
+
+    @PutMapping(value = "/devolucao/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> devolucao(@PathVariable("id") int id){
+        Emprestimo emprestimo = service.findById(id);
+        if (emprestimo == null){
+            return ResponseEntity.notFound().build();
+        }
+        Map<Object, Object> response = new LinkedHashMap<>();
+        if (emprestimo.getDataHoraDevolucao() == null){
+            LocalDateTime now = LocalDateTime.now();
+            emprestimo.setDataHoraDevolucao(now);
+            LocalDate today = now.toLocalDate();
+            boolean passouPrazo = today.isAfter(emprestimo.getPrazo());
+            if (passouPrazo){
+                long diasAtraso = ChronoUnit.DAYS.between(emprestimo.getPrazo(), today);
+                BigDecimal multaPorDias = parametroService.getMultaPorDiasAtrazo();
+                BigDecimal multa = multaPorDias.multiply(new BigDecimal(diasAtraso));
+                Pendencia pendencia = new Pendencia();
+                pendencia.setValor(multa);
+                pendencia.setUsuario(emprestimo.getUsuario());
+                pendencia.setEmprestimo(emprestimo);
+                Livro livro = emprestimo.getExemplar().getLivro();
+                pendencia.setDescricao(String.format("Multa referente a empréstimo do livro: %s", livro.getTitulo()));
+                pendenciaService.save(pendencia);
+                DecimalFormat df = new DecimalFormat("#,##0.00");
+                String message = String.format("Empréstimo devolvido após o prazo.\rMulta gerada no valor de R$: %s", df.format(multa));
+                response.put("message", "Empréstimo devolvido com sucesso!");
+            }else{
+                response.put("message", "Empréstimo devolvido com sucesso!");
+            }
+            service.update(emprestimo);
+        }else{
+            response.put("message", "Empréstimo já devolvido!");
+        }
+        return ResponseEntity.ok(response);
+
     }
 
     @DeleteMapping(value = "/{id}")

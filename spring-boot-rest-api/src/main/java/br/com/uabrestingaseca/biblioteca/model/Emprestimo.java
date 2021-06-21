@@ -3,12 +3,11 @@ package br.com.uabrestingaseca.biblioteca.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -38,14 +37,20 @@ public class Emprestimo implements Serializable {
     @NotNull(message = "Usuário deve ser informado")
     private Usuario usuario;
 
+    @Transient
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    private Integer usuarioId = null;
+
     @Column(name = "renovacoes")
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private int numRenovacoes;
 
     @Column(name = "data_hora_devolucao")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHoraDevolucao;
 
-    private BigDecimal multa;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDate prazo;
 
     public Emprestimo() {
     }
@@ -110,12 +115,20 @@ public class Emprestimo implements Serializable {
         this.dataHoraDevolucao = dataHoraDevolucao;
     }
 
-    public BigDecimal getMulta() {
-        return multa;
+    public Integer getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setMulta(BigDecimal multa) {
-        this.multa = multa;
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
+    }
+
+    public void setPrazo(LocalDate prazo){
+        this.prazo = prazo;
+    }
+
+    public LocalDate getPrazo(){
+        return prazo;
     }
 
     @Override
@@ -130,11 +143,11 @@ public class Emprestimo implements Serializable {
                 Objects.equals(exemplarNumRegistro, that.exemplarNumRegistro) &&
                 Objects.equals(usuario, that.usuario) &&
                 Objects.equals(dataHoraDevolucao, that.dataHoraDevolucao) &&
-                Objects.equals(multa, that.multa);
+                Objects.equals(prazo, that.prazo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dataHora, exemplar, exemplarNumRegistro, usuario, numRenovacoes, dataHoraDevolucao, multa);
+        return Objects.hash(id, dataHora, exemplar, exemplarNumRegistro, usuario, numRenovacoes, dataHoraDevolucao, prazo);
     }
 }

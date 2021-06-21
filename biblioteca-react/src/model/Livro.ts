@@ -19,7 +19,7 @@ export class Livro{
         public assunto?: Assunto,
         public anoPublicacao?: number | null,
         public autores?: Autor[],
-        public categorias?: Categoria[]
+        public categorias?: Categoria[],
     ){}
 
     private static _createLivro(data: any):Livro{

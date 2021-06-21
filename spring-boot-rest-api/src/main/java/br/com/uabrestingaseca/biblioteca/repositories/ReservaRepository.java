@@ -25,4 +25,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 
     @Query("SELECT e FROM Reserva e WHERE e.usuario = :usuario")
     Page<Reserva> findFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
+
+    @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa")
+    List<Reserva> findListFiltered(@Param("ativa") boolean ativa);
 }

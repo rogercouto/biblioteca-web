@@ -2,7 +2,8 @@ import { Fragment, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
+import { TextField, Button, FormControlLabel, Checkbox, Tooltip, Snackbar } from '@material-ui/core';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Autocomplete } from '@material-ui/lab';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -10,18 +11,24 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import CancelIcon from '@material-ui/icons/Cancel';
+import UpdateIcon from '@material-ui/icons/Update';
 
 import { BreadcrumbsMaker } from '../../components/breadcrumbs'
-import { Exemplar, Secao, Origem } from '../../model';
-import ExemplarService from '../../services/ExemplarService';
+import { Exemplar, Secao, Origem, Reserva, Usuario } from '../../model';
+import { ExemplarService, ReservaService } from '../../services';
+
+import DateTimeUtil from '../../util/DateTimeUtil';
+import QuestionDialog from '../../components/questionDialog';
+import DialogReserva from '../../components/dialogReserva';
 
 import './style.css';
 
-export default function ExemplaresPage(props : any){
+const ExemplaresPage = (props : any) => {
 
     const livro = props.location.state;
 
-    const canEdit = Cookies.get('isGerente');
+    const canEdit = Cookies.get('isGerente') === 'true';
+    const userId = Cookies.get('userId');
 
     const history = useHistory();
 
@@ -39,7 +46,7 @@ export default function ExemplaresPage(props : any){
     const [temErroSecao, setTemErroSecao] = useState(false);
     const [erroSecao, setErroSecao] = useState('');
 
-    const [edtDataAquisicao, setEdtDataAquisicao] = useState('');
+    const [edtDataAquisicao, setEdtDataAquisicao] = useState<string | null>('');
     const [temErroDtAquis, setTemErroDtAquis] = useState(false);
     const [erroDtAquis, setErroDtAquis] = useState('');
     
@@ -50,6 +57,17 @@ export default function ExemplaresPage(props : any){
     const [edtFixo, setEdtFixo] = useState(false);
 
     const bcMaker = new BreadcrumbsMaker('Exemplares');
+
+    const [qExemplar, setQExemplar] = useState<Exemplar | undefined>(undefined);
+    const [qResOpen, setQResOpen] = useState(false);
+
+    const [confOpen, setConfOpen] = useState(false);
+    const [confMessage, setConfMessage] = useState('');
+    const [errorOpen, setErrorOpen] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogNumReg, setDialogNumReg] = useState<number | undefined>(undefined);
 
     useEffect(()=>{
         ExemplarService.findExemplares(livro.id).then(list =>{
@@ -63,21 +81,25 @@ export default function ExemplaresPage(props : any){
         });
     },[livro.id]);
 
+    const Alert = (props: AlertProps) => {
+        return <MuiAlert elevation={6} variant="filled" {...props} />;
+    };
+    
     bcMaker.addHrefBreadcrumb('Home', '/');
     bcMaker.addHrefBreadcrumb('Livros', '/livros');
     
-    function _handleBack(){
+    const handleBack = () => {
         history.push({
             pathname: '/livros/show',
             state: livro
         });
-    }
+    };
     
     if (livro && livro.id && livro.id > 0){
-        bcMaker.addFunctionBreadcrumb(livro.titulo || 'Livro', _handleBack);
+        bcMaker.addFunctionBreadcrumb(livro.titulo || 'Livro', handleBack);
     }
 
-    function _getIndex(numRegistro : number | undefined) : number{
+    const getIndex = (numRegistro : number | undefined) : number => {
         if (!numRegistro){
             return -1;
         }
@@ -85,9 +107,9 @@ export default function ExemplaresPage(props : any){
             return e.numRegistro;
         });           
         return nrs.indexOf(numRegistro);
-    }
+    };
 
-    function _getSecao(nome : string): Secao | undefined{
+    const getSecao = (nome : string): Secao | undefined => {
         const l = secoes.filter((s)=>{
             return s.nome === nome
         });
@@ -98,9 +120,9 @@ export default function ExemplaresPage(props : any){
             return new Secao(undefined, nome);
         }
         return undefined;
-    }
+    };
 
-    function _getOrigem(descr : string): Origem | undefined{
+    const getOrigem = (descr : string): Origem | undefined => {
         const l = origens.filter((o)=>{
             return o.descricao === descr;
         });
@@ -111,9 +133,9 @@ export default function ExemplaresPage(props : any){
             return new Origem(undefined, descr);
         }
         return undefined;
-    }
+    };
 
-    function _clearErrors(){
+    const clearErrors = () => {
         setTemErroNumReg(false);
         setErroNumReg('');
         setTemErroSecao(false);
@@ -122,16 +144,16 @@ export default function ExemplaresPage(props : any){
         setErroDtAquis('');
         setTemErroOrigem(false);
         setErroOrigem('');
-    }
+    };
 
-    function _handleEdit(exemplar : Exemplar){
+    const handleEdit = (exemplar : Exemplar) => {
         if (exemplar !== null){
-            _clearErrors();
+            clearErrors();
             if (exemplar.secao?.nome){
                 setEdtSecao(exemplar.secao.nome);
             }
             if (exemplar.dataAquisicao){
-                setEdtDataAquisicao(exemplar.getDataAquisicaoAsString());
+                setEdtDataAquisicao(DateTimeUtil.toAPIDate(exemplar.dataAquisicao));
             }
             if (exemplar.origem?.descricao){
                 setEdtOrigem(exemplar.origem.descricao);
@@ -143,19 +165,19 @@ export default function ExemplaresPage(props : any){
                 setEdtNumReg(exemplar.numRegistro);
             }
         }
-    }
+    };
 
-    function _handleInsert(){
-        _clearErrors();
+    const handleInsert = () => {
+        clearErrors();
         setNewNumReg('');
         setEdtSecao('');
         setEdtDataAquisicao('');
         setEdtOrigem('');
         setEdtFixo(false);
         setEdtNumReg(-1);
-    }
+    };
 
-    async function _handleDelete(exemplar : Exemplar){
+    const handleDelete = async (exemplar : Exemplar) => {
         if (window.confirm('Tem certeza que deseja remover o exemplar?')) {
             const resp = await ExemplarService.delete(exemplar);
             if (resp.done){
@@ -164,16 +186,17 @@ export default function ExemplaresPage(props : any){
                 });
                 setExemplares(newArray);
             }else{
-                alert(resp.message);
+                setErrorMessage(resp.message);
+                setErrorOpen(true);
             }
         } 
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () =>{
         setEdtNumReg(0);
-    }
+    };
 
-    function _validate(){
+    const validate =() => {
         let valid = true;
         if (edtNumReg < 0 && newNumReg.trim().length === 0){
             setTemErroNumReg(true);
@@ -191,7 +214,7 @@ export default function ExemplaresPage(props : any){
             setTemErroSecao(false);
             setErroSecao('');
         }
-        if (edtDataAquisicao.trim().length === 0){
+        if (edtDataAquisicao === null || edtDataAquisicao.trim().length === 0){
             setTemErroDtAquis(true);
             setErroDtAquis('Seção deve ser selecionada!');
             valid = false;
@@ -208,16 +231,16 @@ export default function ExemplaresPage(props : any){
             setErroOrigem('');
         }
         return valid;
-    }
+    };
 
-    async function _handleSave(){
-        if (_validate()){
+    const handleSave = async () => {
+        if (validate()){
             const exemplar = new Exemplar();
-            exemplar.secao = _getSecao(edtSecao);
-            exemplar.dataAquisicao = Exemplar.getDataAquisicao(edtDataAquisicao);
-            exemplar.origem = _getOrigem(edtOrigem);
+            exemplar.secao = getSecao(edtSecao);
+            exemplar.dataAquisicao = DateTimeUtil.fromTextField(edtDataAquisicao);         
+            exemplar.origem = getOrigem(edtOrigem);
             exemplar.fixo = edtFixo;
-            exemplar.livro = { id: livro.id};
+            exemplar.livro = { id: livro.id, titulo: livro.titulo};
             let resp;
             if (edtNumReg < 0){
                 //save insert
@@ -233,12 +256,12 @@ export default function ExemplaresPage(props : any){
                 exemplar.numRegistro = edtNumReg;
                 resp = await ExemplarService.update(exemplar);
                 if (resp.done){
-                    let oldSituacao = exemplares[_getIndex(edtNumReg)].situacao;
+                    let oldSituacao = exemplares[getIndex(edtNumReg)].situacao;
                     if (oldSituacao === 'Fixo' && !edtFixo){
                         oldSituacao = 'Disponível';
                     }
                     exemplar.situacao = edtFixo? 'Fixo' : oldSituacao;
-                    exemplares[_getIndex(edtNumReg)] = exemplar;
+                    exemplares[getIndex(edtNumReg)] = exemplar;
                 }
             }
             if (resp.done){
@@ -249,39 +272,109 @@ export default function ExemplaresPage(props : any){
                 setEdtFixo(false);
                 setEdtNumReg(0);
             }else{
-                alert(resp.errors.join('\r'));
+                setErrorMessage(resp.errors.join('\r'));
+                setErrorOpen(true);
             }
-            console.log(exemplares);
+        }
+    };
+
+    const handleQuestionReserva = (exemplar : Exemplar) => {
+        if (canEdit){
+            openForm(exemplar);
+        }else{
+            setQExemplar(exemplar);
+            setQResOpen(true);
         }
     }
 
-    function _renderButtons(exemplar : Exemplar){
+    const handleConfirmReserva = async () => {
+        if (qExemplar && userId){
+            const reserva = new Reserva();
+            reserva.exemplar = qExemplar;
+            reserva.usuario = new Usuario(+userId);
+            reserva.dataHora = new Date();
+            const response = await ReservaService.insert(reserva);
+            if (response.done){
+                const exemplar = response.object.exemplar;
+                const newList = exemplares.map(e=>{
+                    if (e.numRegistro === exemplar.numRegistro){
+                        return exemplar;
+                    }
+                    return e;
+                });
+                setExemplares(newList);
+                setConfMessage(`Exemplar reservado até ${response.object.dataLimite.toLocaleDateString()}`);
+                setConfOpen(true);
+            }else{
+                setErrorMessage(response.object.message);
+                setErrorOpen(true);
+            }
+            setQExemplar(undefined);
+            setQResOpen(false);
+        }
+    }
+
+    const handleCancelReserva = () => {
+        setQExemplar(undefined);
+        setQResOpen(false);
+    }
+
+
+    const renderButtons = (exemplar : Exemplar) => {
         if (canEdit){
             if (edtNumReg === 0){
                 return (
                     <Fragment>
-                        <Button variant="contained" onClick={(e)=>{
-                            _handleEdit(exemplar);
-                        }}>
-                            <EditIcon  style={{color: 'blue'}}/>
-                        </Button>
-                        <Button variant="contained" onClick={(e)=>{
-                            _handleDelete(exemplar)
-                        }}>
-                            <DeleteIcon  style={{color: 'red'}}/>
-                        </Button>
+                        <Tooltip title="Reservar exemplar">
+                            <span>
+                                <Button 
+                                    disabled={exemplar.situacao !== 'Disponível' && exemplar.situacao !== 'Emprestado'}
+                                    variant="contained" 
+                                    onClick={(e)=>{
+                                        handleQuestionReserva(exemplar);
+                                }}>
+                                    <UpdateIcon />
+                                </Button>
+                            </span>
+                        </Tooltip>
+                        <Tooltip title="Editar exemplar">
+                            <span>
+                                <Button variant="contained" onClick={(e)=>{
+                                    handleEdit(exemplar);
+                                }}>
+                                    <EditIcon  style={{color: 'blue'}}/>
+                                </Button>
+                            </span>
+                        </Tooltip>
+                        <Tooltip title="Excluir exemplar">
+                            <span>
+                                <Button variant="contained" onClick={(e)=>{
+                                    handleDelete(exemplar)
+                                }}>
+                                    <DeleteIcon  style={{color: 'red'}}/>
+                                </Button>
+                            </span>
+                        </Tooltip>
                     </Fragment>
                 );
             }else{
                 if (exemplar.numRegistro === edtNumReg){
                     return (
                         <Fragment>
-                            <Button variant="contained" onClick={_handleSave}>
-                                <SaveIcon  style={{color: 'green'}}/>
-                            </Button>
-                            <Button variant="contained" onClick={_handleCancel}>
-                                <CancelIcon />
-                            </Button>
+                            <Tooltip title="Salvar mudanças">
+                                <span>
+                                    <Button variant="contained" onClick={handleSave}>
+                                        <SaveIcon  style={{color: 'green'}}/>
+                                    </Button>
+                                </span>
+                            </Tooltip>
+                            <Tooltip title="Cancelar operação">
+                                <span>
+                                    <Button variant="contained" onClick={handleCancel}>
+                                        <CancelIcon />
+                                    </Button>
+                                </span>
+                            </Tooltip>
                         </Fragment>
                     );
                 }else{
@@ -290,10 +383,22 @@ export default function ExemplaresPage(props : any){
             }
         }
         //depois colocar botões pra reservar caso logado
-        return (<Fragment />);
-    }
+        return (
+            <Fragment>
+                <Tooltip title="Reservar exemplar">
+                    <span>
+                        <Button variant="contained" onClick={(e)=>{
+                            handleQuestionReserva(exemplar);
+                        }}>
+                            <UpdateIcon />
+                        </Button>
+                    </span>
+                </Tooltip>
+            </Fragment>
+        );
+    };
 
-    function _renderFirstColumn(exemplar : Exemplar){
+    const renderFirstColumn = (exemplar : Exemplar) => {
         if (edtNumReg < 0){
             return (
                 <TextField
@@ -309,32 +414,37 @@ export default function ExemplaresPage(props : any){
         }else{
             return <Fragment>{exemplar.numRegistro}</Fragment>
         }
-    }
+    };
     
-    function _renderLastColumnContent(){
+    const renderLastColumnContent = () => {
         if (canEdit){
             return(
                 <td>
-                    <Button variant="contained" onClick={_handleSave}>
-                        <SaveIcon  style={{color: 'green'}}/>
-                    </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
-                        <CancelIcon />
-                    </Button>
+                    <Tooltip title="Salvar mudanças">
+                        <span>
+                            <Button variant="contained" onClick={handleSave}>
+                                <SaveIcon  style={{color: 'green'}}/>
+                            </Button>
+                        </span>
+                    </Tooltip>
+                    <Tooltip title="Cancelar operação">
+                        <span>
+                            <Button variant="contained" onClick={handleCancel}>
+                                <CancelIcon />
+                            </Button>
+                        </span>
+                    </Tooltip>
                 </td>
             );
         }
         return (<Fragment />);
-    }
+    };
 
-    function _renderLastColumnButtons(exemplar : Exemplar){
-        if (canEdit){
-            return (<td>{_renderButtons(exemplar)}</td>);
-        }
-        return (<Fragment />);
-    }
+    const _renderLastColumnButtons = (exemplar : Exemplar) => {
+        return (<td className={canEdit ? "gerente":"aluno"}>{renderButtons(exemplar)}</td>);
+    };
 
-    function _renderRow(exemplar: Exemplar){       
+    const renderRow = (exemplar: Exemplar) => {       
         if (exemplar.numRegistro && edtNumReg !== exemplar.numRegistro){
             //Only show
             return (
@@ -351,7 +461,7 @@ export default function ExemplaresPage(props : any){
             return (
                 <Fragment>
                     <td>
-                        {_renderFirstColumn(exemplar)}
+                        {renderFirstColumn(exemplar)}
                     </td>
                     <td>
                         <Autocomplete
@@ -420,22 +530,22 @@ export default function ExemplaresPage(props : any){
                                 }
                         />
                     </td>
-                    {_renderLastColumnContent()}
+                    {renderLastColumnContent()}
                 </Fragment>
             );
         }
-    }
+    };
 
-    function _renderLastRow(){
+    const renderLastRow = () => {
         if (edtNumReg < 0){
-            return _renderRow(new Exemplar());
+            return renderRow(new Exemplar());
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (canEdit && edtNumReg === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -443,13 +553,48 @@ export default function ExemplaresPage(props : any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
-    function _renderLastColumn(){
+    const _renderLastColumn = () => {
         if (canEdit){
             return (<th></th>);
         }
         return (<Fragment/>);
+    };
+
+    const openForm = (exemplar : Exemplar) => {
+        setDialogNumReg(exemplar?.numRegistro);
+        setDialogOpen(true);
+    };
+
+    const closeForm = () => {
+        setDialogOpen(false);
+    };
+
+    const saveFormReserva = async (exemplar : Exemplar | undefined, usuario: Usuario | undefined) => {
+        if (exemplar){
+            const reserva = new Reserva();
+            reserva.exemplar = exemplar;
+            reserva.usuario = usuario;
+            reserva.dataHora = new Date();
+            const response = await ReservaService.insert(reserva);
+            if (response.done){
+                const exemplar = response.object.exemplar;
+                const newList = exemplares.map(e=>{
+                    if (e.numRegistro === exemplar.numRegistro){
+                        return exemplar;
+                    }
+                    return e;
+                });
+                setExemplares(newList);
+                setConfMessage(`Exemplar reservado até ${response.object.dataLimite.toLocaleDateString()}`);
+                setConfOpen(true);
+            }else{
+                setErrorMessage(response.object.message);
+                setErrorOpen(true);
+            }
+            setDialogOpen(false);
+        }
     }
 
     return(
@@ -472,14 +617,55 @@ export default function ExemplaresPage(props : any){
                     {exemplares.map(exemplar=>{
                         return(
                             <tr key={exemplar.numRegistro}>
-                                {_renderRow(exemplar)}
+                                {renderRow(exemplar)}
                             </tr>
                         );
                     })}
-                    <tr>{_renderLastRow()}</tr>
+                    <tr>{renderLastRow()}</tr>
                 </tbody>
             </table>
-            {_renderInsertButton()}
+            {renderInsertButton()}
+            <QuestionDialog 
+                title="Atenção!"
+                message="Confirma reserva do exemplar?"
+                open={qResOpen}
+                onConfirm={handleConfirmReserva}
+                onClose={handleCancelReserva}
+            />
+            <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
+                setConfOpen(false);
+                setConfMessage('');
+            }}>
+                <Alert onClose={(e)=>{
+                        setConfOpen(false);
+                        setConfMessage('');
+                    }} severity="success">
+                    {confMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
+                setErrorOpen(false);
+                setErrorMessage('');
+            }}>
+                <Alert onClose={(e)=>{
+                        setErrorOpen(false);
+                        setErrorMessage('');
+                    }} severity="error">
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
+            <DialogReserva 
+                title="Nova reserva"
+                message="Número de registro está localizado na etiqueta do exemplar"
+                numReg={dialogNumReg}
+                onSave={saveFormReserva}
+                onClose={closeForm}
+                canChangeNumReg={false}
+                verificaReserva={false}
+                open={dialogOpen}
+             />
         </div>
     );
-}
+};
+
+export default ExemplaresPage;

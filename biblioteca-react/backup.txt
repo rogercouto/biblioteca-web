@@ -293,3 +293,848 @@ function _renderColumns(exemplar : Exemplar){
     justify-content: center;
 }
 
+
+
+import { useEffect, useState} from 'react';
+import Cookies from 'js-cookie';
+
+import { TextField, Button, Tooltip, Dialog, DialogActions, DialogContent,DialogContentText, DialogTitle } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+
+import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
+import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+
+import { BreadcrumbsMaker } from '../../components/breadcrumbs';
+import { EmprestimoService, ExemplarService, UsuarioService } from '../../services';
+
+import { Emprestimo, Usuario } from '../../model';
+
+import './style.css';
+
+import QuestionDialog from '../../components/questionDialog';
+
+export default function EmprestimosPage(){
+
+    const canEdit : boolean = Cookies.get('isGerente') === 'true';
+
+    const [emprestimos, setEmprestimos] = useState(new Array<Emprestimo>());
+
+    const [usuarios, setUsuarios] = useState(new Array<Usuario>());
+    const [nomesUsuarios, setNomesUsuarios] = useState(new Array<string>());
+
+    const [numRegistro, setNumRegistro] = useState('');
+    const [erroNumReg, setErroNumReg] = useState('');
+    const [temErroNumReg, setTemErroNumReg] = useState(false);
+
+    const [nomeUsuario, setNomeUsuario] = useState<string | null>(null);
+    const [erroUsuario, setErroUsuario] = useState('');
+    const [temErroUsuario, setTemErroUsuario] = useState(false);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+    const [confOpen, setConfOpen] = useState(false);
+    const [confTitle, setConfTitle] = useState('');
+    const [confMessage, setConfMessage] = useState('');
+    const [confIsDel, setConfIsDel] = useState(false);
+    const [confEmprestimo, setConfEmprestimo] = useState<Emprestimo | undefined>();
+
+    //Test only
+    
+    const [tstOpen, setTstOpen] = useState(false);
+
+    const  handleTstConfirm = () => {
+        setTstOpen(false);
+        alert('Test confirmated!');
+    };
+
+    const handleTstClose = () => {
+        setTstOpen(false);
+        alert('Test closed!');
+    };
+
+    useEffect(()=>{
+        EmprestimoService.findEmprestimos(true).then(list=>{
+            setEmprestimos(list);
+            console.log(list);
+        });
+    },[]);
+
+    const _handleClickOpen = () => {
+        setUsuarios(new Array<Usuario>());
+        setNomesUsuarios(new Array<string>());
+        setNumRegistro('');
+        setNomeUsuario('');
+        setTemErroNumReg(false);
+        setErroNumReg('')
+        setTemErroUsuario(false);
+        setErroUsuario('');
+        setDialogOpen(true);
+    };
+    
+    const _handleClose = () => {
+        setDialogOpen(false);
+    };
+
+    const _handleChangeNumReg = (event : any) => {
+        const value = event.target.value;
+        setNumRegistro(value);
+        if (value.trim().length > 0){
+            setErroNumReg('');
+            setTemErroNumReg(false);
+        }
+    }
+
+    const _handleBuscaUsuario = async (value : string) => {
+        if (value.trim().length > 1){
+            const list = await UsuarioService.find(value);
+            setUsuarios(list);
+            const nomes = list
+            .filter(u=>{
+                return (u.nome !== undefined);
+            })
+            .map(u=>{
+                return u.nome || '';
+            });
+            setNomesUsuarios(nomes);
+        }else{
+            setUsuarios(new Array<Usuario>());
+            setNomesUsuarios(new Array<string>());
+        }
+    };
+
+    const _handleSelectUsuario = (value : string | null) => {
+        setNomeUsuario(value);
+        if (value !== null){
+            setErroUsuario('');
+            setTemErroUsuario(false);
+        }
+    };
+
+    const _validateNumReg = () => {
+        if (numRegistro.trim().length > 0){
+            setErroNumReg('');
+            setTemErroNumReg(false);
+        }else{
+            setErroNumReg('Número do registro deve ser informado!');
+            setTemErroNumReg(true);
+        }
+    };
+
+    const _validateUsuario = () => {
+        if (nomeUsuario !== null){
+            setErroUsuario('');
+            setTemErroUsuario(false);
+        }else{
+            setErroUsuario('Usuario deve ser informado!');
+            setTemErroUsuario(true);
+        }
+    };
+
+    const _validate = () : boolean => {
+        let valid = true;
+        if (numRegistro.trim().length === 0){
+            setErroNumReg('Número do registro deve ser informado!');
+            setTemErroNumReg(true);
+            valid = false;
+        }
+        if (nomeUsuario === null || nomeUsuario.trim().length === 0){
+            setErroUsuario('Usuario deve ser informado!');
+            setTemErroUsuario(true);
+            valid = false;
+        }
+        return valid;
+    }
+
+    const _handleSave = async () => {
+        if (_validate()){
+            const numReg = +numRegistro;
+            try {
+                const exemplar = await ExemplarService.findById(numReg);
+                const uIndex = nomesUsuarios.indexOf(nomeUsuario||'');
+                if (exemplar && uIndex >= 0) {
+                    const usuario = usuarios[uIndex];
+                    if (exemplar.situacao === 'Disponível'){
+                        const emprestimo = new Emprestimo();
+                        emprestimo.dataHora = new Date();
+                        emprestimo.exemplar = exemplar;
+                        emprestimo.usuario = usuario;
+                        const resp = await EmprestimoService.insert(emprestimo);
+                        if (resp.done){
+                            const newList = [...emprestimos, resp.object];
+                            setEmprestimos(newList);
+                            setDialogOpen(false);
+                        }else{
+                            alert(resp.object.message);
+                        }
+                    }else{
+                        setErroNumReg('Exemplar indisponível!');
+                        setTemErroNumReg(true);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    const _handleDevolucao = async (emprestimo : Emprestimo) => {
+        _openConfirm(emprestimo, false);
+    };
+
+    const _handleDelete = async (emprestimo : Emprestimo) => {
+        _openConfirm(emprestimo, true);
+    };
+    
+    const _openConfirm = (emprestimo : Emprestimo, confIsDel: boolean) => {
+        setConfEmprestimo(emprestimo);
+        if (confIsDel){
+            setConfTitle('Confirmação');
+            setConfMessage('Confirma exclusão do empréstimo ?');
+        }else{
+            setConfTitle('Confirmação');
+            setConfMessage(`Confirma devolução do exmeplar ${emprestimo.exemplar?.numRegistro} ?`);
+        }
+        setConfOpen(true);
+        setConfIsDel(confIsDel);
+    };
+
+    const _handleConfClose = async (result : boolean) => {
+        if (result === true && confEmprestimo){
+            if (confIsDel){
+                const resp = await EmprestimoService.delete(confEmprestimo);
+                if (resp.done){
+                    const updEmprestimos = [...emprestimos].filter((e:Emprestimo)=>{
+                        return e.id !== confEmprestimo.id;
+                    }); 
+                    setEmprestimos(updEmprestimos);    
+                }
+            }else{
+                const index = emprestimos.indexOf(confEmprestimo);
+                const updEmprestimo = await EmprestimoService.devolucao(confEmprestimo);
+                const updEmprestimos = [...emprestimos];
+                updEmprestimos[index] = updEmprestimo.object;
+                setEmprestimos(updEmprestimos);
+            }
+        }
+        setConfOpen(false);
+    };
+
+    const _renderForm = () => {
+        return(
+            <Dialog open={dialogOpen} onClose={_handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Novo empréstimo</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Número de registro está localizado na etiqueta do exemplar
+                    </DialogContentText>
+                    <form className="formEmprestimo">
+                        <TextField 
+                            error={temErroNumReg}
+                            helperText={erroNumReg}
+                            type="number"
+                            label="Nº registro*" 
+                            variant="outlined" 
+                            className="formControl"  
+                            value={numRegistro}                     
+                            onChange={_handleChangeNumReg}
+                            onBlur={_validateNumReg}
+                            />
+                        <Autocomplete
+                            noOptionsText={'Buscar usuário por nome...'}
+                            options={nomesUsuarios}
+                            value={nomeUsuario}
+                            onChange={(e, value)=>{
+                                _handleSelectUsuario(value);
+                            }}
+                            onBlur={_validateUsuario}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroUsuario}
+                                    helperText={erroUsuario}
+                                    label="Usuário*" 
+                                    variant="outlined" 
+                                    className="formControl"
+                                    onChange={(e)=>{
+                                        _handleBuscaUsuario(e.target.value);
+                                    }}
+                                />
+                            )}
+                        /> 
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={_handleSave} variant="contained">
+                    <SaveIcon/>
+                    Salvar
+                </Button>
+                <Button onClick={_handleClose} variant="contained">
+                    <CloseIcon />
+                    Cancelar
+                </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    };
+
+    const _renderConfirmation = () => {
+        return(
+            <Dialog open={confOpen} onClose={(e)=>{
+                _handleConfClose(false)
+            }} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">{confTitle}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {confMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={(e)=>{
+                    _handleConfClose(true);
+                }} variant="contained">
+                    <SaveIcon/>
+                    Sim
+                </Button>
+
+                <Button onClick={(e)=>{
+                    _handleConfClose(false)
+                }} variant="contained">
+                    <CloseIcon />
+                    Não
+                </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    };
+
+    const bcMaker = new BreadcrumbsMaker('Empréstimos');
+
+    bcMaker.addHrefBreadcrumb('Home', '/');
+
+    if (!canEdit){
+        return (<div className="emprestimosContainer"><h1>Não autorizado!</h1></div>);
+    }
+
+    return(
+        <div className="emprestimosContainer">
+            {bcMaker.render()}
+            <Button variant="contained" onClick={_handleClickOpen}>
+                <AssignmentReturnIcon className="flipH"/>
+                Novo empréstimo
+            </Button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Nº Exemplar</th>
+                        <th>Título do livro</th>
+                        <th>Usuário</th>
+                        <th>Devolvido</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {emprestimos.map(emprestimo=>{
+                        return(
+                            <tr key={emprestimo.id}>
+                                <td>{emprestimo.dataHora?.toLocaleString()}</td>
+                                <td>{emprestimo.exemplar?.numRegistro}</td>
+                                <td>{emprestimo.exemplar?.livro?.titulo}</td>
+                                <td>{emprestimo.usuario?.nome}</td>
+                                <td>{emprestimo.dataHoraDevolucao? 'Sim' : 'Não' } </td>
+                                <td>
+                                    <Tooltip title="Devolver exemplar">
+                                        <Button variant="contained" onClick={(e: any)=>{_handleDevolucao(emprestimo);}}>
+                                            <AssignmentReturnIcon />
+                                        </Button>                                  
+                                    </Tooltip>
+                                    <Tooltip title="Excluir empréstimo">
+                                        <Button variant="contained" onClick={(e: any)=>{_handleDelete(emprestimo);}}>
+                                            <DeleteForeverIcon />
+                                        </Button>                                  
+                                    </Tooltip>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+            {_renderForm()}
+            {_renderConfirmation()}
+            <Button variant="contained" onClick={(e: any)=>{setTstOpen(true);}}>
+                Teste
+            </Button>
+            <QuestionDialog 
+                title="Titulo teste"
+                message="Mensagem teste utilizada para testar o negócio"
+                open={tstOpen}
+                onConfirm={handleTstConfirm}
+                onClose={handleTstClose}
+            />
+        </div>
+    );
+}
+
+
+import { useEffect, useState} from 'react';
+import Cookies from 'js-cookie';
+
+import { TextField, Button, Tooltip, Dialog, DialogActions, DialogContent,DialogContentText, DialogTitle, FormControlLabel, Switch } from '@material-ui/core';
+import { Autocomplete, Pagination } from '@material-ui/lab';
+
+import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
+import UpdateIcon from '@material-ui/icons/Update';
+import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from '@material-ui/icons/Close';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+
+import { BreadcrumbsMaker } from '../../components/breadcrumbs';
+import { EmprestimoService, ExemplarService, UsuarioService } from '../../services';
+
+import { Emprestimo, Usuario } from '../../model';
+
+import './style.css';
+
+import QuestionDialog from '../../components/questionDialog';
+import DialogEmprestimo from '../../components/dialogEmprestimo';
+
+export default function EmprestimosPage(){
+
+    const canEdit : boolean = Cookies.get('isGerente') === 'true';
+
+    const [emprestimos, setEmprestimos] = useState(new Array<Emprestimo>());
+    const [pagNum, setPagNum] = useState(1);
+    const [totalPag, setTotalPag] = useState(1);
+    const [somenteAtivos, setSomenteAtivos] = useState(true);
+
+    const [usuarios, setUsuarios] = useState(new Array<Usuario>());
+    const [nomesUsuarios, setNomesUsuarios] = useState(new Array<string>());
+
+    const [numRegistro, setNumRegistro] = useState('');
+    const [erroNumReg, setErroNumReg] = useState('');
+    const [temErroNumReg, setTemErroNumReg] = useState(false);
+
+    const [nomeUsuario, setNomeUsuario] = useState<string | null>(null);
+    const [erroUsuario, setErroUsuario] = useState('');
+    const [temErroUsuario, setTemErroUsuario] = useState(false);
+
+    const [dialogOpen, setDialogOpen] = useState(false); //Inserção
+
+    const [dialogDevolucaoOpen, setDialogDevolucaoOpen] = useState(false);
+    const [dialogRenovacaoOpen, setDialogRenovacaoOpen] = useState(false);
+    const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
+    const [dEmprestimo, setDEmprestimo] = useState<Emprestimo | undefined>(undefined); //devolução-renovacao-exclusão
+
+    useEffect(()=>{
+        EmprestimoService.findPage(pagNum, somenteAtivos).then(resp=>{
+            setEmprestimos(resp.emprestimos);
+            setTotalPag(resp.totalPag);
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    },[pagNum, somenteAtivos]);
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPagNum(value);
+    };
+
+    const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setPagNum(1);
+        setSomenteAtivos(event.target.checked);
+    }
+
+    const _handleClickOpen = () => {
+        setUsuarios(new Array<Usuario>());
+        setNomesUsuarios(new Array<string>());
+        setNumRegistro('');
+        setNomeUsuario('');
+        setTemErroNumReg(false);
+        setErroNumReg('')
+        setTemErroUsuario(false);
+        setErroUsuario('');
+        setDialogOpen(true);
+    };
+    
+    const _handleClose = () => {
+        setDialogOpen(false);
+    };
+
+    const _handleChangeNumReg = (event : any) => {
+        const value = event.target.value;
+        setNumRegistro(value);
+        if (value.trim().length > 0){
+            setErroNumReg('');
+            setTemErroNumReg(false);
+        }
+    }
+
+    const _handleBuscaUsuario = async (value : string) => {
+        if (value.trim().length > 1){
+            const list = await UsuarioService.find(value);
+            setUsuarios(list);
+            const nomes = list
+            .filter(u=>{
+                return (u.nome !== undefined);
+            })
+            .map(u=>{
+                return u.nome || '';
+            });
+            setNomesUsuarios(nomes);
+        }else{
+            setUsuarios(new Array<Usuario>());
+            setNomesUsuarios(new Array<string>());
+        }
+    };
+
+    const _handleSelectUsuario = (value : string | null) => {
+        setNomeUsuario(value);
+        if (value !== null){
+            setErroUsuario('');
+            setTemErroUsuario(false);
+        }
+    };
+
+    const _validateNumReg = () => {
+        if (numRegistro.trim().length > 0){
+            setErroNumReg('');
+            setTemErroNumReg(false);
+        }else{
+            setErroNumReg('Número do registro deve ser informado!');
+            setTemErroNumReg(true);
+        }
+    };
+
+    const _validateUsuario = () => {
+        if (nomeUsuario !== null){
+            setErroUsuario('');
+            setTemErroUsuario(false);
+        }else{
+            setErroUsuario('Usuario deve ser informado!');
+            setTemErroUsuario(true);
+        }
+    };
+
+    const _validate = () : boolean => {
+        let valid = true;
+        if (numRegistro.trim().length === 0){
+            setErroNumReg('Número do registro deve ser informado!');
+            setTemErroNumReg(true);
+            valid = false;
+        }
+        if (nomeUsuario === null || nomeUsuario.trim().length === 0){
+            setErroUsuario('Usuario deve ser informado!');
+            setTemErroUsuario(true);
+            valid = false;
+        }
+        return valid;
+    }
+
+    const daysDiff = (a : Date, b: Date) : number => {
+        const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+        const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+        return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+    const podeRenovar = (emprestimo : Emprestimo) : boolean => {
+        if (!emprestimo.foiDevolvido() && emprestimo.prazo){
+            const diff = daysDiff(new Date(), emprestimo.prazo);
+            return (diff > 0 && diff < 6);    
+        }
+        return false;
+    }
+
+    const getRenTooltipText = (emprestimo : Emprestimo) : string => {
+        if (emprestimo.foiDevolvido()){
+            return 'Exemplar já devolvido';
+        }else{
+            if (emprestimo.prazo){
+                const diff = daysDiff(new Date(), emprestimo.prazo);
+                if (diff > 6){
+                    return 'Ainda não é possível renovar o empréstimo!';
+                }else if (diff < 0){
+                    return 'Não é mais possível renovar o empréstimo!';
+                }
+            }
+        }
+        return 'Renovar empréstimo';
+    }
+
+    const _handleSave = async () => {
+        if (_validate()){
+            const numReg = +numRegistro;
+            try {
+                const exemplar = await ExemplarService.findById(numReg);
+                const uIndex = nomesUsuarios.indexOf(nomeUsuario||'');
+                if (exemplar && uIndex >= 0) {
+                    const usuario = usuarios[uIndex];
+                    if (exemplar.situacao === 'Disponível'){
+                        const emprestimo = new Emprestimo();
+                        emprestimo.dataHora = new Date();
+                        emprestimo.exemplar = exemplar;
+                        emprestimo.usuario = usuario;
+                        const resp = await EmprestimoService.insert(emprestimo);
+                        if (resp.done){
+                            const newList = [...emprestimos, resp.object];
+                            setEmprestimos(newList);
+                            setDialogOpen(false);
+                        }else{
+                            alert(resp.object.message);
+                        }
+                    }else{
+                        setErroNumReg('Exemplar indisponível!');
+                        setTemErroNumReg(true);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
+    const handleQuestionDevolucao = (emprestimo : Emprestimo) => {
+        setDEmprestimo(emprestimo);
+        setDialogDevolucaoOpen(true);
+    };
+
+    const handleConfirmDevolucao = async() =>{
+        if (dEmprestimo){
+            const index = emprestimos.indexOf(dEmprestimo);
+            const updEmprestimo = await EmprestimoService.devolucao(dEmprestimo);
+            const updEmprestimos = [...emprestimos];
+            updEmprestimos[index] = updEmprestimo.object;
+            setEmprestimos(updEmprestimos);
+            setDEmprestimo(undefined);
+        }
+        setDialogDevolucaoOpen(false);
+    };
+
+    const handleCancelDevolucao = () =>{
+        setDEmprestimo(undefined);
+        setDialogDevolucaoOpen(false);
+    }
+
+    const handleQuestionRenovacao = (emprestimo : Emprestimo) => {
+        setDEmprestimo(emprestimo);
+        setDialogRenovacaoOpen(true);
+    };
+
+    const handleConfirmRenovacao = async() =>{
+        if (dEmprestimo){
+            const index = emprestimos.indexOf(dEmprestimo);
+            const updEmprestimo = await EmprestimoService.renovacao(dEmprestimo);
+            const updEmprestimos = [...emprestimos];
+            updEmprestimos[index] = updEmprestimo.object;
+            setEmprestimos(updEmprestimos);
+            setDEmprestimo(undefined);
+        }
+        setDialogRenovacaoOpen(false);
+    };
+
+    const handleCancelRenovacao = () =>{
+        setDEmprestimo(undefined);
+        setDialogRenovacaoOpen(false);
+    }
+
+    const handleQuestionDelete = (emprestimo : Emprestimo) =>{
+        setDEmprestimo(emprestimo);
+        setDialogDeleteOpen(true);
+    };
+    
+    const handleConfirmDelete = async () =>{
+        if (dEmprestimo){
+            const resp = await EmprestimoService.delete(dEmprestimo);
+            if (resp.done){
+                const updEmprestimos = [...emprestimos].filter((e:Emprestimo)=>{
+                    return e.id !== dEmprestimo.id;
+                }); 
+                setEmprestimos(updEmprestimos);    
+            }
+        }
+        setDEmprestimo(undefined);
+        setDialogDeleteOpen(false);
+    }
+
+    const handleCancelDelete = () => {
+        setDEmprestimo(undefined);
+        setDialogDeleteOpen(false);
+    }
+    
+    const _renderForm = () => {
+        return(
+            <Dialog open={dialogOpen} onClose={_handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Novo empréstimo</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Número de registro está localizado na etiqueta do exemplar
+                    </DialogContentText>
+                    <form className="formEmprestimo">
+                        <TextField 
+                            error={temErroNumReg}
+                            helperText={erroNumReg}
+                            type="number"
+                            label="Nº registro*" 
+                            variant="outlined" 
+                            className="formControl"  
+                            value={numRegistro}                     
+                            onChange={_handleChangeNumReg}
+                            onBlur={_validateNumReg}
+                            />
+                        <Autocomplete
+                            noOptionsText={'Buscar usuário por nome...'}
+                            options={nomesUsuarios}
+                            value={nomeUsuario}
+                            onChange={(e, value)=>{
+                                _handleSelectUsuario(value);
+                            }}
+                            onBlur={_validateUsuario}
+                            renderInput={(params) => (
+                                <TextField {...params} 
+                                    error={temErroUsuario}
+                                    helperText={erroUsuario}
+                                    label="Usuário*" 
+                                    variant="outlined" 
+                                    className="formControl"
+                                    onChange={(e)=>{
+                                        _handleBuscaUsuario(e.target.value);
+                                    }}
+                                />
+                            )}
+                        /> 
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={_handleSave} variant="contained">
+                    <SaveIcon/>
+                    Salvar
+                </Button>
+                <Button onClick={_handleClose} variant="contained">
+                    <CloseIcon />
+                    Cancelar
+                </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    };
+
+    // new form above here
+
+
+    const bcMaker = new BreadcrumbsMaker('Empréstimos');
+
+    bcMaker.addHrefBreadcrumb('Home', '/');
+
+    if (!canEdit){
+        return (<div className="emprestimosContainer"><h1>Não autorizado!</h1></div>);
+    }
+
+    return(
+        <div className="emprestimosContainer">
+            {bcMaker.render()}
+            <h2>Empréstimos</h2>
+            <p>
+                <FormControlLabel
+                    control={
+                    <Switch
+                        checked={somenteAtivos}
+                        onChange={handleSwitch}
+                        name="checkedSomenteAtivos"
+                        color="primary"
+                    />
+                    }
+                    label="Somente empréstimos ativos"
+                />
+            </p>
+            <Button variant="contained" onClick={_handleClickOpen}>
+                <AssignmentReturnIcon className="flipH"/>
+                Novo empréstimo
+            </Button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data/Hora</th>
+                        <th>Nº Exemplar</th>
+                        <th>Título do livro</th>
+                        <th>Usuário</th>
+                        <th>Prazo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {emprestimos.map(emprestimo=>{
+                        return(
+                            <tr key={emprestimo.id}>
+                                <td>{emprestimo.dataHora?.toLocaleString()}</td>
+                                <td>{emprestimo.exemplar?.numRegistro}</td>
+                                <td>{emprestimo.exemplar?.livro?.titulo}</td>
+                                <td>{emprestimo.usuario?.nome}</td>
+                                <td style={emprestimo.getTdStyle()}>{emprestimo.dataHoraDevolucao? 'Devolvido' : emprestimo.prazo?.toLocaleDateString() } </td>
+                                <td>
+                                    <Tooltip title={!emprestimo.foiDevolvido()?'Devolver exemplar':'Exemplar já devolvido!'}>
+                                        <span>
+                                            <Button 
+                                                disabled={emprestimo.foiDevolvido()}
+                                                variant="contained" 
+                                                onClick={(e: any)=>{handleQuestionDevolucao(emprestimo);}}>
+                                                <AssignmentReturnIcon />
+                                            </Button>                                  
+                                        </span>
+                                    </Tooltip>
+                                    <Tooltip title={getRenTooltipText(emprestimo)}>
+                                        <span>
+                                            <Button
+                                                disabled={!podeRenovar(emprestimo)} 
+                                                variant="contained" 
+                                                onClick={(e: any)=>{handleQuestionRenovacao(emprestimo);}}>
+                                                <UpdateIcon />
+                                            </Button>                                  
+                                        </span>
+                                    </Tooltip>
+                                    <Tooltip title={!emprestimo.foiDevolvido()?'Excluir empréstimo':'Exemplar já devolvido!'}>
+                                        <span>
+                                            <Button 
+                                                disabled={emprestimo.foiDevolvido()}
+                                                variant="contained" 
+                                                onClick={(e: any)=>{handleQuestionDelete(emprestimo);}}>
+                                                <DeleteForeverIcon />
+                                            </Button>                                  
+                                        </span>
+                                    </Tooltip>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+            <div className="paginationContainer">
+                <Pagination color="primary" 
+                            count={totalPag} page={pagNum} onChange={handlePageChange}/>
+            </div>
+            {_renderForm()}
+            <DialogEmprestimo 
+
+            />
+            <QuestionDialog 
+                title="Atenção!"
+                message="Confirma devolução do exemplar?"
+                open={dialogDevolucaoOpen}
+                onConfirm={handleConfirmDevolucao}
+                onClose={handleCancelDevolucao}
+            />
+            <QuestionDialog 
+                title="Atenção!"
+                message="Confirma renovação do empréstimo?"
+                open={dialogRenovacaoOpen}
+                onConfirm={handleConfirmRenovacao}
+                onClose={handleCancelRenovacao}
+            />
+            <QuestionDialog 
+                title="Atenção!"
+                message="Confirma exclusão do empréstimo?"
+                open={dialogDeleteOpen}
+                onConfirm={handleConfirmDelete}
+                onClose={handleCancelDelete}
+            />
+        </div>
+    );
+}

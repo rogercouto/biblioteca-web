@@ -2,13 +2,24 @@ import api from './api';
 
 import { Exemplar, Secao, Origem } from '../model';
 
-class ExemplarService{
+import DateTimeUtil from '../util/DateTimeUtil';
 
+export class ExemplarService{
+
+    public static async findById(numReg : number): Promise<Exemplar | null>{
+        const url = `exemplares/${numReg}`;
+        const response = await api.get(url);
+        if (response.data){
+            return Exemplar.createFromData(response.data);
+        }
+        return null;
+    }
+    
     public static async findExemplares(livroId : number): Promise<Array<Exemplar>> {
         const url = `exemplares?livroId=${livroId}`;
         const response = await api.get(url);
         return response.data.map((d : any)=>{
-            return Exemplar.createExemplar(d);
+            return Exemplar.createFromData(d);
         });
     }
 
@@ -31,7 +42,14 @@ class ExemplarService{
     public static async insert(exemplar : Exemplar): Promise<any>{
         const url = 'exemplares';
         try{
-            const response = await api.post(url, exemplar);
+            const data = {
+                numRegistro: exemplar.numRegistro,
+                livro: { id: exemplar.livro?.id },
+                secao: { id: exemplar.secao?.id },
+                dataAquisicao: DateTimeUtil.toAPIDate( exemplar.dataAquisicao || new Date() ),
+                origem: { id: exemplar.origem?.id}
+            };
+            const response = await api.post(url, data);
             return {
                 done: true,
                 data: response.data
@@ -54,7 +72,14 @@ class ExemplarService{
     public static async update(exemplar : Exemplar): Promise<any>{
         const url = `exemplares/${exemplar.numRegistro}`;
         try{
-            const response = await api.put(url, exemplar);
+            const data = {
+                numRegistro: exemplar.numRegistro,
+                livro: { id: exemplar.livro?.id },
+                secao: { id: exemplar.secao?.id },
+                dataAquisicao: DateTimeUtil.toAPIDate( exemplar.dataAquisicao || new Date() ),
+                origem: { id: exemplar.origem?.id}
+            };
+            const response = await api.put(url, data);
             return {
                 done: true,
                 data: response.data
@@ -103,6 +128,4 @@ class ExemplarService{
         }
     }
 
-}
-
-export default ExemplarService;
+};

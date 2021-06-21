@@ -5,7 +5,7 @@ CREATE TABLE `emprestimo` (
   `num_registro` int(11) NOT NULL,
   `renovacoes` int(11) DEFAULT NULL,
   `data_hora_devolucao` datetime DEFAULT NULL,
-  `multa` decimal(20,2) DEFAULT NULL,
+  `prazo` DATE NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_usuario_emprestimo` (`usuario_id`),
   KEY `fk_exemplar_emprestimo` (`num_registro`),

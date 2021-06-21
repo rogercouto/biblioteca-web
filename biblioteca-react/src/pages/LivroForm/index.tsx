@@ -8,7 +8,7 @@ import { BreadcrumbsMaker } from '../../components/breadcrumbs'
 import { Assunto, Autor, Categoria, Editora, Livro } from '../../model';
 import { LivroService } from '../../services';
 
-import Loader from '../../components/Loader';
+import Loader from '../../components/loader';
 
 import './styles.css';
 
@@ -34,7 +34,7 @@ export default function LivroForm(props : any){
     const [erroAutor, setErroAutor] = useState('');
     const [temErroAutor, setTemErroAutor] = useState(false);
     const [resumo, setResumo] = useState(livro.resumo);
-    const [isbn, setIsbn] = useState(livro.isbn ? livro.isbn : '');
+    const [isbn, setIsbn] = useState<string>(livro.isbn ? ''+livro.isbn : '');
     const [cutter, setCutter] = useState(livro.cutter);
     const [editora, setEditora] = useState<string | null>(livro.editora?.nome || '');
     const [erroEditora, setErroEditora] = useState('');
@@ -44,7 +44,7 @@ export default function LivroForm(props : any){
     const [assunto, setAssunto] = useState<string | null>(livro.assunto?.descricao || '');
     const [erroAssunto, setErroAssunto] = useState('');
     const [temErroAssunto, setTemErroAssunto] = useState(false);
-    const [anoPublicacao, setAnoPublicacao] = useState(livro.anoPublicacao ? livro.anoPublicacao : '');
+    const [anoPublicacao, setAnoPublicacao] = useState<string>(livro.anoPublicacao ? ''+livro.anoPublicacao : '');
     const [numPaginas, setNumPaginas] = useState(livro.numPaginas ? livro.anoPublicacao : '');
     
     const [categorias, setCategoria] = useState(
@@ -254,7 +254,6 @@ export default function LivroForm(props : any){
         }
         if (_validate()){
             livro.titulo = titulo;
-            
             livro.autores = autores.filter((a : any)=>{
                 if (Autor.validateAutor(a)){
                     return true;
@@ -265,7 +264,7 @@ export default function LivroForm(props : any){
                 return Autor.createAutor(a);
             });
             livro.resumo = resumo;
-            livro.isbn = +isbn;
+            livro.isbn = isbn.trim().length > 0 ? +isbn : null;
             livro.cutter = cutter;
             if (editora){
                 livro.editora = new Editora(undefined, editora);
@@ -277,7 +276,7 @@ export default function LivroForm(props : any){
             if (tmpAssunto !== null){
                 livro.assunto = { id: tmpAssunto.id };
             }
-            livro.anoPublicacao = +anoPublicacao;
+            livro.anoPublicacao = anoPublicacao.trim().length > 0 ? +anoPublicacao : null;
             livro.autores = autores.map((a: any)=>{
                 return Autor.createAutor(a);
             });
@@ -285,7 +284,15 @@ export default function LivroForm(props : any){
                 return new Categoria(undefined, c);
             });
             //console.log(livro);
-            if (livro.id === 0){
+            if (livro.id && livro.id > 0){
+                setIsLoading(true);
+                const updatedLivro = await LivroService.updateLivro(livro);
+                setIsLoading(false);
+                history.push({
+                    pathname: '/livros/show',
+                    state: updatedLivro
+                });
+            }else{
                 setIsLoading(true);
                 const newLivro = await LivroService.insertLivro(livro);
                 setIsLoading(false);
@@ -293,15 +300,6 @@ export default function LivroForm(props : any){
                 history.push({
                     pathname: '/livros/show',
                     state: newLivro
-                });
-            }else{
-                setIsLoading(true);
-                const updatedLivro = await LivroService.updateLivro(livro);
-                setIsLoading(false);
-                console.log(updatedLivro);
-                history.push({
-                    pathname: '/livros/show',
-                    state: updatedLivro
                 });
             }
         }

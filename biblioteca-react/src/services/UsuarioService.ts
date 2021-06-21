@@ -24,6 +24,14 @@ export class UsuarioService{
         }
     }
 
+    public static async find(texto : string, incAdmin : boolean = false) : Promise<Array<Usuario>>{
+        const url = `auth/users?find=${texto}&includeAdmin=${incAdmin?'true':'false'}`;
+        const response = await api.get(url);
+        return response.data.map((d : any) => {
+            return Usuario.createFromData(d);
+        })
+    }
+
     public static async save(usuario : Usuario): Promise<any>{
         try{
             let response;

@@ -98,6 +98,35 @@ export class LivroService{
             } 
         }
     }
+
+    public static async delete(livroId : number) : Promise<any>{
+        const url = `livros/${livroId}`;
+        try{
+            const response = await api.delete(url);
+            return {
+                done: true,
+                data: response.data
+            };
+        }catch(error){
+            if (error.response) {
+                if (error.response.status === 400){
+                    return {
+                        done: false,
+                        message: 'Livro em uso, impossível remover!'
+                    }
+                }
+                return {
+                    done: false,
+                    message: error.response.data.message
+                }
+            } else{
+                return {
+                    done: false, 
+                    message: 'Erro desconhecido!'
+                }
+            }
+        }
+    }
     
 }
 

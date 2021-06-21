@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
+@Deprecated
 public class SettingService {
 
     public int getDiasReserva(){

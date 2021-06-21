@@ -1,11 +1,11 @@
 package br.com.uabrestingaseca.biblioteca.services;
 
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
-import br.com.uabrestingaseca.biblioteca.model.Emprestimo;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.repositories.ReservaRepository;
+import br.com.uabrestingaseca.biblioteca.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +32,7 @@ public class ReservaService {
     private ExemplarService exemplarService;
 
     @Autowired
-    private SettingService settingService;
+    private ParametroService parametroService;
 
     @Autowired
     private UsuarioService usuarioService;
@@ -47,6 +47,10 @@ public class ReservaService {
 
     public Page<Reserva> findFiltered(boolean ativa, Pageable pageable){
         return repository.findFiltered(ativa, pageable);
+    }
+
+    public List<Reserva> findListFiltered(boolean ativa){
+        return repository.findListFiltered(ativa);
     }
 
     public List<Reserva> findAtivasFromExemplar(Exemplar exemplar){
@@ -114,8 +118,8 @@ public class ReservaService {
     
     @Transactional
     public Reserva create(Reserva reserva){
-        if (reserva.getUsuario() == null){
-            reserva.setUsuario(Usuario.getUsuarioLogado());
+        if (reserva.getUsuario() == null && reserva.getUsuarioId() != null){
+            reserva.setUsuario(usuarioService.findById(reserva.getUsuarioId()));
         }
         if (reserva.getExemplar() == null && reserva.getExemplarNumRegistro() != null){
             reserva.setExemplar(new Exemplar(reserva.getExemplarNumRegistro()));
@@ -125,7 +129,10 @@ public class ReservaService {
         exemplar = exemplarService.save(exemplar);
         if (reserva.getDataHora() == null)
             reserva.setDataHora(LocalDateTime.now());
-        reserva.setDataLimite(LocalDate.now().plusDays(settingService.getDiasReserva()));
+        if (reserva.getDataLimite() == null){
+            int diasReserva = parametroService.getDiasReserva();
+            reserva.setDataLimite(LocalDate.now().plusDays(diasReserva));
+        }
         reserva.setExemplar(exemplar);
         return repository.save(reserva);
     }

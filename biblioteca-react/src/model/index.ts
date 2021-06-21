@@ -7,3 +7,5 @@ export * from './Livro';
 export * from './Origem';
 export * from './Secao';
 export * from './Usuario';
+export * from './Emprestimo';
+export * from './Reserva';

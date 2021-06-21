@@ -1,38 +1,86 @@
+import { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
-import { Button } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
 
 import { BreadcrumbsMaker } from '../../components/breadcrumbs'
 import { Livro } from '../../model';
+import { LivroService, ExemplarService } from '../../services';
 
 import './style.css';
 
 export default function LivroPage(props : any){
     
     const livro = Livro.createLivroFromState(props.location.state);
-    
+        
     const history = useHistory();
 
     const canEdit = Cookie.get('isGerente');
+    const [canDelete, setCanDelete] = useState(false);
+
+    const [numExemplares, setNumExemplares] = useState(0);
 
     const bcMaker = new BreadcrumbsMaker(livro.titulo || '');
     bcMaker.addHrefBreadcrumb('Home', '/');
     bcMaker.addHrefBreadcrumb('Livros', '/livros');
 
+    useEffect(()=>{
+        if (livro.id){
+            ExemplarService.findExemplares(livro.id).then((exemplares)=>{
+                setNumExemplares(exemplares.length);
+                setCanDelete(exemplares.length === 0);
+            });
+        }
+    },[livro.id]);
+
     function _handleEdit(){
         history.push('/livros/edit', livro);
     }
 
-    function _renderButtomIfManager(){
+    async function _handleDelete(){
+        if (livro.id && window.confirm('Tem certeza que deseja remover o livro?')) {
+            const resp = await LivroService.delete(livro.id);
+            if (resp.done){
+                history.push('/livros', { message : 'Livro excluído!'});
+            }else{
+                alert(resp.message);
+            }
+        } 
+    }
+
+    function _renderButtonsIfManager(){
         if (canEdit){
             return (
-                <Button variant="contained" type="submit" onClick={_handleEdit}>
-                    <EditIcon />
-                    Editar
-                </Button>
+                <Fragment>
+                    <Button variant="contained" onClick={_handleEdit}>
+                        <EditIcon />
+                        Editar
+                    </Button>
+                    <Tooltip title={canDelete? '' : 
+                        'Não é possivel excluir um livro que tenha exemplares cadastrados'}>
+                        <span>
+
+                        <Button 
+                            style={canDelete?{ 
+                                backgroundColor: '#DD0000',
+                                color: '#EEE',
+                                marginLeft: '0.5rem'
+                            }:{                          
+                                marginLeft: '0.5rem'
+                            }} 
+                            variant="contained" 
+                            disabled={!canDelete}
+                            onClick={_handleDelete}>
+                            <DeleteIcon />
+                            Excluir
+                        </Button>
+                        </span>
+                    </Tooltip>
+                </Fragment>
             );
         }
     }
@@ -99,14 +147,14 @@ export default function LivroPage(props : any){
                         <td className="btnExemplares">
                             <Button variant="contained" type="submit" onClick={_goToExemplares}>
                                 <LibraryBooksIcon />
-                                Exemplares
+                                Exemplares ({numExemplares})
                             </Button>
                         </td>
                     </tr>
                 </tbody>
             </table>
             <div className="editContainer">
-                {_renderButtomIfManager()}
+                {_renderButtonsIfManager()}
             </div>
         </div>
     );

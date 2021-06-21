@@ -69,7 +69,8 @@ public class AuthController {
     public ResponseEntity<List<Usuario>> index(
             @RequestParam(value="page", defaultValue = "0") int page,
             @RequestParam(value="limit", defaultValue = "10") int limit,
-            @RequestParam(value="find", defaultValue = "") String find) {
+            @RequestParam(value="find", defaultValue = "") String find,
+            @RequestParam(value="includeAdmin", defaultValue = "false") boolean includeAdmin) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Usuario> usuarios = (find.isBlank()) ?
                 service.findAll(pageable):
@@ -77,9 +78,14 @@ public class AuthController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(usuarios.getTotalElements()));
-        List<Usuario> users =  usuarios.toList().stream()
-                .filter(u->!u.getRoles().contains("ADMIN"))
-                .collect(Collectors.toList());
+        List<Usuario> users;
+        if (includeAdmin){
+            users =  usuarios.toList();
+        }else{
+            users =  usuarios.toList().stream()
+                    .filter(u->!u.getRoles().contains("ADMIN"))
+                    .collect(Collectors.toList());
+        }
         users.stream().forEach(u->{
             u.setGerente(u.getRoles().contains("GERENTE"));
         });

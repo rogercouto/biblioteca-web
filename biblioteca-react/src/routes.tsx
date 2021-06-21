@@ -13,7 +13,7 @@ import SecoesPage from './pages/Secoes';
 import CategoriasPage from './pages/Categorias';
 import OrigensPage from './pages/Origens';
 import UsuariosPage from './pages/Usuarios';
-
+import EmprestimosPage from './pages/Emprestimos'
 import ErrorsPage from './pages/Errors';
 
 export default function Routes(){
@@ -27,6 +27,7 @@ export default function Routes(){
                 <Route path="/livros/insert" component={LivroForm}/>
                 <Route path="/livros/edit" component={LivroForm}/>
                 <Route path="/exemplares" exact component={ExemplaresPage}/>
+                <Route path="/emprestimos" exact component={EmprestimosPage}/>
                 <Route path="/assuntos" exact component={AssuntosPage}/>
                 <Route path="/autores" exact component={AutoresPage}/>
                 <Route path="/editoras" exact component={EditorasPage}/>

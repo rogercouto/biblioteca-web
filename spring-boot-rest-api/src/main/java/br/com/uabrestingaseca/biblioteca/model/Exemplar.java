@@ -61,6 +61,10 @@ public class Exemplar implements Serializable {
     @Transient
     private Baixa baixa;
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @Transient
+    private String tituloLivro;
+
     public Exemplar() {
     }
 
@@ -179,6 +183,17 @@ public class Exemplar implements Serializable {
         this.baixa = baixa;
     }
 
+    public String getTituloLivro() {
+        if (tituloLivro == null){
+            tituloLivro = getLivro().getTitulo();
+        }
+        return tituloLivro;
+    }
+
+    public void setTituloLivro(String tituloLivro) {
+        this.tituloLivro = tituloLivro;
+    }
+
     public String getSituacao() {
         if (!disponivel){
             setSituacao("Indisponível");
@@ -186,8 +201,10 @@ public class Exemplar implements Serializable {
             setSituacao("Fixo");
         }else if (!emprestado && !reservado){
             setSituacao("Disponível");
-        }else if (emprestado && !reservado){
+        }else if (emprestado && !reservado) {
             setSituacao("Emprestado");
+        }else if (emprestado && reservado){
+            setSituacao("Emprestado e Reservado");
         }else{
             setSituacao("Reservado");
         }
