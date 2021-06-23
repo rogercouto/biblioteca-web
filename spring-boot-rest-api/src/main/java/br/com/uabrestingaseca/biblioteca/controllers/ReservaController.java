@@ -52,7 +52,6 @@ public class ReservaController {
         responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(reservas.getTotalElements()));
         List<Reserva> list = reservas.toList();
-        list.forEach(ModelUtil::printJson);
         return ResponseEntity.ok()
                 .headers(responseHeaders)
                 .body(list);

@@ -14,11 +14,13 @@ const DialogEmprestimo = ( props : any ) => {
                 </DialogContentText>
                 <FormMovimento
                     numReg={props.numReg} 
+                    idUsuario={props.idUsuario}
                     canSelectUser={props.canSelectUser}
                     verificaReserva={true}
                     canChangeNumReg={props.canChangeNumReg}
                     onSave={props.onSave}
                     onClose={props.onClose}
+                    canChangeUser={props.canChangeUser}
                 />
             </DialogContent>
             <DialogActions>
@@ -31,7 +33,9 @@ DialogEmprestimo.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     numReg: PropTypes.number,
+    idUsuario: PropTypes.number,
     canSelectUser: PropTypes.bool,
+    canChangeUser: PropTypes.bool,
     canChangeNumReg: PropTypes.bool,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -39,8 +43,9 @@ DialogEmprestimo.propTypes = {
 };
 
 DialogEmprestimo.defaultProps = {
-    canSelectUser: true,
     canChangeNumReg: true,
+    canSelectUser: true,
+    canChangeUser: true,
     verificaReserva: false
 }
 

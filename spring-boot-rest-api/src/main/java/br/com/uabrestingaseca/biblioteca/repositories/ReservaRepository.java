@@ -1,6 +1,5 @@
 package br.com.uabrestingaseca.biblioteca.repositories;
 
-import br.com.uabrestingaseca.biblioteca.model.Emprestimo;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
@@ -14,8 +13,11 @@ import java.util.List;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 
-    @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa")
+    @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa ORDER BY r.ativa DESC, r.dataHoraRetirada ASC")
     Page<Reserva> findFiltered(@Param("ativa") boolean ativa, Pageable pageable);
+
+    @Query("SELECT r FROM Reserva r ORDER BY r.ativa DESC, r.dataHoraRetirada ASC")
+    Page<Reserva> findAll(Pageable pageable);
 
     @Query("SELECT r FROM Reserva r WHERE r.ativa = true AND r.exemplar = :exemplar")
     List<Reserva> findFromExemplar(@Param("exemplar") Exemplar exemplar);
@@ -26,6 +28,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     @Query("SELECT e FROM Reserva e WHERE e.usuario = :usuario")
     Page<Reserva> findFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
 
-    @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa")
+    @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa ORDER BY r.ativa DESC, r.dataHoraRetirada ASC")
     List<Reserva> findListFiltered(@Param("ativa") boolean ativa);
 }

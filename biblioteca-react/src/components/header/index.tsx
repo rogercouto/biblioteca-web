@@ -63,8 +63,8 @@ export default function Header(){
                     <div className="dropdown">
                         <button className="dropbtn"><CompareArrowsIcon />Movimentação</button>
                         <div className="dropdown-content">
-                            <a href="/emprestimos"><AssignmentReturnIcon />Empréstimos</a>
-                            <a href="/"><HistoryIcon />Reservas</a>
+                            <a href="/emprestimos"><AssignmentReturnIcon className="flipH" />Empréstimos</a>
+                            <a href="/reservas"><HistoryIcon />Reservas</a>
                         </div>
                     </div>
                     <div className="dropdown">

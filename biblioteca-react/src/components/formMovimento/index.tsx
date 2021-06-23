@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { TextField, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
-import SaveIcon from '@material-ui/icons/Save';
+import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { Exemplar, Usuario } from '../../model';
@@ -18,6 +18,7 @@ const FormMovimento = ( props : any) => {
     const isGerente = Cookies.get('isGerente') === 'true';
 
     const [numRegistro, setNumRegistro] = useState<number | undefined>(props.numReg);
+    const [idUsuario, setIdUsuario] = useState<number | undefined>(props.idUsuario);
 
     const [temErroNumReg, setTemErroNumReg] = useState<boolean>(false);
     const [erroNumReg, setErroNumReg] = useState<String>('');
@@ -53,12 +54,41 @@ const FormMovimento = ( props : any) => {
                 setUsuarios(list);
                 const nomes = list.map((u:Usuario)=>{return u.nome || '';});
                 setNomesUsuarios(nomes);
+                if (idUsuario){
+                    let userName : string | undefined;
+                    list.forEach((u : Usuario)=>{ 
+                        if (u.id === idUsuario){
+                            userName = u.nome;
+                        }
+                    });
+                    if (userName){
+                        const users = list.filter((u:Usuario)=>{
+                            return u.nome === userName;
+                        });
+                        if (users.length === 1){
+                            const user = users[0];
+                            setUsuario(user);
+                            setIdUsuario(user.id);
+                        }
+                        setNomeUsuario(userName);
+                    }
+                }
             })
         }else{
-            setUsuarios([]);
+            if (idUsuario){
+                UsuarioService.findById(idUsuario).then((user: Usuario)=>{
+                    setUsuarios( [ user ] );
+                    setNomesUsuarios( [ user.nome || '' ]);
+                    if (user.nome){
+                        setUsuario(user);
+                    }
+                });
+            }else{
+                setUsuarios([]);
+            }
             setNomesUsuarios([]);
         }
-    },[isGerente, numRegistro, buscaUsuario, props.canChangeNumReg]);
+    },[numRegistro, buscaUsuario, props.canChangeNumReg, isGerente, idUsuario]);
 
     const handleChangeNumReg = (event : any) => {
         const num = +event.target.value;
@@ -107,10 +137,14 @@ const FormMovimento = ( props : any) => {
             if (index >= 0){
                 const usr = usuarios[index];
                 setUsuario(usr);
+                if (usr){
+                    setIdUsuario(usr.id);
+                }
             }
         }else{
             setNomeUsuario(undefined);
             setUsuario(undefined);
+            setIdUsuario(undefined);
         }
     };
 
@@ -128,6 +162,7 @@ const FormMovimento = ( props : any) => {
         if (props.canSelectUser){
             return(
                 <Autocomplete
+                    disabled={!props.canChangeUser}
                     noOptionsText={'Buscar usuário por nome...'}
                     options={nomesUsuarios}
                     value={nomeUsuario}
@@ -197,7 +232,7 @@ const FormMovimento = ( props : any) => {
                         }
                     }} 
                     variant="contained">
-                    <SaveIcon/>
+                    <DoneIcon/>
                     Salvar
                 </Button>
                 <Button onClick={props.onClose} variant="contained">
@@ -211,8 +246,10 @@ const FormMovimento = ( props : any) => {
 
 FormMovimento.propTypes = {
     numReg: PropTypes.number,
+    idUsuario: PropTypes.number,
     canSelectUser: PropTypes.bool,
     canChangeNumReg: PropTypes.bool,
+    canChangeUser: PropTypes.bool,
     verificaReserva: PropTypes.bool,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -221,6 +258,7 @@ FormMovimento.propTypes = {
 FormMovimento.defaultProps = {
     canSelectUser: true,
     canChangeNumReg: true,
+    canChangeUser: true,
     verificaReserva: false
 }
 

@@ -14,6 +14,7 @@ import CategoriasPage from './pages/Categorias';
 import OrigensPage from './pages/Origens';
 import UsuariosPage from './pages/Usuarios';
 import EmprestimosPage from './pages/Emprestimos'
+import ReservasPage from './pages/Reservas';
 import ErrorsPage from './pages/Errors';
 
 export default function Routes(){
@@ -26,15 +27,16 @@ export default function Routes(){
                 <Route path="/livros/show" component={LivroPage}/>
                 <Route path="/livros/insert" component={LivroForm}/>
                 <Route path="/livros/edit" component={LivroForm}/>
-                <Route path="/exemplares" exact component={ExemplaresPage}/>
-                <Route path="/emprestimos" exact component={EmprestimosPage}/>
-                <Route path="/assuntos" exact component={AssuntosPage}/>
-                <Route path="/autores" exact component={AutoresPage}/>
-                <Route path="/editoras" exact component={EditorasPage}/>
-                <Route path="/secoes" exact component={SecoesPage}/>
-                <Route path="/categorias" exact component={CategoriasPage}/>
-                <Route path="/origens" exact component={OrigensPage}/>
-                <Route path="/usuarios" exact component={UsuariosPage}/>
+                <Route path="/exemplares" component={ExemplaresPage}/>
+                <Route path="/emprestimos" component={EmprestimosPage}/>
+                <Route path="/reservas" component={ReservasPage}/>
+                <Route path="/assuntos" component={AssuntosPage}/>
+                <Route path="/autores" component={AutoresPage}/>
+                <Route path="/editoras" component={EditorasPage}/>
+                <Route path="/secoes" component={SecoesPage}/>
+                <Route path="/categorias" component={CategoriasPage}/>
+                <Route path="/origens" component={OrigensPage}/>
+                <Route path="/usuarios" component={UsuariosPage}/>
                 <Route path="/errors" component={ErrorsPage} />
             </Switch>
         </BrowserRouter>

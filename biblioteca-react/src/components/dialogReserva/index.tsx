@@ -15,6 +15,7 @@ const DialogReserva = ( props : any ) => {
                 <FormMovimento 
                     numReg={props.numReg} 
                     canSelectUser={props.canSelectUser}
+                    canChangeUser={true}
                     verificaReserva={false}
                     canChangeNumReg={props.canChangeNumReg}
                     onSave={props.onSave}
@@ -30,8 +31,7 @@ const DialogReserva = ( props : any ) => {
 DialogReserva.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
-    numReg: PropTypes.number,
-    canSelectUser: PropTypes.bool,
+    numReg: PropTypes.number,  
     canChangeNumReg: PropTypes.bool,
     onSave: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,

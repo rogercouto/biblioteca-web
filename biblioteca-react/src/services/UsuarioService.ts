@@ -32,6 +32,12 @@ export class UsuarioService{
         })
     }
 
+    public static async findById(userId : number) : Promise<Usuario>{
+        const url = `auth/users/${userId}`;
+        const response = await api.get(url);
+        return await Usuario.createFromData(response.data);
+    }
+
     public static async save(usuario : Usuario): Promise<any>{
         try{
             let response;
