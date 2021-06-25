@@ -5,7 +5,6 @@ import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.repositories.ReservaRepository;
-import br.com.uabrestingaseca.biblioteca.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +49,7 @@ public class ReservaService {
     }
 
     public List<Reserva> findListFiltered(boolean ativa){
-        return repository.findListFiltered(ativa);
+        return repository.findFilteredList(ativa);
     }
 
     public List<Reserva> findAtivasFromExemplar(Exemplar exemplar){
@@ -91,6 +90,11 @@ public class ReservaService {
                         reserva.getUsuario().getId()));
             }else{
                 reserva.setUsuario(usuario);
+            }
+            int totalAtivas = repository.findAtivasFromUsuarioList(usuario).size();
+            int limiteReservas = parametroService.getLimiteReservas();
+            if (totalAtivas >= limiteReservas){
+                errors.add("Não é possivel realizar a reserva, limite excedido!");
             }
         }
         Exemplar exemplar = null;

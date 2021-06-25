@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -132,6 +133,7 @@ public class EmprestimoController {
     @PutMapping(value = "/devolucao/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<?> devolucao(@PathVariable("id") int id){
         Emprestimo emprestimo = service.findById(id);
         if (emprestimo == null){
@@ -151,25 +153,27 @@ public class EmprestimoController {
                 pendencia.setValor(multa);
                 pendencia.setUsuario(emprestimo.getUsuario());
                 pendencia.setEmprestimo(emprestimo);
+                pendencia.setDataHoraLancamento(LocalDateTime.now());
                 Livro livro = emprestimo.getExemplar().getLivro();
                 pendencia.setDescricao(String.format("Multa referente a empréstimo do livro: %s", livro.getTitulo()));
                 pendenciaService.save(pendencia);
                 DecimalFormat df = new DecimalFormat("#,##0.00");
                 String message = String.format("Empréstimo devolvido após o prazo.\rMulta gerada no valor de R$: %s", df.format(multa));
-                response.put("message", "Empréstimo devolvido com sucesso!");
+                response.put("message", message);
             }else{
                 response.put("message", "Empréstimo devolvido com sucesso!");
             }
-            service.update(emprestimo);
+            emprestimo = service.devolucao(emprestimo);
+            response.put("emprestimo", emprestimo);
         }else{
-            response.put("message", "Empréstimo já devolvido!");
+            throw new ModelValidationException("Erro ao devolver exemplar","Exemplar já devolvido!");
         }
         return ResponseEntity.ok(response);
 
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Emprestimo> delete(@PathVariable("id") int id){
+    public ResponseEntity<?> delete(@PathVariable("id") int id){
         service.delete(id);
         return ResponseEntity.ok().build();
     }

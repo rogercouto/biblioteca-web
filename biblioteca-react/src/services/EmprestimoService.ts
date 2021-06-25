@@ -54,13 +54,13 @@ export class EmprestimoService{
 
     public static async devolucao(emprestimo : Emprestimo) : Promise<{done: boolean, object: any}>{
         try {
-            const updEmp = {
-                dataHoraDevolucao : DateTimeUtil.toAPIDateTime(new Date()),
-            }
-            const savedEmp = await api.put(`emprestimos/${emprestimo.id}`, updEmp);
+            const response = await api.put(`emprestimos/devolucao/${emprestimo.id}`, {});
             return {
                 done: true,
-                object: Emprestimo.createFromData(savedEmp.data)
+                object: { 
+                    emprestimo: Emprestimo.createFromData(response.data.emprestimo),
+                    message: response.data.message
+                }
             };
         } catch (error) {
             let message = 'Erro desconhecido!';

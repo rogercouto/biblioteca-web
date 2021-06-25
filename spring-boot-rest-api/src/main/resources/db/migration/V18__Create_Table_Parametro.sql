@@ -9,4 +9,6 @@ INSERT INTO `parametro` values
 ('diasEmprestimo', '7', true),
 ('diasReserva', '2', true),
 ('limiteRenov', '-1', true),
-('multaPorDiaAtraso','2.00', true);
+('multaPorDiaAtraso','2.00', true),
+('limiteReservas','1', true),
+('limiteEmprestimos','3', true);

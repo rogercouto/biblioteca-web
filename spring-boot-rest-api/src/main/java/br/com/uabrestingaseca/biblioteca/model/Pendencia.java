@@ -3,6 +3,7 @@ package br.com.uabrestingaseca.biblioteca.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "pendencia")
@@ -12,7 +13,7 @@ public class Pendencia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @ManyToOne
     @NotNull(message = "Usuário deve ser informado")
@@ -26,22 +27,20 @@ public class Pendencia {
     @ManyToOne
     private Emprestimo emprestimo;
 
+    @Column(name = "data_hora_lancamento")
+    private LocalDateTime dataHoraLancamento;
+
+    @Column(name = "data_hora_pagamento")
+    private LocalDateTime dataHoraPagamento;
+
     public Pendencia() {
     }
 
-    public Pendencia(int id, Usuario usuario, BigDecimal valor, String descricao, Emprestimo emprestimo) {
-        this.id = id;
-        this.usuario = usuario;
-        this.valor = valor;
-        this.descricao = descricao;
-        this.emprestimo = emprestimo;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -75,5 +74,21 @@ public class Pendencia {
 
     public void setEmprestimo(Emprestimo emprestimo) {
         this.emprestimo = emprestimo;
+    }
+
+    public LocalDateTime getDataHoraPagamento() {
+        return dataHoraPagamento;
+    }
+
+    public LocalDateTime getDataHoraLancamento() {
+        return dataHoraLancamento;
+    }
+
+    public void setDataHoraLancamento(LocalDateTime dataHoraLancamento) {
+        this.dataHoraLancamento = dataHoraLancamento;
+    }
+
+    public void setDataHoraPagamento(LocalDateTime dataHoraPagamento) {
+        this.dataHoraPagamento = dataHoraPagamento;
     }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 import { TextField, Button } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
@@ -14,6 +15,8 @@ import './styles.css';
 
 export default function LivroForm(props : any){
     
+    const canEdit = Cookies.get('isGerente') === 'true';
+
     const livro = Livro.createLivroFromState(props.location.state);
 
     const history = useHistory();
@@ -303,6 +306,10 @@ export default function LivroForm(props : any){
                 });
             }
         }
+    }
+
+    if (!canEdit){
+        return (<div className="formContainer"><h1>Não autorizado!</h1></div>);
     }
     
     return (

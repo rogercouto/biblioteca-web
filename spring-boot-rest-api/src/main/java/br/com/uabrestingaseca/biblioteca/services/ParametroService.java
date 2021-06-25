@@ -79,5 +79,28 @@ public class ParametroService {
         return new BigDecimal(0.0);
     }
 
+    public int getLimiteRenov(){
+        Integer limite = findIntValueByKey(ParamKeys.limiteRenov);
+        if (limite != null){
+            return limite.intValue();
+        }
+        return 1;
+    }
+
+    public int getLimiteReservas(){
+        Integer limite = findIntValueByKey(ParamKeys.limiteReservas);
+        if (limite != null){
+            return limite.intValue();
+        }
+        return 1;
+    }
+
+    public int getLimiteEmprestimos(){
+        Integer limite = findIntValueByKey(ParamKeys.limiteEmprestimos);
+        if (limite != null){
+            return limite.intValue();
+        }
+        return 1;
+    }
 
 }

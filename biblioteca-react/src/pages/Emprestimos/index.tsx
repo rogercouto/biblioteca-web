@@ -107,11 +107,17 @@ const EmprestimosPage = () => {
     const handleConfirmDevolucao = async() =>{
         if (dEmprestimo){
             const index = emprestimos.indexOf(dEmprestimo);
-            const updEmprestimo = await EmprestimoService.devolucao(dEmprestimo);
-            const updEmprestimos = [...emprestimos];
-            updEmprestimos[index] = updEmprestimo.object;
-            setEmprestimos(updEmprestimos);
-            setDEmprestimo(undefined);
+            const response = await EmprestimoService.devolucao(dEmprestimo);
+            console.log(response);
+            if (response.done){
+                const updEmprestimo = response.object.emprestimo;
+                const updEmprestimos = [...emprestimos];
+                updEmprestimos[index] = updEmprestimo;
+                setEmprestimos(updEmprestimos);
+                setDEmprestimo(undefined);
+                setConfMessage(response.object.message);
+                setConfOpen(true);
+            }
         }
         setDialogDevolucaoOpen(false);
     };

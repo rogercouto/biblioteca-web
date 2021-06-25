@@ -6,6 +6,7 @@ import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.repositories.EmprestimoRepository;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -89,6 +90,11 @@ public class EmprestimoService {
                         emprestimo.getUsuario().getId()));
             }else{
                 emprestimo.setUsuario(usuario);
+            }
+            int totalAtivos = repository.findAtivosFromUsuarioList(usuario).size();
+            int limiteEmprestimos = parametroService.getLimiteEmprestimos();
+            if (totalAtivos >= limiteEmprestimos){
+                errors.add("Não é possivel realizar o empréstimo, limite excedido!");
             }
         }
         Exemplar exemplar = null;
@@ -189,6 +195,17 @@ public class EmprestimoService {
         int diasEmprestimo = parametroService.getDiasEmprestimo();
         LocalDate prazo = emprestimo.getDataHora().plusDays(diasEmprestimo * (emprestimo.getNumRenovacoes()+1)).toLocalDate();
         emprestimo.setPrazo(prazo);
+        return repository.save(emprestimo);
+    }
+
+    public Emprestimo devolucao(Emprestimo emprestimo){
+        if (emprestimo.getDataHoraDevolucao() == null){
+            emprestimo.setDataHoraDevolucao(LocalDateTime.now());
+        }
+        Exemplar exemplar = emprestimo.getExemplar();
+        exemplar.setEmprestado(false);
+        exemplar = exemplarService.save(exemplar);
+        emprestimo.setExemplar(exemplar);
         return repository.save(emprestimo);
     }
 

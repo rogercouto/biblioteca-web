@@ -22,12 +22,15 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
     @Query("SELECT r FROM Reserva r WHERE r.ativa = true AND r.exemplar = :exemplar")
     List<Reserva> findFromExemplar(@Param("exemplar") Exemplar exemplar);
 
-    @Query("SELECT e FROM Reserva e WHERE e.exemplar = :exemplar")
+    @Query("SELECT r FROM Reserva r WHERE r.exemplar = :exemplar")
     Page<Reserva> findFromExemplar(@Param("exemplar") Exemplar exemplar, Pageable pageable);
 
-    @Query("SELECT e FROM Reserva e WHERE e.usuario = :usuario")
+    @Query("SELECT r FROM Reserva r WHERE r.usuario = :usuario")
     Page<Reserva> findFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
 
+    @Query("SELECT r FROM Reserva r WHERE r.usuario = :usuario AND r.ativa = true")
+    List<Reserva> findAtivasFromUsuarioList(@Param("usuario") Usuario usuario);
+
     @Query("SELECT r FROM Reserva r WHERE r.ativa = :ativa ORDER BY r.ativa DESC, r.dataHoraRetirada ASC")
-    List<Reserva> findListFiltered(@Param("ativa") boolean ativa);
+    List<Reserva> findFilteredList(@Param("ativa") boolean ativa);
 }

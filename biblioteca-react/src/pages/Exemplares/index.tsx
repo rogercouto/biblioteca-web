@@ -26,11 +26,11 @@ import './style.css';
 const ExemplaresPage = (props : any) => {
 
     const livro = props.location.state;
+    const history = useHistory();
 
     const canEdit = Cookies.get('isGerente') === 'true';
     const userId = Cookies.get('userId');
 
-    const history = useHistory();
 
     const [exemplares, setExemplares] = useState(new Array<Exemplar>());
 
@@ -70,16 +70,18 @@ const ExemplaresPage = (props : any) => {
     const [dialogNumReg, setDialogNumReg] = useState<number | undefined>(undefined);
 
     useEffect(()=>{
-        ExemplarService.findExemplares(livro.id).then(list =>{
-            setExemplares(list);
-        });
-        ExemplarService.findSecoes().then(list=>{
-            setSecoes(list);
-        });
-        ExemplarService.findOrigens().then(list=>{
-            setOrigens(list);
-        });
-    },[livro.id]);
+        if (livro){
+            ExemplarService.findExemplares(livro.id).then(list =>{
+                setExemplares(list);
+            });
+            ExemplarService.findSecoes().then(list=>{
+                setSecoes(list);
+            });
+            ExemplarService.findOrigens().then(list=>{
+                setOrigens(list);
+            });
+        }
+    },[livro]);
 
     const Alert = (props: AlertProps) => {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -321,14 +323,15 @@ const ExemplaresPage = (props : any) => {
 
 
     const renderButtons = (exemplar : Exemplar) => {
+        const podeReservar : boolean = exemplar.situacao === 'Disponível' || exemplar.situacao === 'Emprestado';
         if (canEdit){
             if (edtNumReg === 0){
                 return (
                     <Fragment>
-                        <Tooltip title="Reservar exemplar">
+                        <Tooltip title={podeReservar ? 'Reservar exemplar' : 'Exemplar já reservado'}>
                             <span>
                                 <Button 
-                                    disabled={exemplar.situacao !== 'Disponível' && exemplar.situacao !== 'Emprestado'}
+                                    disabled={!podeReservar}
                                     variant="contained" 
                                     onClick={(e)=>{
                                         handleQuestionReserva(exemplar);
@@ -385,11 +388,14 @@ const ExemplaresPage = (props : any) => {
         //depois colocar botões pra reservar caso logado
         return (
             <Fragment>
-                <Tooltip title="Reservar exemplar">
+                <Tooltip title={podeReservar ? 'Reservar exemplar' : 'Exemplar já reservado'}>
                     <span>
-                        <Button variant="contained" onClick={(e)=>{
-                            handleQuestionReserva(exemplar);
-                        }}>
+                        <Button 
+                            disabled={!podeReservar}
+                            variant="contained" 
+                            onClick={(e)=>{
+                                handleQuestionReserva(exemplar);
+                            }}>
                             <UpdateIcon />
                         </Button>
                     </span>
@@ -555,13 +561,6 @@ const ExemplaresPage = (props : any) => {
         }
     };
 
-    const _renderLastColumn = () => {
-        if (canEdit){
-            return (<th></th>);
-        }
-        return (<Fragment/>);
-    };
-
     const openForm = (exemplar : Exemplar) => {
         setDialogNumReg(exemplar?.numRegistro);
         setDialogOpen(true);
@@ -597,6 +596,10 @@ const ExemplaresPage = (props : any) => {
         }
     }
 
+    if (!livro){
+        return (<div className="exemplaresContainer"><h1>Não autorizado!</h1></div>);
+    }
+
     return(
         <div className="exemplaresContainer">
             {bcMaker.render()}
@@ -610,7 +613,7 @@ const ExemplaresPage = (props : any) => {
                         <th>Data de aquisição</th>
                         <th>Origem</th>
                         <th>Situação</th>
-                        {_renderLastColumn()}
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>

@@ -42,7 +42,12 @@ export class ReservaService{
         } catch (error) {
             let message = 'Erro desconhecido!';
             if (error.response) {
-                message = error.response.data.error;
+                if (error.response.data.error){
+                    message = error.response.data.error;
+                }
+                if (error.response.data.errors.length > 0){
+                    message = error.response.data.errors.join('\r');
+                }
             } 
             return {
                 done: false,
