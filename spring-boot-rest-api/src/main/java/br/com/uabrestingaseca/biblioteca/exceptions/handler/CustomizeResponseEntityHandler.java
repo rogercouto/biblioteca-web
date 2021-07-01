@@ -32,7 +32,7 @@ public class CustomizeResponseEntityHandler extends ResponseEntityExceptionHandl
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public final ResponseEntity<ExceptionResponse> handleResourceNotExistsException(ResourceNotFoundException exception,WebRequest request){
 		ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage());
-		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(InvalidJwtAuthenticationException.class)

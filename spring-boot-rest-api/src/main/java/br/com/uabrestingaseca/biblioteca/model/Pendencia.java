@@ -1,5 +1,7 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -28,9 +30,11 @@ public class Pendencia {
     private Emprestimo emprestimo;
 
     @Column(name = "data_hora_lancamento")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHoraLancamento;
 
     @Column(name = "data_hora_pagamento")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataHoraPagamento;
 
     public Pendencia() {

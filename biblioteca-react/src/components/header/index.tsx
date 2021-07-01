@@ -18,13 +18,13 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
 import HistoryIcon from '@material-ui/icons/History';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 
 import './styles.css';
 
 export default function Header(){
 
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
-    
     const [username, setUsername] = useState('');
 
     useEffect(()=>{
@@ -35,28 +35,28 @@ export default function Header(){
         getUsername();
     },[username]);
 
-    function _logout(){
+    const logout = () => {
         Cookies.remove('username');
         Cookies.remove('token');
         Cookies.remove('isGerente');
         setUsername('');
-    }
+    };
 
-    function _renderUserButton(){
+    const renderUserButton = () => {
         if (username && username !== ''){
             return (
                 <div>
                     <FaceIcon />
                     <span>{username}</span>
-                    <a onClick={_logout} href="/"><ExitToAppIcon /> Sair</a>
+                    <a onClick={logout} href="/"><ExitToAppIcon /> Sair</a>
                 </div>
             );
         }else{
             return (<a href="/login"><AccountCircleIcon /> Entrar</a>);
         }
-    }
+    };
 
-    function _renderGerenteLinks(){
+    const renderGerenteLinks = () => {
         if (canEdit){
             return (
                 <Fragment>
@@ -65,6 +65,7 @@ export default function Header(){
                         <div className="dropdown-content">
                             <a href="/emprestimos"><AssignmentReturnIcon className="flipH" />Empréstimos</a>
                             <a href="/reservas"><HistoryIcon />Reservas</a>
+                            <a href="/pendencias"><MonetizationOnIcon />Pendências</a>
                         </div>
                     </div>
                     <div className="dropdown">
@@ -80,6 +81,16 @@ export default function Header(){
                         </div>
                     </div>
                 </Fragment>
+            );
+        }
+    };
+
+    const renderUserLinks = () => {
+        if (!canEdit && username && username.trim().length > 0){
+            return(
+                <li>
+                    <a href="/pendencias"><MonetizationOnIcon />Pendências</a>
+                </li>
             );
         }
     }
@@ -100,11 +111,13 @@ export default function Header(){
                     <li>
                         <a href="/livros"><MenuBookIcon />Livros</a>
                     </li>
-                    {_renderGerenteLinks()}
+                    {renderUserLinks()}
+                    {renderGerenteLinks()}
+
                     <li className="separator">
                     </li>
                     <li>
-                        {_renderUserButton()}
+                        {renderUserButton()}
                     </li>
                 </ul>
             </div>

@@ -9,3 +9,4 @@ export * from './Secao';
 export * from './Usuario';
 export * from './Emprestimo';
 export * from './Reserva';
+export * from './Pendencia';

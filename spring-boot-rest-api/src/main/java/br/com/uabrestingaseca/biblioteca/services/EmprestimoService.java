@@ -6,7 +6,6 @@ import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.repositories.EmprestimoRepository;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

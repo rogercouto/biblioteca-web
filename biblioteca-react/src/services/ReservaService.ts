@@ -1,12 +1,12 @@
 import { Exemplar, Reserva, Usuario } from '../model';
 import DateTimeUtil from '../util/DateTimeUtil';
-import api from './api';
+import Api from './api';
 
 export class ReservaService{
 
     public static async find(somenteAtivos : boolean = false): Promise<Array<Reserva>> {
         const url =  somenteAtivos ? 'reserva?filter=active' : 'reserva';
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any)=>{
             return Reserva.createFromData(d);
         });
@@ -15,7 +15,7 @@ export class ReservaService{
     public static async findPage(pageNum : number = 1, somenteAtivos: boolean = false, limit : number = 10): Promise<{reservas: Array<Reserva>, totalPag: number}>{
         const pageIndex = pageNum - 1;
         const url =  somenteAtivos ? `reservas?page=${pageIndex}&limit=10&filter=active` : `reservas?page=${pageIndex}&limit=10`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const total = response.headers['x-total-count'];
         const totalPages = +(total / limit);
         const totalPagesFixed = +(total / limit).toFixed(0);
@@ -33,19 +33,18 @@ export class ReservaService{
                 usuario: {id: reserva.usuario?.id },
                 dataHora: DateTimeUtil.toAPIDateTime( reserva.dataHora )
             }
-            console.log(newRes);
-            const response = await api.post('reservas', newRes);
+            const response = await Api.post('reservas', newRes);
             return {
                 done: true,
                 object: Reserva.createFromData(response.data)
             };
         } catch (error) {
+            console.log(error);
             let message = 'Erro desconhecido!';
             if (error.response) {
                 if (error.response.data.error){
                     message = error.response.data.error;
-                }
-                if (error.response.data.errors.length > 0){
+                }else if (error.response.data.errors && error.response.data.errors.length > 0){
                     message = error.response.data.errors.join('\r');
                 }
             } 
@@ -59,7 +58,7 @@ export class ReservaService{
     public static async delete(reserva : Reserva){
         const url = `reservas/${reserva.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data
@@ -81,7 +80,7 @@ export class ReservaService{
 
     public static async findByUsuarioId( usuarioId : number ) : Promise<Array<Reserva>>{
         const url = `reservas/usuario/${usuarioId}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any)=>{
             return Reserva.createFromData(d);
         });

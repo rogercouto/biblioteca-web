@@ -26,6 +26,10 @@ public class PendenciaService {
         });
     }
 
+    public Pendencia findById(Integer id){
+        return repository.findById(id).orElse(null);
+    }
+
     public Page<Pendencia> findPage(Pageable pageable){
         return repository.findAll(pageable);
     }
@@ -38,14 +42,18 @@ public class PendenciaService {
         }
     }
 
-    public List<Pendencia> findFromUsuario(Usuario usuario, Boolean ativas){
-        if (ativas != null && ativas.booleanValue() == true){
-            return repository.findAtivasListFromUsuario(usuario);
-        }else if (ativas != null && ativas.booleanValue() == false){
-            return repository.findInativasListFromUsuario(usuario);
+    public Page<Pendencia> findFromUsuario(Usuario usuario, Boolean ativas, Pageable pageable){
+        if (ativas != null && ativas.booleanValue()){
+            return repository.findAtivasPageFromUsuario(usuario, pageable);
+        }else if (ativas != null && !ativas.booleanValue()){
+            return repository.findInativasPageFromUsuario(usuario, pageable);
         }else{
-            return repository.findListFromUsuario(usuario);
+            return repository.findPageFromUsuario(usuario, pageable);
         }
+    }
+
+    public Page<Pendencia> findFromUsuario(Usuario usuario, Pageable pageable){
+        return repository.findPageFromUsuario(usuario, pageable);
     }
 
 

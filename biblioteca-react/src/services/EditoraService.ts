@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Editora } from '../model';
 
@@ -12,7 +12,7 @@ export class EditoraService{
     public static async getList(numPag : number) : Promise<EditorasResp> {
         const pageIndex = numPag - 1;
         const url = `editoras?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalEditoras = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalEditoras / limit).toFixed(0);
@@ -30,10 +30,10 @@ export class EditoraService{
             let url;
             if (editora.id && editora.id > 0){
                 url = `editoras/${editora.id}`;
-                response = await api.put(url, editora);
+                response = await Api.put(url, editora);
             }else{
                 url = 'editoras';
-                response = await api.post(url, editora);
+                response = await Api.post(url, editora);
             }
             return {
                 done: true,
@@ -57,7 +57,7 @@ export class EditoraService{
     public static async delete(editora : Editora): Promise<any>{
         const url = `editoras/${editora.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

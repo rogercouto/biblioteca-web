@@ -6,11 +6,13 @@ import br.com.uabrestingaseca.biblioteca.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
@@ -42,17 +44,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 				.authorizeRequests()
+				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 				.antMatchers("/auth/signin", "/api-docs/**", "/swagger-ui.html**").permitAll()
-				.antMatchers("/auth/signup").hasAuthority("ADMIN")
+				.antMatchers("/auth/signup").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers("/auth/users").hasAnyAuthority("ADMIN", "GERENTE")
 				.antMatchers("/").permitAll()
-				.antMatchers("/info").hasAuthority("ADMIN")
-				.antMatchers("/livros/**").permitAll()
-				.antMatchers("/exemplares/**").permitAll()
-				.antMatchers("/autores/**").permitAll()
-				.antMatchers("/baixas/**").permitAll()
-				.antMatchers("/reservas/**").permitAll()
+				.antMatchers("/info").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.GET, "/livros/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/livros/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.PUT, "/livros/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.DELETE, "/livros/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.GET, "/exemplares/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/exemplares/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.PUT, "/exemplares/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.DELETE, "/exemplares/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers("/autores/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers("/baixas/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.GET, "/reservas/**").hasAnyAuthority("ADMIN", "GERENTE", "ALUNO")
+				.antMatchers(HttpMethod.POST, "/reservas/**").hasAnyAuthority("ADMIN", "GERENTE", "ALUNO")
+				.antMatchers(HttpMethod.PUT, "/reservas/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers(HttpMethod.DELETE, "/reservas/**").hasAnyAuthority("ADMIN", "GERENTE")
+				.antMatchers("/emprestimos/**").hasAnyAuthority("ADMIN", "GERENTE")
 				.antMatchers("/pendencias/usuario/**").permitAll()
-				.antMatchers("/pendencias/adm/**").hasAnyAuthority("ADMIN")
+				.antMatchers("/pendencias/adm/**").hasAnyAuthority("ADMIN", "GERENTE")
 				.antMatchers("/users").denyAll()
 			.and()
 				.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)

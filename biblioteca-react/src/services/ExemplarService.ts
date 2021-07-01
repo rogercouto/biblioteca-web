@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Exemplar, Secao, Origem } from '../model';
 
@@ -8,7 +8,7 @@ export class ExemplarService{
 
     public static async findById(numReg : number): Promise<Exemplar | null>{
         const url = `exemplares/${numReg}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         if (response.data){
             return Exemplar.createFromData(response.data);
         }
@@ -17,7 +17,7 @@ export class ExemplarService{
     
     public static async findExemplares(livroId : number): Promise<Array<Exemplar>> {
         const url = `exemplares?livroId=${livroId}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any)=>{
             return Exemplar.createFromData(d);
         });
@@ -25,7 +25,7 @@ export class ExemplarService{
 
     public static async findSecoes(): Promise<Array<Secao>>{
         const url = 'secoes?page=0&limit=100000';
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any)=>{
             return new Secao(d.id, d.nome);
         });
@@ -33,7 +33,7 @@ export class ExemplarService{
 
     public static async findOrigens(): Promise<Array<Origem>>{
         const url = 'origens?page=0&limit=100000';
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any)=>{
             return new Origem(d.id, d.descricao);
         });
@@ -49,7 +49,7 @@ export class ExemplarService{
                 dataAquisicao: DateTimeUtil.toAPIDate( exemplar.dataAquisicao || new Date() ),
                 origem: { id: exemplar.origem?.id}
             };
-            const response = await api.post(url, data);
+            const response = await Api.post(url, data);
             return {
                 done: true,
                 data: response.data
@@ -79,7 +79,7 @@ export class ExemplarService{
                 dataAquisicao: DateTimeUtil.toAPIDate( exemplar.dataAquisicao || new Date() ),
                 origem: { id: exemplar.origem?.id}
             };
-            const response = await api.put(url, data);
+            const response = await Api.put(url, data);
             return {
                 done: true,
                 data: response.data
@@ -102,7 +102,7 @@ export class ExemplarService{
     public static async delete(exemplar : Exemplar) : Promise<any>{
         const url = `exemplares/${exemplar.numRegistro}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

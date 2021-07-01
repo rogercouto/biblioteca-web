@@ -16,6 +16,7 @@ import UsuariosPage from './pages/Usuarios';
 import EmprestimosPage from './pages/Emprestimos'
 import ReservasPage from './pages/Reservas';
 import ErrorsPage from './pages/Errors';
+import PendenciasPage from './pages/Pendencias';
 
 export default function Routes(){
     return(
@@ -30,6 +31,7 @@ export default function Routes(){
                 <Route path="/exemplares" component={ExemplaresPage}/>
                 <Route path="/emprestimos" component={EmprestimosPage}/>
                 <Route path="/reservas" component={ReservasPage}/>
+                <Route path="/pendencias" component={PendenciasPage}/>
                 <Route path="/assuntos" component={AssuntosPage}/>
                 <Route path="/autores" component={AutoresPage}/>
                 <Route path="/editoras" component={EditorasPage}/>

@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Secao } from '../model';
 
@@ -12,7 +12,7 @@ export class SecaoService{
     public static async getList(numPag : number) : Promise<SecoesResp> {
         const pageIndex = numPag - 1;
         const url = `secoes?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalSecoes = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalSecoes / limit).toFixed(0);
@@ -30,10 +30,10 @@ export class SecaoService{
             let url;
             if (secao.id && secao.id > 0){
                 url = `secoes/${secao.id}`;
-                response = await api.put(url, secao);
+                response = await Api.put(url, secao);
             }else{
                 url = 'secoes';
-                response = await api.post(url, secao);
+                response = await Api.post(url, secao);
             }
             return {
                 done: true,
@@ -57,7 +57,7 @@ export class SecaoService{
     public static async delete(secao : Secao): Promise<any>{
         const url = `secoes/${secao.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

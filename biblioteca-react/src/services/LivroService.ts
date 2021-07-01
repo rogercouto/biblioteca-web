@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Assunto, Livro } from '../model';
 
@@ -17,7 +17,7 @@ export class LivroService{
         }else{
             url = `livros?page=${pageIndex}`;
         }
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalLivros = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalLivros / limit).toFixed(0);
@@ -29,7 +29,7 @@ export class LivroService{
 
     public static async findAllNomesEditoras(texto : string){
         const url = `editoras?find=${texto}&limit=100000`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const editoras = response.data.map((d : any) => {
             return d.nome
         });
@@ -38,7 +38,7 @@ export class LivroService{
 
     public static async findAllDescrsAssuntos(){
         const url = 'assuntos?limit=100000';
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const assuntos = response.data.map((d : any) => {
             return d.descricao
         });
@@ -47,7 +47,7 @@ export class LivroService{
 
     public static async findAllAssuntos(): Promise<Array<Assunto>>{
         const url = 'assuntos?limit=100000';
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const assuntos: Array<Assunto> = response.data.map((d : any) => {
             return {
                 id: d.id, descricao: d.descricao, cores: d.cores, cdu: d.cdu
@@ -59,7 +59,7 @@ export class LivroService{
     
     public static async findAllDescrsCategorias(texto : string){
         const url = `categorias?find=${texto}&limit=100000`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const categorias = response.data.map((d : any) => {
             return d.descricao
         });
@@ -68,7 +68,7 @@ export class LivroService{
     
     public static async findNomesAutores(texto : string){
         const url = `autores?find=${texto}&limit=100000`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const autores = response.data.map((d : any) => {
             return `${d.sobrenome.toUpperCase()}, ${d.nome}`;
         });
@@ -78,7 +78,7 @@ export class LivroService{
     public static async insertLivro(livro : Livro): Promise<any>{
         const url = 'livros';
         try{
-            const response = await api.post(url, livro);
+            const response = await Api.post(url, livro);
             return response.data;
         }catch(error){
             if (error.response) {
@@ -90,7 +90,7 @@ export class LivroService{
     public static async updateLivro(livro : Livro): Promise<any>{
         const url = `livros/${livro.id}`;
         try{
-            const response = await api.put(url, livro);
+            const response = await Api.put(url, livro);
             return response.data;
         }catch(error){
             if (error.response) {
@@ -102,7 +102,7 @@ export class LivroService{
     public static async delete(livroId : number) : Promise<any>{
         const url = `livros/${livroId}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

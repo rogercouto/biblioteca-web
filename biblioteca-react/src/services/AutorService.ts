@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Autor } from '../model';
 
@@ -12,7 +12,7 @@ export class AutorService{
     public static async getList(numPag : number) : Promise<AutorsResp> {
         const pageIndex = numPag - 1;
         const url = `autores?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalAutors = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalAutors / limit).toFixed(0);
@@ -30,10 +30,10 @@ export class AutorService{
             let url;
             if (autor.id && autor.id > 0){
                 url = `autores/${autor.id}`;
-                response = await api.put(url, autor);
+                response = await Api.put(url, autor);
             }else{
                 url = 'autores';
-                response = await api.post(url, autor);
+                response = await Api.post(url, autor);
             }
             return {
                 done: true,
@@ -57,7 +57,7 @@ export class AutorService{
     public static async delete(autor : Autor): Promise<any>{
         const url = `autores/${autor.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

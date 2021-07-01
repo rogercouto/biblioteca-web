@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Origem } from '../model';
 
@@ -12,7 +12,7 @@ export class OrigemService{
     public static async getList(numPag : number) : Promise<OrigensResp> {
         const pageIndex = numPag - 1;
         const url = `origens?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalOrigens = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalOrigens / limit).toFixed(0);
@@ -30,10 +30,10 @@ export class OrigemService{
             let url;
             if (categoria.id && categoria.id > 0){
                 url = `origens/${categoria.id}`;
-                response = await api.put(url, categoria);
+                response = await Api.put(url, categoria);
             }else{
                 url = 'origens';
-                response = await api.post(url, categoria);
+                response = await Api.post(url, categoria);
             }
             return {
                 done: true,
@@ -57,7 +57,7 @@ export class OrigemService{
     public static async delete(categoria : Origem): Promise<any>{
         const url = `origens/${categoria.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

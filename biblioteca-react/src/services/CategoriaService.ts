@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Categoria } from '../model';
 
@@ -12,7 +12,7 @@ export class CategoriaService{
     public static async getList(numPag : number) : Promise<CategoriasResp> {
         const pageIndex = numPag - 1;
         const url = `categorias?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalCategorias = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalCategorias / limit).toFixed(0);
@@ -30,10 +30,10 @@ export class CategoriaService{
             let url;
             if (categoria.id && categoria.id > 0){
                 url = `categorias/${categoria.id}`;
-                response = await api.put(url, categoria);
+                response = await Api.put(url, categoria);
             }else{
                 url = 'categorias';
-                response = await api.post(url, categoria);
+                response = await Api.post(url, categoria);
             }
             return {
                 done: true,
@@ -57,7 +57,7 @@ export class CategoriaService{
     public static async delete(categoria : Categoria): Promise<any>{
         const url = `categorias/${categoria.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data

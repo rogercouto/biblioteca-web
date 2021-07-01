@@ -1,4 +1,4 @@
-import api from './api';
+import Api from './api';
 
 import { Usuario } from '../model';
 
@@ -12,7 +12,7 @@ export class UsuarioService{
     public static async getList(numPag : number) : Promise<UsuariosResp> {
         const pageIndex = numPag - 1;
         const url = `auth/users?page=${pageIndex}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         const totalUsuarios = response.headers['x-total-count'];
         const limit = 10;
         const totalPag = +(totalUsuarios / limit).toFixed(0);
@@ -26,7 +26,7 @@ export class UsuarioService{
 
     public static async find(texto : string, incAdmin : boolean = false) : Promise<Array<Usuario>>{
         const url = `auth/users?find=${texto}&includeAdmin=${incAdmin?'true':'false'}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return response.data.map((d : any) => {
             return Usuario.createFromData(d);
         })
@@ -34,7 +34,7 @@ export class UsuarioService{
 
     public static async findById(userId : number) : Promise<Usuario>{
         const url = `auth/users/${userId}`;
-        const response = await api.get(url);
+        const response = await Api.get(url);
         return await Usuario.createFromData(response.data);
     }
 
@@ -44,11 +44,11 @@ export class UsuarioService{
             let url;
             if (usuario.id && usuario.id > 0){
                 url = `auth/users/${usuario.id}`;
-                response = await api.put(url, usuario);
+                response = await Api.put(url, usuario);
             }else{
                 url = 'auth/users';
                 console.log(usuario);
-                response = await api.post(url, usuario);
+                response = await Api.post(url, usuario);
             }
             return {
                 done: true,
@@ -72,7 +72,7 @@ export class UsuarioService{
     public static async delete(usuario : Usuario){
         const url = `auth/users/${usuario.id}`;
         try{
-            const response = await api.delete(url);
+            const response = await Api.delete(url);
             return {
                 done: true,
                 data: response.data
