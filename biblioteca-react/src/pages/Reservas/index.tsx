@@ -20,15 +20,20 @@ import './style.css';
 import QuestionDialog from '../../components/questionDialog';
 import DialogEmprestimo from '../../components/dialogEmprestimo';
 import DialogReserva from '../../components/dialogReserva';
+import SelectorUser from '../../components/selectorUser';
 
 const ReservasPage = () => {
 
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
+    const userId = Cookies.get('userId');
+    
     const [reservas, setReservas] = useState(new Array<Reserva>());
     const [pagNum, setPagNum] = useState(1);
     const [totalPag, setTotalPag] = useState(1);
     const [somenteAtivos, setSomenteAtivos] = useState(true);
+
+    const [sUserId, setSUserId] = useState<number | null>(canEdit? null : (userId ? +userId : null)); 
 
     const [dialogOpen, setDialogOpen] = useState(false); 
     const [dReserva, setDReserva] = useState<Reserva | undefined>(undefined); // lançar reserva
@@ -45,12 +50,20 @@ const ReservasPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(()=>{
-        ReservaService.findPage(pagNum, somenteAtivos).then(resp=>{
-            setReservas(resp.reservas);
-            setTotalPag(resp.totalPag);
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        });
-    },[pagNum, somenteAtivos]);
+        if (sUserId){
+            ReservaService.findUsuarioPage(sUserId, pagNum, somenteAtivos).then(resp=>{
+                setReservas(resp.reservas);
+                setTotalPag(resp.totalPag);
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }else{
+            ReservaService.findPage(pagNum, somenteAtivos).then(resp=>{
+                setReservas(resp.reservas);
+                setTotalPag(resp.totalPag);
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    },[sUserId, pagNum, somenteAtivos]);
 
     const Alert = (props: AlertProps) => {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -171,21 +184,66 @@ const ReservasPage = () => {
     const handleDialogEmpClose = () => {
         setDialogEmpOpen(false);
     };
-    
+
+    const changeUser = (userId : number | null) => {
+        setSUserId(userId);
+    };
+
+    const renderSelectorUser = ()  => {
+        if (canEdit){
+            return (
+                <SelectorUser 
+                    incAdmin={canEdit}
+                    onChange={changeUser}
+                />
+            );
+        }
+    };
+
+    const renderLastTh = () => {
+        if (canEdit){
+            return (<th></th>);
+        }
+    };
+
+    const renderLastTd = (reserva : Reserva) => {
+        if (canEdit){
+            return (
+                <td>
+                    <Tooltip title={reserva.ativa?'Registrar empréstimo':'Reserva Inativa!'}>
+                        <span>
+                            <Button 
+                                disabled={!reserva.ativa}
+                                variant="contained" 
+                                onClick={(e: any)=>{handleDialogEmpOpen(reserva);}}>
+                                <AssignmentReturnIcon className="flipH" />
+                            </Button>                                  
+                        </span>
+                    </Tooltip>
+                    <Tooltip title={reserva.ativa ? 'Excluir reserva':'Reserva inativa!'}>
+                        <span>
+                            <Button 
+                                disabled={!reserva.ativa}
+                                variant="contained" 
+                                onClick={(e: any)=>{handleQuestionDelete(reserva);}}>
+                                <DeleteForeverIcon />
+                            </Button>                                  
+                        </span>
+                    </Tooltip>
+                </td>
+            );
+        }
+    };
 
     const bcMaker = new BreadcrumbsMaker('Reservas');
 
     bcMaker.addHrefBreadcrumb('Home', '/');
 
-    if (!canEdit){
-        return (<div className="reservasContainer"><h1>Não autorizado!</h1></div>);
-    }
-
     return(
         <div className="reservasContainer">
             {bcMaker.render()}
             <h2>Reservas</h2>
-            <p>
+            <div className="filterDiv">
                 <FormControlLabel
                     control={
                     <Switch
@@ -197,7 +255,9 @@ const ReservasPage = () => {
                     }
                     label="Somente reservas ativas"
                 />
-            </p>
+                <span />
+                {renderSelectorUser()}
+            </div>
             <Button variant="contained" onClick={handleDialogOpen}>
                 <UpdateIcon className="flipH"/>
                 Nova reserva
@@ -211,7 +271,7 @@ const ReservasPage = () => {
                         <th>Usuário</th>
                         <th>Ativa</th>
                         <th>Retirar até</th>
-                        <th></th>
+                        {renderLastTh()}
                     </tr>
                 </thead>
                 <tbody>
@@ -224,28 +284,7 @@ const ReservasPage = () => {
                                 <td>{reserva.usuario?.nome}</td>
                                 <td>{reserva.ativa? 'Sim' : 'Não' } </td>
                                 <td>{reserva.ativa? reserva.dataLimite?.toLocaleDateString() : '-'} </td>
-                                <td>
-                                    <Tooltip title={reserva.ativa?'Registrar empréstimo':'Reserva Inativa!'}>
-                                        <span>
-                                            <Button 
-                                                disabled={!reserva.ativa}
-                                                variant="contained" 
-                                                onClick={(e: any)=>{handleDialogEmpOpen(reserva);}}>
-                                                <AssignmentReturnIcon className="flipH" />
-                                            </Button>                                  
-                                        </span>
-                                    </Tooltip>
-                                    <Tooltip title={reserva.ativa ? 'Excluir reserva':'Reserva inativa!'}>
-                                        <span>
-                                            <Button 
-                                                disabled={!reserva.ativa}
-                                                variant="contained" 
-                                                onClick={(e: any)=>{handleQuestionDelete(reserva);}}>
-                                                <DeleteForeverIcon />
-                                            </Button>                                  
-                                        </span>
-                                    </Tooltip>
-                                </td>
+                                {renderLastTd(reserva)}
                             </tr>
                         );
                     })}

@@ -29,6 +29,13 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Integer>
     Page<Emprestimo> findFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
 
     @Query("SELECT e FROM Emprestimo e WHERE e.usuario = :usuario AND e.dataHoraDevolucao IS NULL")
+    Page<Emprestimo> findAtivosPageFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
+
+    @Query("SELECT e FROM Emprestimo e WHERE e.usuario = :usuario AND e.dataHoraDevolucao IS NOT NULL")
+    Page<Emprestimo> findInativosPageFromUsuario(@Param("usuario") Usuario usuario, Pageable pageable);
+
+    @Query("SELECT e FROM Emprestimo e WHERE e.usuario = :usuario AND e.dataHoraDevolucao IS NULL")
+    @Deprecated
     List<Emprestimo> findAtivosFromUsuarioList(@Param("usuario") Usuario usuario);
 
 }

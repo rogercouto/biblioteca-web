@@ -64,14 +64,10 @@ public class PendenciasController {
         }
         Pageable pageable = PageRequest.of(page, limit);
         Page<Pendencia> pendencias;
-        if (filter.trim().length() > 0){
-            if (filter.toLowerCase().compareTo("active") == 0 || filter.toLowerCase().compareTo("ativas") == 0){
-                pendencias = service.findFromUsuario(usuario, true, pageable) ;
-            }else if (filter.toLowerCase().compareTo("inactive") == 0 || filter.toLowerCase().compareTo("inativas") == 0){
-                pendencias = service.findFromUsuario(usuario, false, pageable) ;
-            }else{
-                pendencias = service.findFromUsuario(usuario, null, pageable) ;
-            }
+        if (filter.toLowerCase().compareTo("active") == 0 || filter.toLowerCase().compareTo("ativas") == 0){
+            pendencias = service.findFromUsuario(usuario, true, pageable) ;
+        }else if (filter.toLowerCase().compareTo("inactive") == 0 || filter.toLowerCase().compareTo("inativas") == 0){
+            pendencias = service.findFromUsuario(usuario, false, pageable) ;
         }else{
             pendencias = service.findFromUsuario(usuario, pageable) ;
         }

@@ -62,6 +62,16 @@ public class EmprestimoService {
         return repository.findFromUsuario(usuario, pageable);
     }
 
+    public Page<Emprestimo> findFromUsuario(Usuario usuario, Boolean ativos, Pageable pageable){
+        if (ativos != null && ativos.booleanValue()){
+            return  repository.findAtivosPageFromUsuario(usuario, pageable);
+        }else if (ativos != null && !ativos.booleanValue()){
+            return repository.findInativosPageFromUsuario(usuario, pageable);
+        }else{
+            return repository.findFromUsuario(usuario, pageable);
+        }
+    }
+
     public Exemplar validateNew(Emprestimo emprestimo){
         Set<String> errors = new TreeSet<>();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();

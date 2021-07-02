@@ -88,9 +88,14 @@ export default function Header(){
     const renderUserLinks = () => {
         if (!canEdit && username && username.trim().length > 0){
             return(
-                <li>
-                    <a href="/pendencias"><MonetizationOnIcon />Pendências</a>
-                </li>
+                <div className="dropdown">
+                    <button className="dropbtn"><CompareArrowsIcon />Movimentação</button>
+                    <div className="dropdown-content">
+                        <a href="/emprestimos"><AssignmentReturnIcon className="flipH" />Empréstimos</a>
+                        <a href="/reservas"><HistoryIcon />Reservas</a>
+                        <a href="/pendencias"><MonetizationOnIcon />Pendências</a>
+                    </div>
+                </div>
             );
         }
     }
@@ -113,7 +118,6 @@ export default function Header(){
                     </li>
                     {renderUserLinks()}
                     {renderGerenteLinks()}
-
                     <li className="separator">
                     </li>
                     <li>

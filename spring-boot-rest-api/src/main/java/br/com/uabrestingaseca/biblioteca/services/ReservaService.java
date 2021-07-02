@@ -59,8 +59,17 @@ public class ReservaService {
     public Page<Reserva> findFromExemplar(Exemplar exemplar, Pageable pageable){
         return repository.findFromExemplar(exemplar, pageable);
     }
-    public Page<Reserva> findFromUsuario(Usuario usuario, Pageable pageable){
-        return repository.findFromUsuario(usuario, pageable);
+
+    public Page<Reserva> findPageFromUsuario(Usuario usuario, Pageable pageable){
+        return repository.findPageFromUsuario(usuario, pageable);
+    }
+
+    public Page<Reserva> findPageFromUsuario(Usuario usuario, Boolean ativa, Pageable pageable){
+        if (ativa != null){
+            return repository.findFilteredPageFromUsuario(usuario, ativa, pageable);
+        }else{
+            return repository.findPageFromUsuario(usuario, pageable);
+        }
     }
 
     public Exemplar validateNew(Reserva reserva){

@@ -64,16 +64,24 @@ public class EmprestimoController {
 
     @GetMapping(value = "/usuario/{id}")
     public ResponseEntity<List<Emprestimo>> findByUsuario(
-    @PathVariable("id") int usuarioId,
-    @RequestParam(value="page", defaultValue = "0") int page,
-    @RequestParam(value="limit", defaultValue = "10") int limit
+        @PathVariable("id") int usuarioId,
+        @RequestParam(value="page", defaultValue = "0") int page,
+        @RequestParam(value="limit", defaultValue = "10") int limit,
+        @RequestParam(value="filter", defaultValue = "") String filter
     ){
         Usuario usuario = usuarioService.findById(usuarioId);
         if (usuario == null){
             return ResponseEntity.notFound().build();
         }
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Emprestimo> emprestimos = service.findFromUsuario(usuario, pageable);
+        Page<Emprestimo> emprestimos;
+        if (filter.toLowerCase().compareTo("active") == 0 || filter.toLowerCase().compareTo("ativas") == 0){
+            emprestimos = service.findFromUsuario(usuario, true, pageable);
+        }else if (filter.toLowerCase().compareTo("inactive") == 0 || filter.toLowerCase().compareTo("inativas") == 0){
+            emprestimos = service.findFromUsuario(usuario, false, pageable);
+        }else{
+            emprestimos = service.findFromUsuario(usuario, pageable);
+        }
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(emprestimos.getTotalElements()));

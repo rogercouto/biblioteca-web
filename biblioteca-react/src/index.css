@@ -105,3 +105,21 @@ button{
   -webkit-transform: scaleY(-1);
   transform: scaleY(-1);
 }
+
+.filterDiv{
+  margin: 0.5rem 0rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.filterDiv > span{
+  flex-grow: 1;
+  width: 30%;
+}
+
+.filterDiv > div{
+  flex-grow: 1;
+  margin: 0 0rem;
+  width: 20rem;
+} 

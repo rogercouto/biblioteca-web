@@ -1,14 +1,12 @@
 package br.com.uabrestingaseca.biblioteca.controllers;
 
 import br.com.uabrestingaseca.biblioteca.exceptions.ModelValidationException;
-import br.com.uabrestingaseca.biblioteca.model.Emprestimo;
 import br.com.uabrestingaseca.biblioteca.model.Exemplar;
 import br.com.uabrestingaseca.biblioteca.model.Reserva;
 import br.com.uabrestingaseca.biblioteca.model.Usuario;
 import br.com.uabrestingaseca.biblioteca.services.ExemplarService;
 import br.com.uabrestingaseca.biblioteca.services.ReservaService;
 import br.com.uabrestingaseca.biblioteca.services.UsuarioService;
-import br.com.uabrestingaseca.biblioteca.util.ModelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,14 +59,22 @@ public class ReservaController {
     public ResponseEntity<List<Reserva>> findByUsuario(
             @PathVariable("id") int usuarioId,
             @RequestParam(value="page", defaultValue = "0") int page,
-            @RequestParam(value="limit", defaultValue = "10") int limit
+            @RequestParam(value="limit", defaultValue = "10") int limit,
+            @RequestParam(value="filter", defaultValue = "") String filter
     ){
         Usuario usuario = usuarioService.findById(usuarioId);
         if (usuario == null){
             return ResponseEntity.notFound().build();
         }
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Reserva> reservas = service.findFromUsuario(usuario, pageable);
+        Page<Reserva> reservas;
+        if (filter.toLowerCase().compareTo("active") == 0 || filter.toLowerCase().compareTo("ativas") == 0){
+            reservas = service.findPageFromUsuario(usuario, true, pageable);
+        }else if (filter.toLowerCase().compareTo("inactive") == 0 || filter.toLowerCase().compareTo("inativas") == 0){
+            reservas = service.findPageFromUsuario(usuario, false, pageable);
+        }else{
+            reservas = service.findPageFromUsuario(usuario, pageable);
+        }
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Expose-Headers", "X-Total-Count");
         responseHeaders.set("X-Total-Count", String.valueOf(reservas.getTotalElements()));

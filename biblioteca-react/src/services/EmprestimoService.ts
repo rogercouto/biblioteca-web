@@ -27,6 +27,20 @@ export class EmprestimoService{
         return { emprestimos, totalPag }
     }
 
+    public static async findUsuarioPage(usuarioId : number, pageNum : number = 1, somenteAtivos: boolean = false, limit : number = 10): Promise<{emprestimos: Array<Emprestimo>, totalPag: number}>{
+        const pageIndex = pageNum - 1;
+        const url =  somenteAtivos ? `emprestimos/usuario/${usuarioId}?page=${pageIndex}&limit=10&filter=active` : `emprestimos/usuario/${usuarioId}?page=${pageIndex}&limit=10`;
+        const response = await Api.get(url);
+        const total = response.headers['x-total-count'];
+        const totalPages = +(total / limit);
+        const totalPagesFixed = +(total / limit).toFixed(0);
+        const totalPag = totalPagesFixed < totalPages ? totalPagesFixed + 1 : totalPagesFixed;
+        const emprestimos = response.data.map((d : any)=>{
+            return Emprestimo.createFromData(d);
+        });
+        return { emprestimos, totalPag }
+    }
+
     public static async insert(emprestimo : Emprestimo) : Promise<{done: boolean, object: any}>{
         try {
             const newEmp = {

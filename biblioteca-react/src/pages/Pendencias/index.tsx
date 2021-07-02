@@ -35,6 +35,10 @@ const PendenciasPage = () => {
     const [totalPag, setTotalPag] = useState(1);
     const [somenteAtivos, setSomenteAtivos] = useState(true);
 
+    const [usuarios, setUsuarios] = useState<Array<Usuario>>([]);
+    const [nomesUsuarios, setNomesUsuarios] = useState<Array<string>>([]);
+    const [nomeUsuario, setNomeUsuario] = useState<string | null>(fixedUser ? userName : '');
+
     const [tPendencia, setTPendencia] = useState<Pendencia | undefined>(undefined);
     const [dialogPayOpen, setDialogPayOpen] = useState(false);   
     const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
@@ -43,10 +47,6 @@ const PendenciasPage = () => {
     const [confMessage, setConfMessage] = useState('');
     const [errorOpen, setErrorOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
-    const [usuarios, setUsuarios] = useState<Array<Usuario>>([]);
-    const [nomesUsuarios, setNomesUsuarios] = useState<Array<string>>([]);
-    const [nomeUsuario, setNomeUsuario] = useState<string | null>(fixedUser ? userName : '');
 
     useEffect(()=>{
         if (nomeUsuario === null || nomeUsuario.trim().length === 0){

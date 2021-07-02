@@ -2,9 +2,9 @@
 import { useEffect, useState} from 'react';
 import Cookies from 'js-cookie';
 
-import { Button, Tooltip, FormControlLabel, Switch, Snackbar } from '@material-ui/core';
+import { TextField, Button, Tooltip, FormControlLabel, Switch, Snackbar } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { Pagination } from '@material-ui/lab';
+import { Autocomplete, Pagination } from '@material-ui/lab';
 
 import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
 import UpdateIcon from '@material-ui/icons/Update';
@@ -12,7 +12,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { BreadcrumbsMaker } from '../../components/breadcrumbs';
 
-import { EmprestimoService } from '../../services';
+import { EmprestimoService, UsuarioService } from '../../services';
 import { Emprestimo, Exemplar, Usuario } from '../../model';
 
 import './style.css';
@@ -24,10 +24,20 @@ const EmprestimosPage = () => {
 
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
+    const userId = Cookies.get('userId');
+    
+    const userName = Cookies.get('username') || '';
+
+    const fixedUser = !canEdit;
+
     const [emprestimos, setEmprestimos] = useState(new Array<Emprestimo>());
     const [pagNum, setPagNum] = useState(1);
     const [totalPag, setTotalPag] = useState(1);
     const [somenteAtivos, setSomenteAtivos] = useState(true);
+
+    const [usuarios, setUsuarios] = useState<Array<Usuario>>([]);
+    const [nomesUsuarios, setNomesUsuarios] = useState<Array<string>>([]);
+    const [nomeUsuario, setNomeUsuario] = useState<string | null>(fixedUser ? userName : '');
 
     const [dialogOpen, setDialogOpen] = useState(false); //Inserção
 
@@ -42,12 +52,35 @@ const EmprestimosPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(()=>{
-        EmprestimoService.findPage(pagNum, somenteAtivos).then(resp=>{
-            setEmprestimos(resp.emprestimos);
-            setTotalPag(resp.totalPag);
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        });
-    },[pagNum, somenteAtivos]);
+        if (nomeUsuario === null || nomeUsuario.trim().length === 0){
+            EmprestimoService.findPage(pagNum, somenteAtivos).then(resp=>{
+                setEmprestimos(resp.emprestimos);
+                setTotalPag(resp.totalPag);
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }else{
+            if (usuarios.length > 0 && nomesUsuarios.length > 0){
+                const index = nomesUsuarios.indexOf(nomeUsuario);
+                if (index >= 0){
+                    const usuario = usuarios[index];
+                    if (usuario && usuario.id){
+                        EmprestimoService.findUsuarioPage(usuario.id, pagNum, somenteAtivos).then(resp=>{
+                            setEmprestimos(resp.emprestimos);
+                            setTotalPag(resp.totalPag);
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        });
+                    }
+                }
+            }else if (userId){
+                const id = +userId;
+                EmprestimoService.findUsuarioPage(id, pagNum, somenteAtivos).then(resp=>{
+                    setEmprestimos(resp.emprestimos);
+                    setTotalPag(resp.totalPag);
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                });
+            }
+        }
+    },[pagNum, somenteAtivos, nomeUsuario, usuarios, nomesUsuarios, userId]);
 
     const Alert = (props: AlertProps) => {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -217,15 +250,93 @@ const EmprestimosPage = () => {
 
     bcMaker.addHrefBreadcrumb('Home', '/');
 
-    if (!canEdit){
-        return (<div className="emprestimosContainer"><h1>Não autorizado!</h1></div>);
+    // busca usuário
+    const buscaUsuarios = (value : string) => {
+        UsuarioService.find(value, canEdit).then((usuarios : Array<Usuario>)=>{
+            setUsuarios(usuarios);
+            const nomes = usuarios.map((u : Usuario)=>{return u.nome || ''});
+            setNomesUsuarios(nomes);
+        });
+    }
+
+    const renderLastThIfGerente = () => {
+        if (canEdit){
+            return (
+                <th></th>
+            );
+        }
+    }
+
+    const renderLastTdIfGerente = (emprestimo : Emprestimo) => {
+        if (canEdit){
+            return (
+                <td>
+                    <Tooltip title={!emprestimo.foiDevolvido()?'Registrar devolução':'Exemplar já devolvido!'}>
+                        <span>
+                            <Button 
+                                disabled={emprestimo.foiDevolvido()}
+                                variant="contained" 
+                                onClick={(e: any)=>{handleQuestionDevolucao(emprestimo);}}>
+                                <AssignmentReturnIcon />
+                            </Button>                                  
+                        </span>
+                    </Tooltip>
+                    <Tooltip title={getRenTooltipText(emprestimo)}>
+                        <span>
+                            <Button
+                                disabled={!podeRenovar(emprestimo)} 
+                                variant="contained" 
+                                onClick={(e: any)=>{handleQuestionRenovacao(emprestimo);}}>
+                                <UpdateIcon />
+                            </Button>                                  
+                        </span>
+                    </Tooltip>
+                    <Tooltip title={!emprestimo.foiDevolvido()?'Excluir empréstimo':'Exemplar já devolvido!'}>
+                        <span>
+                            <Button 
+                                disabled={emprestimo.foiDevolvido()}
+                                variant="contained" 
+                                onClick={(e: any)=>{handleQuestionDelete(emprestimo);}}>
+                                <DeleteForeverIcon />
+                            </Button>                                  
+                        </span>
+                    </Tooltip>
+                </td>
+            );
+        }
+    }
+
+    const renderBuscaUsuarioIfGerente = () => {
+        if (canEdit){
+            return (
+                <Autocomplete
+                    options={nomesUsuarios}
+                    value={nomeUsuario}
+                    onChange={(e, value)=>{
+                        setNomeUsuario(value);
+                    }}
+                    renderInput={(params) => (
+                        <TextField {...params} 
+                            variant="outlined" 
+                            label="Usuário" 
+                            className="formControl"
+                            onChange={(e)=>buscaUsuarios(e.target.value)}
+                        />
+                    )}
+                />
+            );
+        }
     }
 
     return(
         <div className="emprestimosContainer">
             {bcMaker.render()}
             <h2>Empréstimos</h2>
-            <p>
+            <Button variant="contained" onClick={handleDialogOpen}>
+                <AssignmentReturnIcon className="flipH"/>
+                Novo empréstimo
+            </Button>
+            <div className="formDiv">
                 <FormControlLabel
                     control={
                     <Switch
@@ -237,11 +348,9 @@ const EmprestimosPage = () => {
                     }
                     label="Somente empréstimos ativos"
                 />
-            </p>
-            <Button variant="contained" onClick={handleDialogOpen}>
-                <AssignmentReturnIcon className="flipH"/>
-                Novo empréstimo
-            </Button>
+                <span />
+                {renderBuscaUsuarioIfGerente()}
+            </div>
             <table>
                 <thead>
                     <tr>
@@ -250,7 +359,7 @@ const EmprestimosPage = () => {
                         <th>Título do livro</th>
                         <th>Usuário</th>
                         <th>Prazo</th>
-                        <th></th>
+                        {renderLastThIfGerente()}
                     </tr>
                 </thead>
                 <tbody>
@@ -262,38 +371,7 @@ const EmprestimosPage = () => {
                                 <td>{emprestimo.exemplar?.livro?.titulo}</td>
                                 <td>{emprestimo.usuario?.nome}</td>
                                 <td style={emprestimo.getTdStyle()}>{emprestimo.dataHoraDevolucao? 'Devolvido' : emprestimo.prazo?.toLocaleDateString() } </td>
-                                <td>
-                                    <Tooltip title={!emprestimo.foiDevolvido()?'Registrar devolução':'Exemplar já devolvido!'}>
-                                        <span>
-                                            <Button 
-                                                disabled={emprestimo.foiDevolvido()}
-                                                variant="contained" 
-                                                onClick={(e: any)=>{handleQuestionDevolucao(emprestimo);}}>
-                                                <AssignmentReturnIcon />
-                                            </Button>                                  
-                                        </span>
-                                    </Tooltip>
-                                    <Tooltip title={getRenTooltipText(emprestimo)}>
-                                        <span>
-                                            <Button
-                                                disabled={!podeRenovar(emprestimo)} 
-                                                variant="contained" 
-                                                onClick={(e: any)=>{handleQuestionRenovacao(emprestimo);}}>
-                                                <UpdateIcon />
-                                            </Button>                                  
-                                        </span>
-                                    </Tooltip>
-                                    <Tooltip title={!emprestimo.foiDevolvido()?'Excluir empréstimo':'Exemplar já devolvido!'}>
-                                        <span>
-                                            <Button 
-                                                disabled={emprestimo.foiDevolvido()}
-                                                variant="contained" 
-                                                onClick={(e: any)=>{handleQuestionDelete(emprestimo);}}>
-                                                <DeleteForeverIcon />
-                                            </Button>                                  
-                                        </span>
-                                    </Tooltip>
-                                </td>
+                                {renderLastTdIfGerente(emprestimo)}
                             </tr>
                         );
                     })}

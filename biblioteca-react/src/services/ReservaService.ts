@@ -26,6 +26,20 @@ export class ReservaService{
         return { reservas, totalPag }
     }
 
+    public static async findUsuarioPage(usuarioId: number, pageNum : number = 1, somenteAtivos: boolean = false, limit : number = 10): Promise<{reservas: Array<Reserva>, totalPag: number}>{
+        const pageIndex = pageNum - 1;
+        const url =  somenteAtivos ? `reservas/usuario/${usuarioId}?page=${pageIndex}&limit=10&filter=active` : `reservas/usuario/${usuarioId}?page=${pageIndex}&limit=10`;
+        const response = await Api.get(url);
+        const total = response.headers['x-total-count'];
+        const totalPages = +(total / limit);
+        const totalPagesFixed = +(total / limit).toFixed(0);
+        const totalPag = totalPagesFixed < totalPages ? totalPagesFixed + 1 : totalPagesFixed;
+        const reservas = response.data.map((d : any)=>{
+            return Reserva.createFromData(d);
+        });
+        return { reservas, totalPag }
+    }
+
     public static async insert( reserva : Reserva ) : Promise<{ done: boolean, object: any }> {
         try {
             const newRes = {
