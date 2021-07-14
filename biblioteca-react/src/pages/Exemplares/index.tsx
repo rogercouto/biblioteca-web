@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { TextField, Button, FormControlLabel, Checkbox, Tooltip, Snackbar } from '@material-ui/core';
+import { TextField, Button, FormControlLabel, Checkbox, Tooltip, Snackbar, Paper } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Autocomplete } from '@material-ui/lab';
 
@@ -601,73 +601,77 @@ const ExemplaresPage = (props : any) => {
     }
 
     return(
-        <div className="exemplaresContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>{livro.titulo}</h2>
-            <h3>Exemplares:</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nº Registro</th>
-                        <th>Seção</th>
-                        <th>Data de aquisição</th>
-                        <th>Origem</th>
-                        <th>Situação</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {exemplares.map(exemplar=>{
-                        return(
-                            <tr key={exemplar.numRegistro}>
-                                {renderRow(exemplar)}
+            <Paper className="exemplaresContainer">
+                <h2>{livro.titulo}</h2>
+                <h3>Exemplares:</h3>
+                <div className="dataTable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº Registro</th>
+                                <th>Seção</th>
+                                <th>Data de aquisição</th>
+                                <th>Origem</th>
+                                <th>Situação</th>
+                                <th></th>
                             </tr>
-                        );
-                    })}
-                    <tr>{renderLastRow()}</tr>
-                </tbody>
-            </table>
-            {renderInsertButton()}
-            <QuestionDialog 
-                title="Atenção!"
-                message="Confirma reserva do exemplar?"
-                open={qResOpen}
-                onConfirm={handleConfirmReserva}
-                onClose={handleCancelReserva}
-            />
-            <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
-                setConfOpen(false);
-                setConfMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setConfOpen(false);
-                        setConfMessage('');
-                    }} severity="success">
-                    {confMessage}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
-                setErrorOpen(false);
-                setErrorMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setErrorOpen(false);
-                        setErrorMessage('');
-                    }} severity="error">
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
-            <DialogReserva 
-                title="Nova reserva"
-                message="Número de registro está localizado na etiqueta do exemplar"
-                numReg={dialogNumReg}
-                onSave={saveFormReserva}
-                onClose={closeForm}
-                canChangeNumReg={false}
-                verificaReserva={false}
-                open={dialogOpen}
-             />
-        </div>
+                        </thead>
+                        <tbody>
+                            {exemplares.map(exemplar=>{
+                                return(
+                                    <tr key={exemplar.numRegistro}>
+                                        {renderRow(exemplar)}
+                                    </tr>
+                                );
+                            })}
+                            <tr>{renderLastRow()}</tr>
+                        </tbody>
+                    </table>
+                </div>
+                {renderInsertButton()}
+                <QuestionDialog 
+                    title="Atenção!"
+                    message="Confirma reserva do exemplar?"
+                    open={qResOpen}
+                    onConfirm={handleConfirmReserva}
+                    onClose={handleCancelReserva}
+                />
+                <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setConfOpen(false);
+                    setConfMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setConfOpen(false);
+                            setConfMessage('');
+                        }} severity="success">
+                        {confMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setErrorOpen(false);
+                    setErrorMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setErrorOpen(false);
+                            setErrorMessage('');
+                        }} severity="error">
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
+                <DialogReserva 
+                    title="Nova reserva"
+                    message="Número de registro está localizado na etiqueta do exemplar"
+                    numReg={dialogNumReg}
+                    onSave={saveFormReserva}
+                    onClose={closeForm}
+                    canChangeNumReg={false}
+                    verificaReserva={false}
+                    open={dialogOpen}
+                />
+            </Paper>
+        </Fragment>
     );
 };
 

@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import Cookie from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 
 import api from '../../services/api';
 
@@ -47,7 +47,7 @@ export default function LoginPage(){
     }
 
     return(
-        <div className="loginContainer">
+        <Paper className="loginContainer">
             <form onSubmit={_handleSubmit}>
                 <TextField 
                     InputProps={{ error: errorMessage !== '' }} 
@@ -76,6 +76,6 @@ export default function LoginPage(){
                 </Button>
             </form>
             <Loader open={isLoading} />
-        </div>
+        </Paper>
     );
 }

@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookie from 'js-cookie';
 
-import { Button, Tooltip } from '@material-ui/core';
+import { Button, Tooltip, Paper } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LibraryBooksIcon from '@material-ui/icons/LibraryBooks';
@@ -63,21 +63,24 @@ export default function LivroPage(props : any){
                     <Tooltip title={canDelete? '' : 
                         'Não é possivel excluir um livro que tenha exemplares cadastrados'}>
                         <span>
-
-                        <Button 
-                            style={canDelete?{ 
-                                backgroundColor: '#DD0000',
-                                color: '#EEE',
-                                marginLeft: '0.5rem'
-                            }:{                          
-                                marginLeft: '0.5rem'
-                            }} 
-                            variant="contained" 
-                            disabled={!canDelete}
-                            onClick={_handleDelete}>
-                            <DeleteIcon />
-                            Excluir
-                        </Button>
+                            <Button 
+                                id="deleteButon"
+                                variant="contained" 
+                                style={canDelete?{ 
+                                    backgroundColor: '#DD0000',
+                                    color: '#EEE',
+                                    marginLeft: '2.5%',
+                                    width: '95%'
+                                }:{                          
+                                    marginLeft: '2.5%',
+                                    width: '95%'
+                                    
+                                }} 
+                                disabled={!canDelete}
+                                onClick={_handleDelete}>
+                                <DeleteIcon />
+                                Excluir
+                            </Button>
                         </span>
                     </Tooltip>
                 </Fragment>
@@ -90,73 +93,73 @@ export default function LivroPage(props : any){
     }
 
     return(
-        <div className="livroContainer">
+        <Fragment>
             {bcMaker.render()}
-            <table>
-                <tbody>
-                    <tr>
-                        <td className="rowLabel"> Título: </td>
-                        <td className="rowValue" colSpan={3}>{livro.titulo}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabel">Autor(es): </td>
-                        <td className="rowValue" colSpan={3}>{livro.getNomesAutores()}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabel">Resumo: </td>
-                        <td className="rowValue" colSpan={3}>{livro.resumo}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabelSmall">ISBN: </td>
-                        <td className="rowValueHalf">{livro.isbn}</td>
-                        <td className="rowLabelSmall">Cutter: </td>
-                        <td className="rowValueHalf">{livro.cutter}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabelSmall">Editora: </td>
-                        <td className="rowValueHalf">{livro.editora?.nome}</td>
-                        <td className="rowLabelSmall">Edição: </td>
-                        <td className="rowValueHalf">{livro.edicao}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabelSmall">Volume: </td>
-                        <td className="rowValueHalf">{livro.volume}</td>
-                        <td className="rowLabelSmall">Nº páginas: </td>
-                        <td className="rowValueHalf">{livro.numPaginas}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabel">Assunto: </td>
-                        <td className="rowValue" colSpan={3}>{livro.assunto?.descricao}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabelSmall">Ano publicação: </td>
-                        <td className="rowValueHalf">{livro.anoPublicacao}</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabel">Categorias: </td>
-                        <td className="rowValue" colSpan={3}>{
-                            livro.categorias?.map(
+            <Paper className="livroContainer">
+                <div className="dataContainer">
+                    <div className="field">
+                        <div className="label">Título: </div>
+                        <div className="value">{livro.titulo}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Autor(es):</div>
+                        <div className="value">{livro.getNomesAutores()}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Resumo:</div>
+                        <div className="value">{livro.resumo}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">ISBN:</div>
+                        <div className="value">{livro.isbn}</div>
+                        <div className="label">Cutter:</div>
+                        <div className="value">{livro.cutter}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Editora:</div>
+                        <div className="value">{livro.editora?.nome}</div>
+                        <div className="label">Edição:</div>
+                        <div className="value">{livro.edicao}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Volume:</div>
+                        <div className="value">{livro.volume}</div>
+                        <div className="label">Nº páginas:</div>
+                        <div className="value">{livro.numPaginas}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Assunto:</div>
+                        <div className="value">{livro.assunto?.descricao}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Ano publicação:</div>
+                        <div className="value">{livro.anoPublicacao}</div>
+                    </div>
+                    <div className="field">
+                        <div className="label">Categorias:</div>
+                        <div className="value">
+                            {livro.categorias?.map(
                                 (c: any)=>{
                                     return c.descricao;
                                 }
-                            ).join('; ')
-                        }</td>
-                    </tr>
-                    <tr>
-                        <td className="rowLabel"></td>
-                        <td className="btnExemplares">
-                            <Button variant="contained" type="submit" onClick={_goToExemplares}>
-                                <LibraryBooksIcon />
-                                Exemplares ({numExemplares})
-                            </Button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <div className="editContainer">
-                {_renderButtonsIfManager()}
-            </div>
-        </div>
+                            ).join('; ')}
+                        </div>
+                    </div>
+                    <div className="field" id="firstButton">
+                        <Button 
+                            variant="contained" 
+                            type="submit" 
+                            onClick={_goToExemplares}>
+                            <LibraryBooksIcon />
+                            Exemplares ({numExemplares})
+                        </Button>
+                    </div>
+                    <div className="field">
+                        {_renderButtonsIfManager()}
+                    </div>
+                </div>
+            </Paper>
+        </Fragment>
     );
 
 }

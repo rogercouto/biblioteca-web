@@ -1,5 +1,7 @@
-import { Fragment, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Cookie from 'js-cookie';
+
+import { Paper } from '@material-ui/core';
 
 import api from '../../services/api';
 
@@ -35,18 +37,18 @@ export default function HomePage(){
     
     function renderUsuario(){
         return (
-            <Fragment>
+            <div>
                 <p>Bem vindo, <strong>{username}</strong></p><br />
                 <h3>Estatísticas:</h3>
                 <p>Total de livros: <strong>{totalLivros}</strong></p>
                 <p>Total de exemplares: <strong>{totalExemplares}</strong></p>
-            </Fragment>
+            </div>
         );
     }
 
     return(
-        <div className="content">
+        <Paper className="content">
             {(token && token !== '') ? renderUsuario() : renderVisitante()}
-        </div>
+        </Paper>
     );
 }

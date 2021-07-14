@@ -6,7 +6,7 @@
 
 .mainContainer{
     background-color: #FFF;
-    min-height: calc(87.5vh - 150px);;
+    min-height: calc(87.5vh - 150px);
 }
  
 .content{
@@ -17,11 +17,12 @@
     .appContainer{
         margin: 0;
     }
-    .mainContainer{
-        max-height: 0;
-    }
     .content{
         padding: 2rem;
         min-height: 20rem;
+    }
+    .mainContainer{
+        background-color: #FFF;
+        min-height: calc(87.5vh + 0px);
     }
 }

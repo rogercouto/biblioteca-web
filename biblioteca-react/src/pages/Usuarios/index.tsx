@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button, FormControlLabel, Switch } from '@material-ui/core';
+import { TextField, Button, FormControlLabel, Switch, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -16,8 +16,7 @@ import { UsuarioService } from '../../services';
 
 import './style.css';
 
-export default function UsuariosPage(props: any){
-
+const UsuariosPage = (props: any) => {
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
     const [usuarios, setUsuarios] = useState(new Array<Usuario>());
@@ -50,13 +49,13 @@ export default function UsuariosPage(props: any){
         })
     },[pagNum])
 
-    function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setEdtId(0);
         setPagNum(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    };
 
-    function _handleEdit(usuario : Usuario){
+    const handleEdit = (usuario : Usuario) => {
         setTemErroNome(false);
         setErroNome('');
         if (usuario.id){
@@ -68,9 +67,9 @@ export default function UsuariosPage(props: any){
             setAtivo(usuario.ativo || true);
             setEdtId(usuario.id);
         }
-    }
+    };
 
-    function _handleInsert(){
+    const handleInsert = () => {
         setTemErroNome(false);
         setErroNome('');
         setNome('');
@@ -80,9 +79,9 @@ export default function UsuariosPage(props: any){
         setSenha('');
         setAtivo(true);
         setEdtId(-1);
-    }
+    };
 
-    function _validate() : boolean{
+    const validate = (): boolean => {
         let valid = true;
         if (nome.trim().length === 0){
             setTemErroNome(true);
@@ -100,15 +99,15 @@ export default function UsuariosPage(props: any){
         setTemErroNome(false);
         setErroNome('');
         return true;
-    }
+    };
 
-    function indexOf(usuario : Usuario){
+    const indexOf = (usuario : Usuario) => {
         const ids = usuarios.map((a : Usuario)=>{return a.id;});
         return ids.indexOf(usuario.id);
-    }
-    
-    async function _handleSave(){
-        if (_validate()){
+    };
+
+    const handleSave = async () => {
+        if (validate()){
             let sUsuario = new Usuario();
             let insert = true;
             if (edtId > 0){
@@ -142,9 +141,9 @@ export default function UsuariosPage(props: any){
                 alert(resp.errors);
             }
         }
-    }
+    };
 
-    async function _handleDelete(usuario : Usuario){
+    const handleDelete = async (usuario : Usuario) => {
         if (window.confirm('Tem certeza que deseja remover o usuario?')) {
             const resp = await UsuarioService.delete(usuario);
             if (resp.done){
@@ -154,24 +153,24 @@ export default function UsuariosPage(props: any){
                 setUsuarios(array);
             }
         }
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () => {
         setEdtId(0);
 
-    }
+    };
 
-    function _renderButtons(usuario : Usuario){
+    const renderButtons = (usuario : Usuario) => {
         if (edtId === 0){
             return (
                 <Fragment>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleEdit(usuario);
+                        handleEdit(usuario);
                     }}>
                         <EditIcon  style={{color: 'blue'}}/>
                     </Button>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleDelete(usuario)
+                        handleDelete(usuario)
                     }}>
                         <DeleteIcon  style={{color: 'red'}}/>
                     </Button>
@@ -180,18 +179,18 @@ export default function UsuariosPage(props: any){
         }else if (edtId === usuario.id){
             return (
                 <Fragment>
-                    <Button variant="contained" onClick={_handleSave}>
+                    <Button variant="contained" onClick={handleSave}>
                         <SaveIcon  style={{color: 'green'}}/>
                     </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
+                    <Button variant="contained" onClick={handleCancel}>
                         <CancelIcon />
                     </Button>
                 </Fragment>
             );
         } 
-    }
+    };
 
-    function _renderRow(usuario : Usuario){
+    const renderRow = (usuario : Usuario) => {
         if (usuario.id && usuario.id > 0 && edtId !== usuario.id){
             return(
                 <tr key={usuario.id}>
@@ -201,7 +200,7 @@ export default function UsuariosPage(props: any){
                     <td>{usuario.gerente ? 'Sim' : 'Não' }</td>
                     <td>*****</td>
                     <td>{usuario.ativo ? 'Sim' : 'Não' }</td>
-                    <td>{_renderButtons(usuario)}</td>
+                    <td>{renderButtons(usuario)}</td>
                 </tr>
             );
         }else{
@@ -277,22 +276,22 @@ export default function UsuariosPage(props: any){
                             label={ativo?'Sim': 'Não'}
                         />
                     </td>
-                    <td>{_renderButtons(usuario)}</td>
+                    <td>{renderButtons(usuario)}</td>
                 </tr>
             );
         }
-    }
+    };
 
-    function _renderInsertRow(){
+    const renderInsertRow = () => {
         if (edtId < 0){
-            return _renderRow(new Usuario(-1));
+            return renderRow(new Usuario(-1));
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (edtId === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -300,7 +299,7 @@ export default function UsuariosPage(props: any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
     if (!canEdit){
         return (<div className="usuariosContainer"><h1>Não autorizado!</h1></div>);
@@ -309,33 +308,37 @@ export default function UsuariosPage(props: any){
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return (
-        <div className="usuariosContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Usuarios</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th className="big">E-mail</th>
-                        <th>Telefone</th>
-                        <th>Gerente</th>
-                        <th>Senha</th>
-                        <th>Ativo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usuarios.map((a:Usuario)=>{
-                        return _renderRow(a);
-                    })}
-                    {_renderInsertRow()}
-                </tbody>
-            </table>
-            {_renderInsertButton()}
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={_handlePageChange}/>
-            </div>
-        </div>
+            <Paper className="usuariosContainer">
+                <h2>Usuarios</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th className="big">E-mail</th>
+                            <th>Telefone</th>
+                            <th>Gerente</th>
+                            <th>Senha</th>
+                            <th>Ativo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {usuarios.map((a:Usuario)=>{
+                            return renderRow(a);
+                        })}
+                        {renderInsertRow()}
+                    </tbody>
+                </table>
+                {renderInsertButton()}
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+            </Paper>
+        </Fragment>
     );
-}
+};
+
+export default UsuariosPage;

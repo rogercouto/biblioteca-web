@@ -40,6 +40,7 @@ const SelectorUser = ( props : any ) => {
                 const id = getUserId(value);
                 props.onChange(id);
             }}
+            noOptionsText="Pesquisar..."
             renderInput={(params) => (
                 <TextField {...params} 
                     variant="outlined" 

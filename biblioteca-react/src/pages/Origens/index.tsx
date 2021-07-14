@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -16,8 +16,7 @@ import { OrigemService } from '../../services';
 
 import './style.css';
 
-export default function OrigensPage(props: any){
-
+const OrigensPage = (props: any) => {
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
     const [origens, setOrigens] = useState(new Array<Origem>());
@@ -38,29 +37,29 @@ export default function OrigensPage(props: any){
         })
     },[pagNum])
 
-    function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setEdtId(0);
         setPagNum(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    };
 
-    function _handleEdit(origem : Origem){
+    const handleEdit = (origem : Origem) => {
         setTemErroDescricao(false);
         setErroDescricao('');
         if (origem.id){
             setDescricao(origem.descricao || '');
             setEdtId(origem.id);
         }
-    }
+    };
 
-    function _handleInsert(){
+    const handleInsert = () => {
         setTemErroDescricao(false);
         setErroDescricao('');
         setDescricao('');        
         setEdtId(-1);
-    }
+    };
 
-    function _validate() : boolean{
+    const validate = (): boolean => {
         if (descricao.trim().length === 0){
             setTemErroDescricao(true);
             setErroDescricao('Descrição do origem não pode ficar em branco');
@@ -69,15 +68,15 @@ export default function OrigensPage(props: any){
         setTemErroDescricao(false);
         setErroDescricao('');
         return true;
-    }
+    };
 
-    function indexOf(origem : Origem){
+    const indexOf = (origem : Origem) => {
         const ids = origens.map((a : Origem)=>{return a.id;});
         return ids.indexOf(origem.id);
-    }
-    
-    async function _handleSave(){
-        if (_validate()){
+    };
+
+    const handleSave = async () => {
+        if (validate()){
             let sOrigem = new Origem();
             let insert = true;
             if (edtId > 0){
@@ -100,9 +99,9 @@ export default function OrigensPage(props: any){
                 setEdtId(0);
             }
         }
-    }
+    };
 
-    async function _handleDelete(origem : Origem){
+    const handleDelete = async (origem : Origem) => {
         if (window.confirm('Tem certeza que deseja remover o origem?')) {
             const resp = await OrigemService.delete(origem);
             if (resp.done){
@@ -114,24 +113,23 @@ export default function OrigensPage(props: any){
                 alert(resp.message || 'Erro desconhecido!');
             }
         }
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () => {
         setEdtId(0);
+    };
 
-    }
-
-    function _renderButtons(origem : Origem){
+    const renderButtons = (origem : Origem) => {
         if (edtId === 0){
             return (
                 <Fragment>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleEdit(origem);
+                        handleEdit(origem);
                     }}>
                         <EditIcon  style={{color: 'blue'}}/>
                     </Button>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleDelete(origem)
+                        handleDelete(origem)
                     }}>
                         <DeleteIcon  style={{color: 'red'}}/>
                     </Button>
@@ -140,23 +138,23 @@ export default function OrigensPage(props: any){
         }else if (edtId === origem.id){
             return (
                 <Fragment>
-                    <Button variant="contained" onClick={_handleSave}>
+                    <Button variant="contained" onClick={handleSave}>
                         <SaveIcon  style={{color: 'green'}}/>
                     </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
+                    <Button variant="contained" onClick={handleCancel}>
                         <CancelIcon />
                     </Button>
                 </Fragment>
             );
         } 
-    }
+    };
 
-    function _renderRow(origem : Origem){
+    const renderRow = (origem : Origem) => {
         if (origem.id && origem.id > 0 && edtId !== origem.id){
             return(
                 <tr key={origem.id}>
                     <td>{origem.descricao}</td>
-                    <td>{_renderButtons(origem)}</td>
+                    <td>{renderButtons(origem)}</td>
                 </tr>
             );
         }else{
@@ -174,22 +172,22 @@ export default function OrigensPage(props: any){
                             }}
                         />
                     </td>
-                    <td>{_renderButtons(origem)}</td>
+                    <td>{renderButtons(origem)}</td>
                 </tr>
             );
         }
-    }
+    };
 
-    function _renderInsertRow(){
+    const renderInsertRow = () => {
         if (edtId < 0){
-            return _renderRow(new Origem(-1));
+            return renderRow(new Origem(-1));
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (edtId === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -197,7 +195,7 @@ export default function OrigensPage(props: any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
     if (!canEdit){
         return (<div className="origensContainer"><h1>Não autorizado!</h1></div>);
@@ -206,28 +204,32 @@ export default function OrigensPage(props: any){
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return (
-        <div className="origensContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Origens</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Descricao</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {origens.map((a:Origem)=>{
-                        return _renderRow(a);
-                    })}
-                    {_renderInsertRow()}
-                </tbody>
-            </table>
-            {_renderInsertButton()}
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={_handlePageChange}/>
-            </div>
-        </div>
+            <Paper className="origensContainer">
+                <h2>Origens</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descricao</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {origens.map((a:Origem)=>{
+                            return renderRow(a);
+                        })}
+                        {renderInsertRow()}
+                    </tbody>
+                </table>
+                {renderInsertButton()}
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+            </Paper>
+        </Fragment>
     );
-}
+};
+
+export default OrigensPage;

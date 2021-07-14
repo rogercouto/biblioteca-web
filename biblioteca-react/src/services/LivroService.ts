@@ -5,6 +5,7 @@ import { Assunto, Livro } from '../model';
 type LivrosResp = {
     list: Livro[];
     totalPag: number;
+    totalRows: number;
 }
 
 export class LivroService{
@@ -18,12 +19,13 @@ export class LivroService{
             url = `livros?page=${pageIndex}`;
         }
         const response = await Api.get(url);
-        const totalLivros = response.headers['x-total-count'];
+        const total = response.headers['x-total-count'];
         const limit = 10;
-        const totalPag = +(totalLivros / limit).toFixed(0);
+        const totalPag = +(total / limit).toFixed(0);
         return {
             list: Livro.createLivros(response), 
-            totalPag
+            totalPag,
+            totalRows: total
         }
     }
 

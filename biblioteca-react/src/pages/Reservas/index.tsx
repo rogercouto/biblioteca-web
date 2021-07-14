@@ -1,8 +1,8 @@
 
-import { useEffect, useState} from 'react';
+import { Fragment, useEffect, useState} from 'react';
 import Cookies from 'js-cookie';
 
-import { Button, Tooltip, FormControlLabel, Switch, Snackbar } from '@material-ui/core';
+import { Button, Tooltip, FormControlLabel, Switch, Snackbar, Paper } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { Pagination } from '@material-ui/lab';
 
@@ -240,108 +240,110 @@ const ReservasPage = () => {
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return(
-        <div className="reservasContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Reservas</h2>
-            <div className="filterDiv">
-                <FormControlLabel
-                    control={
-                    <Switch
-                        checked={somenteAtivos}
-                        onChange={handleSwitch}
-                        name="checkedSomenteAtivos"
-                        color="primary"
+            <Paper className="reservasContainer">        
+                <h2>Reservas</h2>
+                <div className="filterDiv">
+                    <FormControlLabel
+                        control={
+                        <Switch
+                            checked={somenteAtivos}
+                            onChange={handleSwitch}
+                            name="checkedSomenteAtivos"
+                            color="primary"
+                        />
+                        }
+                        label="Somente reservas ativas"
                     />
-                    }
-                    label="Somente reservas ativas"
+                    <span />
+                    {renderSelectorUser()}
+                </div>
+                <Button variant="contained" onClick={handleDialogOpen}>
+                    <UpdateIcon className="flipH"/>
+                    Nova reserva
+                </Button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Nº Exemplar</th>
+                            <th>Título do livro</th>
+                            <th>Usuário</th>
+                            <th>Ativa</th>
+                            <th>Retirar até</th>
+                            {renderLastTh()}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reservas.map(reserva=>{
+                            return(
+                                <tr key={reserva.id}>
+                                    <td>{reserva.dataHora?.toLocaleString()}</td>
+                                    <td>{reserva.exemplar?.numRegistro}</td>
+                                    <td>{reserva.exemplar?.livro?.titulo}</td>
+                                    <td>{reserva.usuario?.nome}</td>
+                                    <td>{reserva.ativa? 'Sim' : 'Não' } </td>
+                                    <td>{reserva.ativa? reserva.dataLimite?.toLocaleDateString() : '-'} </td>
+                                    {renderLastTd(reserva)}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+                <DialogReserva
+                    title="Nova reserva"
+                    message="Número de registro está localizado na etiqueta do exemplar"
+                    open={dialogOpen}
+                    onClose={handleDialogClose}
+                    onSave={handleDialogSave}
                 />
-                <span />
-                {renderSelectorUser()}
-            </div>
-            <Button variant="contained" onClick={handleDialogOpen}>
-                <UpdateIcon className="flipH"/>
-                Nova reserva
-            </Button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data/Hora</th>
-                        <th>Nº Exemplar</th>
-                        <th>Título do livro</th>
-                        <th>Usuário</th>
-                        <th>Ativa</th>
-                        <th>Retirar até</th>
-                        {renderLastTh()}
-                    </tr>
-                </thead>
-                <tbody>
-                    {reservas.map(reserva=>{
-                        return(
-                            <tr key={reserva.id}>
-                                <td>{reserva.dataHora?.toLocaleString()}</td>
-                                <td>{reserva.exemplar?.numRegistro}</td>
-                                <td>{reserva.exemplar?.livro?.titulo}</td>
-                                <td>{reserva.usuario?.nome}</td>
-                                <td>{reserva.ativa? 'Sim' : 'Não' } </td>
-                                <td>{reserva.ativa? reserva.dataLimite?.toLocaleDateString() : '-'} </td>
-                                {renderLastTd(reserva)}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={handlePageChange}/>
-            </div>
-            <DialogReserva
-                title="Nova reserva"
-                message="Número de registro está localizado na etiqueta do exemplar"
-                open={dialogOpen}
-                onClose={handleDialogClose}
-                onSave={handleDialogSave}
-            />
-            <DialogEmprestimo 
-                title="Registrar empréstimo"
-                message="Número de registro está localizado na etiqueta do exemplar"
-                numReg={dEmpNumReg}
-                idUsuario={dEmpIdUsuario}
-                open={dialogEmpOpen}
-                onClose={handleDialogEmpClose}
-                onSave={handleDialogEmpSave}
-                canChangeNumReg={false}
-                canChangeUser={false}
-            />
-            <QuestionDialog 
-                title="Atenção!"
-                message="Confirma exclusão da reserva?"
-                open={dialogDeleteOpen}
-                onConfirm={handleConfirmDelete}
-                onClose={handleCancelDelete}
-            />
-            <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
-                setConfOpen(false);
-                setConfMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setConfOpen(false);
-                        setConfMessage('');
-                    }} severity="success">
-                    {confMessage}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
-                setErrorOpen(false);
-                setErrorMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setErrorOpen(false);
-                        setErrorMessage('');
-                    }} severity="error">
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
-        </div>
+                <DialogEmprestimo 
+                    title="Registrar empréstimo"
+                    message="Número de registro está localizado na etiqueta do exemplar"
+                    numReg={dEmpNumReg}
+                    idUsuario={dEmpIdUsuario}
+                    open={dialogEmpOpen}
+                    onClose={handleDialogEmpClose}
+                    onSave={handleDialogEmpSave}
+                    canChangeNumReg={false}
+                    canChangeUser={false}
+                />
+                <QuestionDialog 
+                    title="Atenção!"
+                    message="Confirma exclusão da reserva?"
+                    open={dialogDeleteOpen}
+                    onConfirm={handleConfirmDelete}
+                    onClose={handleCancelDelete}
+                />
+                <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setConfOpen(false);
+                    setConfMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setConfOpen(false);
+                            setConfMessage('');
+                        }} severity="success">
+                        {confMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setErrorOpen(false);
+                    setErrorMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setErrorOpen(false);
+                            setErrorMessage('');
+                        }} severity="error">
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
+            </Paper>
+        </Fragment>
     );
 };
 

@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -16,8 +16,7 @@ import { CategoriaService } from '../../services';
 
 import './style.css';
 
-export default function CategoriasPage(props: any){
-
+const CategoriasPage = (props: any) => {
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
     const [categorias, setCategorias] = useState(new Array<Categoria>());
@@ -38,29 +37,29 @@ export default function CategoriasPage(props: any){
         })
     },[pagNum])
 
-    function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setEdtId(0);
         setPagNum(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    };
 
-    function _handleEdit(categoria : Categoria){
+    const handleEdit = (categoria : Categoria) => {
         setTemErroDescricao(false);
         setErroDescricao('');
         if (categoria.id){
             setDescricao(categoria.descricao || '');
             setEdtId(categoria.id);
         }
-    }
+    };
 
-    function _handleInsert(){
+    const handleInsert = () => {
         setTemErroDescricao(false);
         setErroDescricao('');
         setDescricao('');        
         setEdtId(-1);
-    }
+    };
 
-    function _validate() : boolean{
+    const validate = (): boolean => {
         if (descricao.trim().length === 0){
             setTemErroDescricao(true);
             setErroDescricao('Descrição do categoria não pode ficar em branco');
@@ -69,15 +68,15 @@ export default function CategoriasPage(props: any){
         setTemErroDescricao(false);
         setErroDescricao('');
         return true;
-    }
+    };
 
-    function indexOf(categoria : Categoria){
+    const indexOf = (categoria : Categoria) => {
         const ids = categorias.map((a : Categoria)=>{return a.id;});
         return ids.indexOf(categoria.id);
-    }
-    
-    async function _handleSave(){
-        if (_validate()){
+    };
+
+    const handleSave = async () => {
+        if (validate()){
             let sCategoria = new Categoria();
             let insert = true;
             if (edtId > 0){
@@ -100,9 +99,9 @@ export default function CategoriasPage(props: any){
                 setEdtId(0);
             }
         }
-    }
+    };
 
-    async function _handleDelete(categoria : Categoria){
+    const handleDelete = async (categoria : Categoria) => {
         if (window.confirm('Tem certeza que deseja remover o categoria?')) {
             const resp = await CategoriaService.delete(categoria);
             if (resp.done){
@@ -114,24 +113,24 @@ export default function CategoriasPage(props: any){
                 alert(resp.message || 'Erro desconhecido!');
             }
         }
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () => {
         setEdtId(0);
 
-    }
+    };
 
-    function _renderButtons(categoria : Categoria){
+    const renderButtons = (categoria : Categoria) => {
         if (edtId === 0){
             return (
                 <Fragment>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleEdit(categoria);
+                        handleEdit(categoria);
                     }}>
                         <EditIcon  style={{color: 'blue'}}/>
                     </Button>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleDelete(categoria)
+                        handleDelete(categoria)
                     }}>
                         <DeleteIcon  style={{color: 'red'}}/>
                     </Button>
@@ -140,23 +139,23 @@ export default function CategoriasPage(props: any){
         }else if (edtId === categoria.id){
             return (
                 <Fragment>
-                    <Button variant="contained" onClick={_handleSave}>
+                    <Button variant="contained" onClick={handleSave}>
                         <SaveIcon  style={{color: 'green'}}/>
                     </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
+                    <Button variant="contained" onClick={handleCancel}>
                         <CancelIcon />
                     </Button>
                 </Fragment>
             );
         } 
-    }
+    };
 
-    function _renderRow(categoria : Categoria){
+    const renderRow = (categoria : Categoria) => {
         if (categoria.id && categoria.id > 0 && edtId !== categoria.id){
             return(
                 <tr key={categoria.id}>
                     <td>{categoria.descricao}</td>
-                    <td>{_renderButtons(categoria)}</td>
+                    <td>{renderButtons(categoria)}</td>
                 </tr>
             );
         }else{
@@ -174,22 +173,22 @@ export default function CategoriasPage(props: any){
                             }}
                         />
                     </td>
-                    <td>{_renderButtons(categoria)}</td>
+                    <td>{renderButtons(categoria)}</td>
                 </tr>
             );
         }
-    }
+    };
 
-    function _renderInsertRow(){
+    const renderInsertRow = () => {
         if (edtId < 0){
-            return _renderRow(new Categoria(-1));
+            return renderRow(new Categoria(-1));
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (edtId === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -197,7 +196,7 @@ export default function CategoriasPage(props: any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
     if (!canEdit){
         return (<div className="categoriasContainer"><h1>Não autorizado!</h1></div>);
@@ -206,28 +205,32 @@ export default function CategoriasPage(props: any){
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return (
-        <div className="categoriasContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Categorias</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Descricao</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categorias.map((a:Categoria)=>{
-                        return _renderRow(a);
-                    })}
-                    {_renderInsertRow()}
-                </tbody>
-            </table>
-            {_renderInsertButton()}
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={_handlePageChange}/>
-            </div>
-        </div>
+            <Paper className="categoriasContainer">
+                <h2>Categorias</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descricao</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {categorias.map((a:Categoria)=>{
+                            return renderRow(a);
+                        })}
+                        {renderInsertRow()}
+                    </tbody>
+                </table>
+                {renderInsertButton()}
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+            </Paper>
+        </Fragment>
     );
-}
+};
+
+export default CategoriasPage;

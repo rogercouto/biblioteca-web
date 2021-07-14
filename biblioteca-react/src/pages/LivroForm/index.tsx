@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 
 import { BreadcrumbsMaker } from '../../components/breadcrumbs'
@@ -313,192 +313,194 @@ export default function LivroForm(props : any){
     }
     
     return (
-        <div className="formContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>{formType} livro</h2>
-            <hr />
-            <form onSubmit={_handleSubmit}>
-                <TextField 
-                    error={temErroTitulo}
-                    helperText={erroTitulo}
-                    label="Título *" 
-                    variant="outlined" 
-                    className="formControl"
-                    type="text"
-                    value={titulo}
-                    onChange={_handleTituloChange}
-                    onBlur={_handleTituloExit}
-                />
-                <Autocomplete
-                    multiple
-                    freeSolo
-                    options={nomesAutores}
-                    value={autores || null}
-                    onChange={(e, value)=>{
-                        setAutor(value as string[]);
-                        setTxtAutor('');
-                    }}
-                    onBlur={(e) => {
-                        _validateAutor();
-                    }}
-                    renderInput={(params) => (
-                        <TextField {...params} 
-                            error={temErroAutor}
-                            helperText={erroAutor}
-                            variant="outlined" 
-                            label="Autores *" 
+            <Paper className="formContainer">
+                <h2>{formType} livro</h2>
+                <hr />
+                <form onSubmit={_handleSubmit}>
+                    <TextField 
+                        error={temErroTitulo}
+                        helperText={erroTitulo}
+                        label="Título *" 
+                        variant="outlined" 
+                        className="formControl"
+                        type="text"
+                        value={titulo}
+                        onChange={_handleTituloChange}
+                        onBlur={_handleTituloExit}
+                    />
+                    <Autocomplete
+                        multiple
+                        freeSolo
+                        options={nomesAutores}
+                        value={autores || null}
+                        onChange={(e, value)=>{
+                            setAutor(value as string[]);
+                            setTxtAutor('');
+                        }}
+                        onBlur={(e) => {
+                            _validateAutor();
+                        }}
+                        renderInput={(params) => (
+                            <TextField {...params} 
+                                error={temErroAutor}
+                                helperText={erroAutor}
+                                variant="outlined" 
+                                label="Autores *" 
+                                className="formControl"
+                                value={txtAutor}
+                                onChange={(e)=>{
+                                    _handleBuscaAutor(e.target.value);
+                                    setTxtAutor(e.target.value);
+                                }}
+                            />
+                        )}
+                    />
+                    <TextField 
+                        label="Resumo" 
+                        variant="outlined" 
+                        className="formControl"
+                        type="text"
+                        value={resumo}
+                        multiline
+                        rows={3}
+                        onChange={e=>{
+                            setResumo(e.target.value);
+                        }}
+                    />
+                    <div className="row">
+                        <TextField 
+                            label="ISBN" 
+                            variant="outlined"  
                             className="formControl"
-                            value={txtAutor}
-                            onChange={(e)=>{
-                                _handleBuscaAutor(e.target.value);
-                                setTxtAutor(e.target.value);
+                            value={isbn}
+                            onChange={e=>{
+                                setIsbn(e.target.value);
                             }}
                         />
-                    )}
-                />
-                <TextField 
-                    label="Resumo" 
-                    variant="outlined" 
-                    className="formControl"
-                    type="text"
-                    value={resumo}
-                    multiline
-                    rows={3}
-                    onChange={e=>{
-                        setResumo(e.target.value);
-                    }}
-                />
-                <div className="row">
-                    <TextField 
-                        label="ISBN" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={isbn}
-                        onChange={e=>{
-                            setIsbn(e.target.value);
-                        }}
-                    />
-                    <TextField 
-                        label="Cutter" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={cutter}
-                        onChange={e=>{
-                            setCutter(e.target.value);
-                        }}
-                    />
-                </div>  
-                <Autocomplete
-                    freeSolo
-                    options={nomesEditoras}
-                    value={editora}
-                    onChange={(e, value)=>{
-                        _handleEditoraChange(value);
-                    }}
-                    onBlur={_handleEditoraExit}
-                    renderInput={(params) => (
-                        <TextField {...params} 
-                            error={temErroEditora}
-                            helperText={erroEditora}
-                            label="Editora *" 
-                            variant="outlined" 
+                        <TextField 
+                            label="Cutter" 
+                            variant="outlined"  
                             className="formControl"
-                            onChange={(e)=>{
-                                _handleBuscaEditora(e.target.value);
-                                _handleEditoraChange(e.target.value);
+                            value={cutter}
+                            onChange={e=>{
+                                setCutter(e.target.value);
                             }}
                         />
-                    )}
-                /> 
-                <div className="row">
-                    <TextField 
-                        label="Edição" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={edicao}
-                        onChange={e=>{
-                            setEdicao(e.target.value);
+                    </div>  
+                    <Autocomplete
+                        freeSolo
+                        options={nomesEditoras}
+                        value={editora}
+                        onChange={(e, value)=>{
+                            _handleEditoraChange(value);
                         }}
-                    />
-                    <TextField 
-                        label="Volume" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={volume}
-                        onChange={e=>{
-                            setVolume(e.target.value);
-                        }}
-                    />
-                </div>            
-                <Autocomplete
-                    options={descrsAssuntos}
-                    value={assunto || null}
-                    onChange={(e, value)=>{
-                        _handleAssuntoChange(value);
-                    }}
-                    //onFocus={_handleFocusOnAssuntos}
-                    onBlur={_handleAssuntoExit}
-                    renderInput={(params) => (
-                        <TextField {...params} 
-                            error={temErroAssunto}
-                            helperText={erroAssunto}
-                            label="Assunto *" 
-                            variant="outlined" 
+                        onBlur={_handleEditoraExit}
+                        renderInput={(params) => (
+                            <TextField {...params} 
+                                error={temErroEditora}
+                                helperText={erroEditora}
+                                label="Editora *" 
+                                variant="outlined" 
+                                className="formControl"
+                                onChange={(e)=>{
+                                    _handleBuscaEditora(e.target.value);
+                                    _handleEditoraChange(e.target.value);
+                                }}
+                            />
+                        )}
+                    /> 
+                    <div className="row">
+                        <TextField 
+                            label="Edição" 
+                            variant="outlined"  
                             className="formControl"
-                            onChange={(e)=>{
-                                _handleAssuntoExit();
+                            value={edicao}
+                            onChange={e=>{
+                                setEdicao(e.target.value);
                             }}
                         />
-                    )}
-                />
-                <div className="row">
-                    <TextField 
-                        label="Ano publicação" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={anoPublicacao}
-                        onChange={e=>{
-                            setAnoPublicacao(e.target.value);
-                        }}
-                    />
-                    <TextField 
-                        label="Nº Páginas" 
-                        variant="outlined"  
-                        className="formControl"
-                        value={numPaginas}
-                        onChange={e=>{
-                            setNumPaginas(e.target.value);
-                        }}
-                    />
-                </div> 
-                <Autocomplete
-                    multiple
-                    freeSolo
-                    options={descrsCategorias}
-                    value={categorias}
-                    onChange={(e, value)=>{
-                        setCategoria(value as string[]);
-                        setTxtCategoria('');
-                    }}
-                    renderInput={(params) => (
-                        <TextField {...params} 
-                            variant="outlined" 
-                            label="Categorias" 
+                        <TextField 
+                            label="Volume" 
+                            variant="outlined"  
                             className="formControl"
-                            placeholder="Categorias" 
-                            value={txtCategoria}
-                            onChange={(e)=>{
-                                _handleBuscaCategoria(e.target.value);
-                                setTxtCategoria(e.target.value);
+                            value={volume}
+                            onChange={e=>{
+                                setVolume(e.target.value);
                             }}
                         />
-                    )}
-                />
-                <Button variant="contained" type="submit" color="primary">
-                    Salvar
-                </Button>
-            </form>
-            <Loader open={isLoading} />
-        </div>
+                    </div>            
+                    <Autocomplete
+                        options={descrsAssuntos}
+                        value={assunto || null}
+                        onChange={(e, value)=>{
+                            _handleAssuntoChange(value);
+                        }}
+                        //onFocus={_handleFocusOnAssuntos}
+                        onBlur={_handleAssuntoExit}
+                        renderInput={(params) => (
+                            <TextField {...params} 
+                                error={temErroAssunto}
+                                helperText={erroAssunto}
+                                label="Assunto *" 
+                                variant="outlined" 
+                                className="formControl"
+                                onChange={(e)=>{
+                                    _handleAssuntoExit();
+                                }}
+                            />
+                        )}
+                    />
+                    <div className="row">
+                        <TextField 
+                            label="Ano publicação" 
+                            variant="outlined"  
+                            className="formControl"
+                            value={anoPublicacao}
+                            onChange={e=>{
+                                setAnoPublicacao(e.target.value);
+                            }}
+                        />
+                        <TextField 
+                            label="Nº Páginas" 
+                            variant="outlined"  
+                            className="formControl"
+                            value={numPaginas}
+                            onChange={e=>{
+                                setNumPaginas(e.target.value);
+                            }}
+                        />
+                    </div> 
+                    <Autocomplete
+                        multiple
+                        freeSolo
+                        options={descrsCategorias}
+                        value={categorias}
+                        onChange={(e, value)=>{
+                            setCategoria(value as string[]);
+                            setTxtCategoria('');
+                        }}
+                        renderInput={(params) => (
+                            <TextField {...params} 
+                                variant="outlined" 
+                                label="Categorias" 
+                                className="formControl"
+                                placeholder="Categorias" 
+                                value={txtCategoria}
+                                onChange={(e)=>{
+                                    _handleBuscaCategoria(e.target.value);
+                                    setTxtCategoria(e.target.value);
+                                }}
+                            />
+                        )}
+                    />
+                    <Button variant="contained" type="submit" color="primary">
+                        Salvar
+                    </Button>
+                </form>
+                <Loader open={isLoading} />
+            </Paper>
+        </Fragment>
     );
 }

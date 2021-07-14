@@ -5,7 +5,7 @@
 .content > .row{
     display: flex;
     flex-direction: row;
-    margin: 0;
+    margin: 1.5rem 1rem 0 1rem;
     padding: 0 1rem;
 }
 
@@ -19,7 +19,6 @@
 }
 
 .livrosContainer{
-    margin-top: 0.5rem;
     padding: 2rem;
 }
 
@@ -31,25 +30,25 @@
     margin: 1rem;
 }
 
-.dataTable > table{
+.livrosContainer > table{
     width: 100%;
     border-collapse: collapse;
 }
 
-.dataTable > table > tbody > tr > td {
+.livrosContainer > table > tbody > tr > td {
     height: 3.5rem;
 }
 
-.dataTable > table > tbody > tr:nth-child(odd) {
+.livrosContainer > table > tbody > tr:nth-child(odd) {
     background: #eee;
 }
 
-.dataTable > table> thead > tr > th{
+.livrosContainer > table> thead > tr > th{
     padding: 0.25rem;
     border: 1px solid var(--gray-200);
 }
 
-.dataTable > table> thead > tr > th:last-child{
+.livrosContainer > table> thead > tr > th:last-child{
     max-width: 10px;
 }
 
@@ -59,28 +58,28 @@
     
 }
 
-.dataTable > table> tbody > tr > td:last-child{
+.livrosContainer > table> tbody > tr > td:last-child{
     max-width: 10%;
 }
 
-.dataTable > table > thead > tr > th{
+.livrosContainer > table > thead > tr > th{
     text-transform: uppercase;
     font: 600 0.75rem Lexend, sans-serif;
     text-align: left;
 }
 
-.dataTable > table > tbody > tr > td{
+.livrosContainer > table > tbody > tr > td{
     font-size: 0.875rem;
     min-height: 23rem;
 }
 
-.dataTable > table > tbody  > tr > td > img{
+.livrosContainer > table > tbody  > tr > td > img{
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.5rem;
 }
 
-.dataTable > table > tbody > tr > td > a{
+.livrosContainer > table > tbody > tr > td > a{
     color: var(--gray-800);
     font-family: Lexend, sans-serif;
     font-weight: 600;
@@ -89,11 +88,11 @@
     font-size: 1rem;
 }
 
-.dataTable > table > tbody  > td > a:hover{
+.livrosContainer > table > tbody  > td > a:hover{
     text-decoration: underline;
 }
 
-.dataTable > table > tbody > tr > td > button{
+.livrosContainer > table > tbody > tr > td > button{
     background: var(--white);
     border: 1px solid var(--gray-100);
     border-radius: 0.5rem;
@@ -101,12 +100,12 @@
     margin: 2px;
 }
 
-.dataTable > table > tbody > td > button > img{
+.livrosContainer > table > tbody > td > button > img{
     width: 1.5rem;
     height: 1.5rem;
 }
 
-.dataTable > table > tbody > td > button> img:hover{
+.livrosContainer > table > tbody > td > button> img:hover{
     filter: brightness(0.9);
 }
 

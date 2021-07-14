@@ -1,10 +1,10 @@
 
-import { useEffect, useState} from 'react';
+import { Fragment, useEffect, useState} from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button, Tooltip, FormControlLabel, Switch, Snackbar } from '@material-ui/core';
+import { Button, Tooltip, FormControlLabel, Switch, Snackbar, Paper } from '@material-ui/core';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { Autocomplete, Pagination } from '@material-ui/lab';
+import { Pagination } from '@material-ui/lab';
 
 import AssignmentReturnIcon from '@material-ui/icons/AssignmentReturn';
 import UpdateIcon from '@material-ui/icons/Update';
@@ -12,13 +12,14 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import { BreadcrumbsMaker } from '../../components/breadcrumbs';
 
-import { EmprestimoService, UsuarioService } from '../../services';
+import { EmprestimoService } from '../../services';
 import { Emprestimo, Exemplar, Usuario } from '../../model';
 
 import './style.css';
 
 import QuestionDialog from '../../components/questionDialog';
 import DialogEmprestimo from '../../components/dialogEmprestimo';
+import SelectorUser from '../../components/selectorUser';
 
 const EmprestimosPage = () => {
 
@@ -26,18 +27,12 @@ const EmprestimosPage = () => {
 
     const userId = Cookies.get('userId');
     
-    const userName = Cookies.get('username') || '';
-
-    const fixedUser = !canEdit;
+    const [sUserId, setSUserId] = useState<number | null>(canEdit? null : (userId ? +userId : null)); 
 
     const [emprestimos, setEmprestimos] = useState(new Array<Emprestimo>());
     const [pagNum, setPagNum] = useState(1);
     const [totalPag, setTotalPag] = useState(1);
     const [somenteAtivos, setSomenteAtivos] = useState(true);
-
-    const [usuarios, setUsuarios] = useState<Array<Usuario>>([]);
-    const [nomesUsuarios, setNomesUsuarios] = useState<Array<string>>([]);
-    const [nomeUsuario, setNomeUsuario] = useState<string | null>(fixedUser ? userName : '');
 
     const [dialogOpen, setDialogOpen] = useState(false); //Inserção
 
@@ -52,35 +47,20 @@ const EmprestimosPage = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(()=>{
-        if (nomeUsuario === null || nomeUsuario.trim().length === 0){
-            EmprestimoService.findPage(pagNum, somenteAtivos).then(resp=>{
+        if (sUserId){
+            EmprestimoService.findUsuarioPage(sUserId, pagNum, somenteAtivos).then(resp=>{
                 setEmprestimos(resp.emprestimos);
                 setTotalPag(resp.totalPag);
                 window.scrollTo({top: 0, behavior: 'smooth'});
             });
         }else{
-            if (usuarios.length > 0 && nomesUsuarios.length > 0){
-                const index = nomesUsuarios.indexOf(nomeUsuario);
-                if (index >= 0){
-                    const usuario = usuarios[index];
-                    if (usuario && usuario.id){
-                        EmprestimoService.findUsuarioPage(usuario.id, pagNum, somenteAtivos).then(resp=>{
-                            setEmprestimos(resp.emprestimos);
-                            setTotalPag(resp.totalPag);
-                            window.scrollTo({top: 0, behavior: 'smooth'});
-                        });
-                    }
-                }
-            }else if (userId){
-                const id = +userId;
-                EmprestimoService.findUsuarioPage(id, pagNum, somenteAtivos).then(resp=>{
-                    setEmprestimos(resp.emprestimos);
-                    setTotalPag(resp.totalPag);
-                    window.scrollTo({top: 0, behavior: 'smooth'});
-                });
-            }
+            EmprestimoService.findPage(pagNum, somenteAtivos).then(resp=>{
+                setEmprestimos(resp.emprestimos);
+                setTotalPag(resp.totalPag);
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
         }
-    },[pagNum, somenteAtivos, nomeUsuario, usuarios, nomesUsuarios, userId]);
+    },[sUserId, pagNum, somenteAtivos]);
 
     const Alert = (props: AlertProps) => {
         return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -250,15 +230,6 @@ const EmprestimosPage = () => {
 
     bcMaker.addHrefBreadcrumb('Home', '/');
 
-    // busca usuário
-    const buscaUsuarios = (value : string) => {
-        UsuarioService.find(value, canEdit).then((usuarios : Array<Usuario>)=>{
-            setUsuarios(usuarios);
-            const nomes = usuarios.map((u : Usuario)=>{return u.nome || ''});
-            setNomesUsuarios(nomes);
-        });
-    }
-
     const renderLastThIfGerente = () => {
         if (canEdit){
             return (
@@ -306,132 +277,127 @@ const EmprestimosPage = () => {
         }
     }
 
-    const renderBuscaUsuarioIfGerente = () => {
+    const changeUser = (userId : number | null) => {
+        setSUserId(userId);
+    };
+
+    const renderSelectorUser = ()  => {
         if (canEdit){
             return (
-                <Autocomplete
-                    options={nomesUsuarios}
-                    value={nomeUsuario}
-                    onChange={(e, value)=>{
-                        setNomeUsuario(value);
-                    }}
-                    renderInput={(params) => (
-                        <TextField {...params} 
-                            variant="outlined" 
-                            label="Usuário" 
-                            className="formControl"
-                            onChange={(e)=>buscaUsuarios(e.target.value)}
-                        />
-                    )}
+                <SelectorUser 
+                    incAdmin={canEdit}
+                    onChange={changeUser}
                 />
             );
         }
-    }
+    };
 
     return(
-        <div className="emprestimosContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Empréstimos</h2>
-            <Button variant="contained" onClick={handleDialogOpen}>
-                <AssignmentReturnIcon className="flipH"/>
-                Novo empréstimo
-            </Button>
-            <div className="formDiv">
-                <FormControlLabel
-                    control={
-                    <Switch
-                        checked={somenteAtivos}
-                        onChange={handleSwitch}
-                        name="checkedSomenteAtivos"
-                        color="primary"
+            <Paper className="emprestimosContainer">
+                <h2>Empréstimos</h2>
+                <Button variant="contained" onClick={handleDialogOpen}>
+                    <AssignmentReturnIcon className="flipH"/>
+                    Novo empréstimo
+                </Button>
+                <div className="filterDiv">
+                    <FormControlLabel
+                        control={
+                        <Switch
+                            checked={somenteAtivos}
+                            onChange={handleSwitch}
+                            name="checkedSomenteAtivos"
+                            color="primary"
+                        />
+                        }
+                        label="Somente empréstimos ativos"
                     />
-                    }
-                    label="Somente empréstimos ativos"
+                    <span />
+                    {renderSelectorUser()}
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Nº Exemplar</th>
+                            <th>Título do livro</th>
+                            <th>Usuário</th>
+                            <th>Prazo</th>
+                            {renderLastThIfGerente()}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {emprestimos.map(emprestimo=>{
+                            return(
+                                <tr key={emprestimo.id}>
+                                    <td>{emprestimo.dataHora?.toLocaleString()}</td>
+                                    <td>{emprestimo.exemplar?.numRegistro}</td>
+                                    <td>{emprestimo.exemplar?.livro?.titulo}</td>
+                                    <td>{emprestimo.usuario?.nome}</td>
+                                    <td style={emprestimo.getTdStyle()}>{emprestimo.dataHoraDevolucao? 'Devolvido' : emprestimo.prazo?.toLocaleDateString() } </td>
+                                    {renderLastTdIfGerente(emprestimo)}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+                <DialogEmprestimo 
+                    title="Novo empréstimo"
+                    message="Número de registro está localizado na etiqueta do exemplar"
+                    open={dialogOpen}
+                    onClose={handleDialogClose}
+                    onSave={handleDialogSave}
                 />
-                <span />
-                {renderBuscaUsuarioIfGerente()}
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data/Hora</th>
-                        <th>Nº Exemplar</th>
-                        <th>Título do livro</th>
-                        <th>Usuário</th>
-                        <th>Prazo</th>
-                        {renderLastThIfGerente()}
-                    </tr>
-                </thead>
-                <tbody>
-                    {emprestimos.map(emprestimo=>{
-                        return(
-                            <tr key={emprestimo.id}>
-                                <td>{emprestimo.dataHora?.toLocaleString()}</td>
-                                <td>{emprestimo.exemplar?.numRegistro}</td>
-                                <td>{emprestimo.exemplar?.livro?.titulo}</td>
-                                <td>{emprestimo.usuario?.nome}</td>
-                                <td style={emprestimo.getTdStyle()}>{emprestimo.dataHoraDevolucao? 'Devolvido' : emprestimo.prazo?.toLocaleDateString() } </td>
-                                {renderLastTdIfGerente(emprestimo)}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={handlePageChange}/>
-            </div>
-            <DialogEmprestimo 
-                title="Novo empréstimo"
-                message="Número de registro está localizado na etiqueta do exemplar"
-                open={dialogOpen}
-                onClose={handleDialogClose}
-                onSave={handleDialogSave}
-            />
-            <QuestionDialog 
-                title="Atenção!"
-                message="Confirma devolução do exemplar?"
-                open={dialogDevolucaoOpen}
-                onConfirm={handleConfirmDevolucao}
-                onClose={handleCancelDevolucao}
-            />
-            <QuestionDialog 
-                title="Atenção!"
-                message="Confirma renovação do empréstimo?"
-                open={dialogRenovacaoOpen}
-                onConfirm={handleConfirmRenovacao}
-                onClose={handleCancelRenovacao}
-            />
-            <QuestionDialog 
-                title="Atenção!"
-                message="Confirma exclusão do empréstimo?"
-                open={dialogDeleteOpen}
-                onConfirm={handleConfirmDelete}
-                onClose={handleCancelDelete}
-            />
-            <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
-                setConfOpen(false);
-                setConfMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setConfOpen(false);
-                        setConfMessage('');
-                    }} severity="success">
-                    {confMessage}
-                </Alert>
-            </Snackbar>
-            <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
-                setErrorOpen(false);
-                setErrorMessage('');
-            }}>
-                <Alert onClose={(e)=>{
-                        setErrorOpen(false);
-                        setErrorMessage('');
-                    }} severity="error">
-                    {errorMessage}
-                </Alert>
-            </Snackbar>
-        </div>
+                <QuestionDialog 
+                    title="Atenção!"
+                    message="Confirma devolução do exemplar?"
+                    open={dialogDevolucaoOpen}
+                    onConfirm={handleConfirmDevolucao}
+                    onClose={handleCancelDevolucao}
+                />
+                <QuestionDialog 
+                    title="Atenção!"
+                    message="Confirma renovação do empréstimo?"
+                    open={dialogRenovacaoOpen}
+                    onConfirm={handleConfirmRenovacao}
+                    onClose={handleCancelRenovacao}
+                />
+                <QuestionDialog 
+                    title="Atenção!"
+                    message="Confirma exclusão do empréstimo?"
+                    open={dialogDeleteOpen}
+                    onConfirm={handleConfirmDelete}
+                    onClose={handleCancelDelete}
+                />
+                <Snackbar open={confOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setConfOpen(false);
+                    setConfMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setConfOpen(false);
+                            setConfMessage('');
+                        }} severity="success">
+                        {confMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={errorOpen} autoHideDuration={10000} onClose={(e)=>{
+                    setErrorOpen(false);
+                    setErrorMessage('');
+                }}>
+                    <Alert onClose={(e)=>{
+                            setErrorOpen(false);
+                            setErrorMessage('');
+                        }} severity="error">
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
+            </Paper>
+        </Fragment>
     );
 };
 

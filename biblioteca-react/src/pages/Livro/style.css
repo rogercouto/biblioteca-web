@@ -1,39 +1,12 @@
 .livroContainer{
     padding: 2rem;
-    margin-right: 10%;
+    padding-top: 3rem;
+    padding-right: 10%;
 }
 
-.livroContainer > table{
+.dataContainer{
     width: 100%;
     margin: 1rem;
-}
-
-.livroContainer > table > tbody > tr > td{
-    padding: 0.5rem;
-}
-
-.rowLabel{
-    width: 20%;
-    text-align: right;
-    border: 0;
-}
-
-.rowLabelSmall{
-    width: 10%;
-    text-align: right;   
-    border: 0;
-}
-
-.rowValue{
-    width: 80%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-.rowValueHalf{
-    width: 40%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
 }
 
 .editContainer{
@@ -45,3 +18,74 @@
     border: 0px solid #ddd;
 }
 
+.dataContainer{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.field{
+    display: flex;
+    flex-direction: row;
+    margin: 0.2rem;
+    flex-grow: 1;
+}
+
+.field button{
+    margin: 1rem 1rem 1rem 11rem;
+}
+
+.label{
+    font-weight: bold;
+    width: 10rem;
+    display: flex; 
+    justify-content: flex-end;
+    padding: 1rem 0;
+}
+
+.value{
+    color: var(--gray-800);
+    margin-left: 1rem;
+    border: 1px solid var(--gray-500);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+    flex-grow: 1;
+    width: 10rem;
+}
+
+@media(max-width: 768px){
+
+    .field{
+        flex-direction: column;
+        margin: 0.05rem;
+    }
+    
+    .value{
+        margin-left: 0rem;
+    }
+    
+    .livroContainer{
+        padding: 1rem;
+        margin-right: 0;
+    }
+    
+    .label{
+        font-weight: bold;
+        display: block; 
+    }
+    
+    .field button{
+        margin: 0.75rem;
+    }
+
+    .value{
+        width: auto;
+    }
+
+    #firstButton{
+        margin-top: 2rem;
+    }
+}

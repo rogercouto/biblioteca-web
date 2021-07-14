@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -16,8 +16,8 @@ import { EditoraService } from '../../services';
 
 import './style.css';
 
-export default function EditorasPage(props: any){
-
+const EditorasPage = (props: any) => {
+    
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
     const [editoras, setEditoras] = useState(new Array<Editora>());
@@ -38,29 +38,29 @@ export default function EditorasPage(props: any){
         })
     },[pagNum])
 
-    function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setEdtId(0);
         setPagNum(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    };
 
-    function _handleEdit(editora : Editora){
+    const handleEdit = (editora : Editora) => {
         setTemErroNome(false);
         setErroNome('');
         if (editora.id){
             setNome(editora.nome || '');
             setEdtId(editora.id);
         }
-    }
+    };
 
-    function _handleInsert(){
+    const handleInsert = () => {
         setTemErroNome(false);
         setErroNome('');
         setNome('');        
         setEdtId(-1);
-    }
+    };
 
-    function _validate() : boolean{
+    const validate = (): boolean => {
         if (nome.trim().length === 0){
             setTemErroNome(true);
             setErroNome('Descrição do editora não pode ficar em branco');
@@ -69,15 +69,15 @@ export default function EditorasPage(props: any){
         setTemErroNome(false);
         setErroNome('');
         return true;
-    }
+    };
 
-    function indexOf(editora : Editora){
+    const indexOf = (editora : Editora) => {
         const ids = editoras.map((a : Editora)=>{return a.id;});
         return ids.indexOf(editora.id);
-    }
-    
-    async function _handleSave(){
-        if (_validate()){
+    };
+
+    const handleSave = async () => {
+        if (validate()){
             let sEditora = new Editora();
             let insert = true;
             if (edtId > 0){
@@ -100,9 +100,9 @@ export default function EditorasPage(props: any){
                 setEdtId(0);
             }
         }
-    }
+    };
 
-    async function _handleDelete(editora : Editora){
+    const handleDelete = async (editora : Editora) => {
         if (window.confirm('Tem certeza que deseja remover o editora?')) {
             const resp = await EditoraService.delete(editora);
             if (resp.done){
@@ -114,24 +114,24 @@ export default function EditorasPage(props: any){
                 alert(resp.message || 'Erro desconhecido!');
             }
         }
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () => {
         setEdtId(0);
 
-    }
+    };
 
-    function _renderButtons(editora : Editora){
+    const renderButtons = (editora : Editora) => {
         if (edtId === 0){
             return (
                 <Fragment>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleEdit(editora);
+                        handleEdit(editora);
                     }}>
                         <EditIcon  style={{color: 'blue'}}/>
                     </Button>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleDelete(editora)
+                        handleDelete(editora)
                     }}>
                         <DeleteIcon  style={{color: 'red'}}/>
                     </Button>
@@ -140,23 +140,23 @@ export default function EditorasPage(props: any){
         }else if (edtId === editora.id){
             return (
                 <Fragment>
-                    <Button variant="contained" onClick={_handleSave}>
+                    <Button variant="contained" onClick={handleSave}>
                         <SaveIcon  style={{color: 'green'}}/>
                     </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
+                    <Button variant="contained" onClick={handleCancel}>
                         <CancelIcon />
                     </Button>
                 </Fragment>
             );
         } 
-    }
+    };
 
-    function _renderRow(editora : Editora){
+    const renderRow = (editora : Editora) => {
         if (editora.id && editora.id > 0 && edtId !== editora.id){
             return(
                 <tr key={editora.id}>
                     <td>{editora.nome}</td>
-                    <td>{_renderButtons(editora)}</td>
+                    <td>{renderButtons(editora)}</td>
                 </tr>
             );
         }else{
@@ -174,22 +174,22 @@ export default function EditorasPage(props: any){
                             }}
                         />
                     </td>
-                    <td>{_renderButtons(editora)}</td>
+                    <td>{renderButtons(editora)}</td>
                 </tr>
             );
         }
-    }
+    };
 
-    function _renderInsertRow(){
+    const renderInsertRow = () => {
         if (edtId < 0){
-            return _renderRow(new Editora(-1));
+            return renderRow(new Editora(-1));
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (edtId === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -197,7 +197,7 @@ export default function EditorasPage(props: any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
     if (!canEdit){
         return (<div className="editorasContainer"><h1>Não autorizado!</h1></div>);
@@ -206,28 +206,32 @@ export default function EditorasPage(props: any){
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return (
-        <div className="editorasContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Editoras</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {editoras.map((a:Editora)=>{
-                        return _renderRow(a);
-                    })}
-                    {_renderInsertRow()}
-                </tbody>
-            </table>
-            {_renderInsertButton()}
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={_handlePageChange}/>
-            </div>
-        </div>
+            <Paper className="editorasContainer">
+                <h2>Editoras</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {editoras.map((a:Editora)=>{
+                            return renderRow(a);
+                        })}
+                        {renderInsertRow()}
+                    </tbody>
+                </table>
+                {renderInsertButton()}
+                <div className="paginationContainer">
+                    <Pagination color="primary" 
+                                count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                </div>
+            </Paper>
+        </Fragment>
     );
-}
+};
+
+export default EditorasPage;

@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
@@ -16,8 +16,7 @@ import { AutorService } from '../../services';
 
 import './style.css';
 
-export default function AutoresPage(props: any){
-
+const AutoresPage = (props: any) => {
     const canEdit : boolean = Cookies.get('isGerente') === 'true';
 
     const [autores, setAutores] = useState(new Array<Autor>());
@@ -42,13 +41,13 @@ export default function AutoresPage(props: any){
         })
     },[pagNum])
 
-    function _handlePageChange(event: React.ChangeEvent<unknown>, value: number){
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setEdtId(0);
         setPagNum(value);
         window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    };
 
-    function _handleEdit(autor : Autor){
+    const handleEdit = (autor : Autor) => {
         setTemErroNome(false);
         setErroNome('');
         if (autor.id){
@@ -57,18 +56,18 @@ export default function AutoresPage(props: any){
             setInfo(autor.info || '');
             setEdtId(autor.id);
         }
-    }
+    };
 
-    function _handleInsert(){
+    const handleInsert = () => {
         setTemErroNome(false);
         setErroNome('');
         setNome('');
         setSobrenome('');
         setInfo('');
         setEdtId(-1);
-    }
+    };
 
-    function _validate() : boolean{
+    const validate = (): boolean => {
         let valid = true;
         if (nome.trim().length === 0){
             setTemErroNome(true);
@@ -86,15 +85,15 @@ export default function AutoresPage(props: any){
         setTemErroNome(false);
         setErroNome('');
         return true;
-    }
+    };
 
-    function indexOf(autor : Autor){
+    const indexOf = (autor : Autor) => {
         const ids = autores.map((a : Autor)=>{return a.id;});
         return ids.indexOf(autor.id);
-    }
-    
-    async function _handleSave(){
-        if (_validate()){
+    };
+
+    const handleSave = async () => {
+        if (validate()){
             let sAutor = new Autor();
             let insert = true;
             if (edtId > 0){
@@ -121,9 +120,9 @@ export default function AutoresPage(props: any){
                 setEdtId(0);
             }
         }
-    }
+    };
 
-    async function _handleDelete(autor : Autor){
+    const handleDelete = async (autor : Autor) => {
         if (window.confirm('Tem certeza que deseja remover o autor?')) {
             const resp = await AutorService.delete(autor);
             if (resp.done){
@@ -133,24 +132,24 @@ export default function AutoresPage(props: any){
                 setAutores(array);
             }
         }
-    }
+    };
 
-    function _handleCancel(){
+    const handleCancel = () => {
         setEdtId(0);
 
-    }
+    };
 
-    function _renderButtons(autor : Autor){
+    const renderButtons = (autor : Autor) => {
         if (edtId === 0){
             return (
                 <Fragment>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleEdit(autor);
+                        handleEdit(autor);
                     }}>
                         <EditIcon  style={{color: 'blue'}}/>
                     </Button>
                     <Button variant="contained" onClick={(e)=>{
-                        _handleDelete(autor)
+                        handleDelete(autor)
                     }}>
                         <DeleteIcon  style={{color: 'red'}}/>
                     </Button>
@@ -159,25 +158,25 @@ export default function AutoresPage(props: any){
         }else if (edtId === autor.id){
             return (
                 <Fragment>
-                    <Button variant="contained" onClick={_handleSave}>
+                    <Button variant="contained" onClick={handleSave}>
                         <SaveIcon  style={{color: 'green'}}/>
                     </Button>
-                    <Button variant="contained" onClick={_handleCancel}>
+                    <Button variant="contained" onClick={handleCancel}>
                         <CancelIcon />
                     </Button>
                 </Fragment>
             );
         } 
-    }
+    };
 
-    function _renderRow(autor : Autor){
+    const renderRow = (autor : Autor) => {
         if (autor.id && autor.id > 0 && edtId !== autor.id){
             return(
                 <tr key={autor.id}>
                     <td>{autor.nome}</td>
                     <td>{autor.sobrenome}</td>
                     <td>{autor.info}</td>
-                    <td>{_renderButtons(autor)}</td>
+                    <td>{renderButtons(autor)}</td>
                 </tr>
             );
         }else{
@@ -217,22 +216,22 @@ export default function AutoresPage(props: any){
                             }}
                         />
                     </td>
-                    <td>{_renderButtons(autor)}</td>
+                    <td>{renderButtons(autor)}</td>
                 </tr>
             );
         }
-    }
+    };
 
-    function _renderInsertRow(){
+    const renderInsertRow = () => {
         if (edtId < 0){
-            return _renderRow(new Autor(-1));
+            return renderRow(new Autor(-1));
         }
-    }
+    };
 
-    function _renderInsertButton(){
+    const renderInsertButton = () => {
         if (edtId === 0){
             return (
-                <Button variant="contained" onClick={_handleInsert}>
+                <Button variant="contained" onClick={handleInsert}>
                     <AddCircleOutlineIcon  style={{color: 'blue'}}/>
                     Inserir
                 </Button>
@@ -240,7 +239,7 @@ export default function AutoresPage(props: any){
         }else{
             return <div style={{height: '3rem'}}></div>
         }
-    }
+    };
 
     if (!canEdit){
         return (<div className="autoresContainer"><h1>Não autorizado!</h1></div>);
@@ -249,30 +248,36 @@ export default function AutoresPage(props: any){
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return (
-        <div className="autoresContainer">
+        <Fragment>
             {bcMaker.render()}
-            <h2>Autores</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Sobrenome</th>
-                        <th>Info</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {autores.map((a:Autor)=>{
-                        return _renderRow(a);
-                    })}
-                    {_renderInsertRow()}
-                </tbody>
-            </table>
-            {_renderInsertButton()}
-            <div className="paginationContainer">
-                <Pagination color="primary" 
-                            count={totalPag} page={pagNum} onChange={_handlePageChange}/>
-            </div>
-        </div>
+            <Paper className="autoresContainer">
+                <h2>Autores</h2>
+                <div className="dataTable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Sobrenome</th>
+                                <th>Info</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {autores.map((a:Autor)=>{
+                                return renderRow(a);
+                            })}
+                            {renderInsertRow()}
+                        </tbody>
+                    </table>
+                    {renderInsertButton()}
+                    <div className="paginationContainer">
+                        <Pagination color="primary" 
+                                    count={totalPag} page={pagNum} onChange={handlePageChange}/>
+                    </div>
+                </div>
+            </Paper>
+        </Fragment>
     );
-}
+};
+
+export default AutoresPage;

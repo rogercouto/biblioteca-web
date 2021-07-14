@@ -2,7 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { TextField, Button, Snackbar } from '@material-ui/core';
+import { TextField, Button, Snackbar, Paper } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
@@ -75,10 +75,14 @@ export default function LivrosPage( props: any ){
         });
     }
 
+    const insert = () => {
+        history.push('/livros/insert');
+    }
+
     function _renderCreateButtonIfManager(){
         if (canEdit){
             return (
-                <Button variant="contained" type="submit" href="/livros/insert">
+                <Button variant="contained" onClick={insert}>
                     <AddCircleOutlineIcon />
                     Inserir
                 </Button>
@@ -89,8 +93,15 @@ export default function LivrosPage( props: any ){
     }
 
     function renderLivros(){
+        if (livros.length === 0){
+            if (textoBusca.trim().length === 0){
+                return (<h3>Utilize o campo acima pra fazer uma busca</h3>);
+            }else{
+                return (<h3>Nenhum resultado encontrado</h3>);
+            }
+        }
         return (
-            <Fragment>
+            <div className="dataTable">
                 <h2>Livros</h2>
                     <table cellSpacing={0}>
                         <thead>
@@ -136,39 +147,45 @@ export default function LivrosPage( props: any ){
                         <Pagination color="primary" 
                                     count={totalPag} page={pagNum} onChange={_handlePageChange}/>
                     </div>
-            </Fragment>
+            </div>
         );
     }
 
     bcMaker.addHrefBreadcrumb('Home', '/');
 
     return(
-        <div className="content">
+        <Fragment>
             {bcMaker.render()}
-            <div className="row">
-                <TextField label="Buscar" variant="outlined" 
-                            className="text" 
-                            value={textoBusca}
-                            onChange={(e)=>setTextoBusca(e.target.value)}
-                            onKeyUp={(e)=>{
-                                if (e.code === 'Enter' || e.code === 'NumpadEnter') {
-                                    _handleFind();
-                                }
-                            }}
-                            />
-                <Button variant="contained" onClick={_handleFind}>
-                    <SearchIcon />
-                </Button>
-                {_renderCreateButtonIfManager()}
-            </div>
-            <section className="livrosContainer">
-                { livros.length > 0 ? renderLivros() : <h3>Utilize o campo acima pra fazer uma busca</h3>}
-            </section>
+            <Paper>
+                <div className="content">
+                    <div className="row">
+                        <TextField label="Buscar" variant="outlined" 
+                                    className="text" 
+                                    value={textoBusca}
+                                    onChange={(e)=>setTextoBusca(e.target.value)}
+                                    onKeyUp={(e)=>{
+                                        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+                                            _handleFind();
+                                        }
+                                    }}
+                                    />
+                        <Button variant="contained" onClick={_handleFind}>
+                            <SearchIcon />
+                        </Button>
+                        {_renderCreateButtonIfManager()}
+                    </div>
+                </div>
+            </Paper>
+            <Paper>
+                <div className="livrosContainer">
+                    {renderLivros()}
+                </div>
+            </Paper>
             <Snackbar open={confOpen} autoHideDuration={10000} onClose={handleConfClose}>
                 <Alert onClose={handleConfClose} severity="success">
                     {confMessage}
                 </Alert>
             </Snackbar>
-        </div>
+        </Fragment>
     );
 }

@@ -10,89 +10,14 @@
     margin: 1rem;
 }
 
-.autoresContainer > table{
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.autoresContainer > table > tbody > tr > td {
-    height: 3.5rem;
-}
-
-.autoresContainer > table > tbody > tr:nth-child(odd) {
-    background: #eee;
-}
-
-.autoresContainer > table> thead > tr > th{
-    padding: 0.25rem;
-    border: 1px solid var(--gray-200);
-}
-
-.autoresContainer > table> thead > tr > th:last-child{
-    max-width: 10px;
-}
-
-.autoresContainer > table> tbody > tr > td{
-    padding: 0.25rem;
-    border: 1px solid var(--gray-100);
-    
-}
-
-.autoresContainer > table> tbody > tr > td:last-child{
-    width: 15%;
-}
-
-.autoresContainer > table > thead > tr > th{
-    text-transform: uppercase;
-    font: 600 0.75rem Lexend, sans-serif;
-    text-align: left;
-}
-
-.autoresContainer > table > tbody > tr > td{
-    font-size: 0.875rem;
-    min-height: 23rem;
-}
-
-.autoresContainer > table > tbody  > tr > td > img{
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.5rem;
-}
-
-.autoresContainer > table > tbody > tr > td > a{
-    color: var(--gray-800);
-    font-family: Lexend, sans-serif;
-    font-weight: 600;
-    text-decoration: none;
-    line-height: 1.4rem;
-    font-size: 1rem;
-}
-
-.autoresContainer > table > tbody  > td > a:hover{
-    text-decoration: underline;
-}
-
-.autoresContainer > table > tbody > tr > td > button{
-    background: var(--white);
-    border: 1px solid var(--gray-100);
-    border-radius: 0.5rem;
-    transition: filter 0.2s;
-    margin: 2px;
-}
-
-.autoresContainer > table > tbody > td > button > img{
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-.autoresContainer > table > tbody > td > button> img:hover{
-    filter: brightness(0.9);
-}
-
-.autoresContainer > button{
+.autoresContainer button{
     background: var(--white);
     border: 1px solid var(--gray-100);
     border-radius: 0.5rem;
     transition: filter 0.2s;
     margin: 5px;
+}
+
+.dataTable > table> tbody > tr > td:last-child{
+    width: 15%;
 }

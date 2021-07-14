@@ -19,6 +19,7 @@ import ErrorsPage from './pages/Errors';
 import PendenciasPage from './pages/Pendencias';
 
 export default function Routes(){
+    
     return(
         <BrowserRouter>
             <Switch>
@@ -39,7 +40,7 @@ export default function Routes(){
                 <Route path="/categorias" component={CategoriasPage}/>
                 <Route path="/origens" component={OrigensPage}/>
                 <Route path="/usuarios" component={UsuariosPage}/>
-                <Route path="/errors" component={ErrorsPage} />
+                <Route path="/errors" component={ErrorsPage} />               
             </Switch>
         </BrowserRouter>
     );

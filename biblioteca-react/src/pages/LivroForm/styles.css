@@ -56,10 +56,14 @@
     
     .formContainer > form{
         margin: 0 1rem;
-        
     }
 
     .formControl{
         margin-top: 0.5rem;
     }
+
+    .formContainer > form > button{
+        margin-bottom: 1rem;
+    }
+
 }
