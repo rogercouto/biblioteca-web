@@ -4,4 +4,4 @@ CREATE TABLE `origem` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
-INSERT INTO origem(descricao) VALUES('Aquisição'),('Doação');
+INSERT INTO origem(descricao) VALUES('Aquisição'),('Doação'),('Doação Apostila');
