@@ -129,7 +129,7 @@
 					<user>root</user>
 					<password>admin2020#TI</password>
 					<locations>
-						<location>classpath:db/migration</location>
+						<location>classpath:db/migrations</location>
 					</locations>
 				</configuration>
 				<dependencies>
