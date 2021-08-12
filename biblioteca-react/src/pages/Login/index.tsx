@@ -15,8 +15,8 @@ export default function LoginPage(){
 
     const history = useHistory();
     
-    const [email, setEmail] = useState('admin@gmail.com');
-    const [senha, setSenha] = useState('admin123');
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
