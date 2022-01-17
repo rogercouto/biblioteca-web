@@ -113,11 +113,11 @@ public class ReservaService {
                 errors.add(String.format(
                         "Exemplar com número de registro = %d não existe",
                         reserva.getExemplar().getNumRegistro()));
-            }else if(reserva.isAtiva() && exemplar.getFixo()){
+            }else if(reserva.isAtiva() && exemplar.isFixo()){
                 errors.add("Exemplar não pode ser reservado/emprestado");
-            }else if (reserva.isAtiva() && !exemplar.getDisponivel()){
+            }else if (reserva.isAtiva() && !exemplar.isDisponivel()){
                 errors.add("Exemplar indisponível");
-            }else if (reserva.isAtiva() && exemplar.getReservado()){
+            }else if (reserva.isAtiva() && exemplar.isReservado()){
                 errors.add("Exemplar já reservado");
             }
         }

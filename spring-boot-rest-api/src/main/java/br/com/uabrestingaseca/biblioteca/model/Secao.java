@@ -1,10 +1,19 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Objects;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "secao")
 public class Secao implements Serializable {
@@ -18,46 +27,14 @@ public class Secao implements Serializable {
     @NotBlank(message = "Descrição da seção deve ser informada")
     private String nome;
 
-    public Secao() {
-    }
-
+    @Deprecated
     public Secao(Integer id) {
         this.id = id;
     }
 
+    @Deprecated
     public Secao(String nome) {
         this.nome = nome;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Secao secao = (Secao) o;
-        return Objects.equals(id, secao.id) &&
-                Objects.equals(nome, secao.nome);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, nome);
     }
 
 }

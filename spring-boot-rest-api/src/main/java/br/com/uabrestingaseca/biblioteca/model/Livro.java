@@ -1,6 +1,9 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -11,8 +14,11 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "livro")
 public class Livro implements Serializable {
@@ -71,99 +77,27 @@ public class Livro implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Exemplar> exemplares;
 
-    public Livro() {
+    private String nomesAutores;
+
+    public String getNomesAutores(){
+        if (nomesAutores == null && autores != null){
+            StringBuilder builder = new StringBuilder();
+            autores.forEach(a->{
+                if (builder.length() > 0){
+                    builder.append("; ");
+                }
+                builder.append(a.getSobrenome().toUpperCase());
+                builder.append(", ");
+                builder.append(a.getNome());
+            });
+            nomesAutores = builder.toString();
+        }
+        return nomesAutores;
     }
 
+    @Deprecated
     public Livro(Integer id){
         this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public String getResumo() {
-        return resumo;
-    }
-
-    public void setResumo(String resumo) {
-        this.resumo = resumo;
-    }
-
-    public Long getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(Long isbn) {
-        this.isbn = isbn;
-    }
-
-    public String getCutter() {
-        return cutter;
-    }
-
-    public void setCutter(String cutter) {
-        this.cutter = cutter;
-    }
-
-    public Editora getEditora() {
-        return editora;
-    }
-
-    public void setEditora(Editora editora) {
-        this.editora = editora;
-    }
-
-    public String getEdicao() {
-        return edicao;
-    }
-
-    public void setEdicao(String edicao) {
-        this.edicao = edicao;
-    }
-
-    public String getVolume() {
-        return volume;
-    }
-
-    public void setVolume(String volume) {
-        this.volume = volume;
-    }
-
-    public Integer getNumPaginas() {
-        return numPaginas;
-    }
-
-    public void setNumPaginas(Integer numPaginas) {
-        this.numPaginas = numPaginas;
-    }
-
-    public Assunto getAssunto() {
-        return assunto;
-    }
-
-    public void setAssunto(Assunto assunto) {
-        this.assunto = assunto;
-    }
-
-    public Short getAnoPublicacao() {
-        return anoPublicacao;
-    }
-
-    public void setAnoPublicacao(Short anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
     }
 
     public List<Autor> getAutores() {
@@ -174,6 +108,7 @@ public class Livro implements Serializable {
 
     public void setAutores(List<Autor> autores) {
         this.autores = autores;
+        getNomesAutores();
     }
 
     public List<Categoria> getCategorias() {
@@ -196,29 +131,4 @@ public class Livro implements Serializable {
         this.exemplares = exemplares;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Livro livro = (Livro) o;
-        return Objects.equals(id, livro.id) &&
-                Objects.equals(titulo, livro.titulo) &&
-                Objects.equals(resumo, livro.resumo) &&
-                Objects.equals(isbn, livro.isbn) &&
-                Objects.equals(cutter, livro.cutter) &&
-                Objects.equals(editora, livro.editora) &&
-                Objects.equals(edicao, livro.edicao) &&
-                Objects.equals(volume, livro.volume) &&
-                Objects.equals(numPaginas, livro.numPaginas) &&
-                Objects.equals(assunto, livro.assunto) &&
-                Objects.equals(anoPublicacao, livro.anoPublicacao) &&
-                Objects.equals(autores, livro.autores) &&
-                Objects.equals(categorias, livro.categorias) &&
-                Objects.equals(exemplares, livro.exemplares);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, titulo, resumo, isbn, cutter, editora, edicao, volume, numPaginas, assunto, anoPublicacao, autores, categorias, exemplares);
-    }
 }

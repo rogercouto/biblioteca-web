@@ -56,7 +56,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario create(Usuario usuario){
-        if (usuario.isGerente()){
+        if (usuario.getGerente()){
             usuario.getPermissoes().add(new Permissao(2));
         }
         usuario.getPermissoes().add(new Permissao(3));
@@ -73,7 +73,7 @@ public class UsuarioService implements UserDetailsService {
         }
         Usuario sUsuario = findById(usuario.getId());
         sUsuario.setPermissoes(new LinkedList<Permissao>());
-        if (usuario.isGerente()){
+        if (usuario.getGerente()){
             sUsuario.getPermissoes().add(new Permissao(2));
         }
         sUsuario.getPermissoes().add(new Permissao(3));
@@ -92,11 +92,11 @@ public class UsuarioService implements UserDetailsService {
             if (usuario.getNumTel() != null){
                 sUsuario.setNumTel(usuario.getNumTel());
             }
-            if (usuario.isAtivo() != null){
-                sUsuario.setAtivo(usuario.isAtivo());
+            if (usuario.getAtivo() != null){
+                sUsuario.setAtivo(usuario.getAtivo());
             }
-            if (usuario.isGerente() != null){
-                sUsuario.setGerente(usuario.isGerente());
+            if (usuario.getGerente() != null){
+                sUsuario.setGerente(usuario.getGerente());
             }
             return repository.save(sUsuario);
         }

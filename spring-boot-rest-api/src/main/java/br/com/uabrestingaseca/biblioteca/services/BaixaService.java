@@ -67,7 +67,7 @@ public class BaixaService {
             errors.add(String.format(
                     "Exemplar com número de registro = %d não existe",
                             baixa.getExemplar().getNumRegistro()));
-        }else if (!exemplar.getDisponivel()){
+        }else if (!exemplar.isDisponivel()){
             errors.add("Baixa já lançada para o exemplar");
         }
         if (errors.size()  > 0){

@@ -47,10 +47,20 @@
 		</dependency>
 
 		<!-- for MySQL support -->
+		<!--
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+		-->
+
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.23</version>
+		</dependency>
+
 
 		<!-- for Migrations support -->
 		<dependency>
@@ -113,6 +123,14 @@
 		</dependency>
 		<!--
 		-->
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.20</version>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -125,9 +143,9 @@
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
 				<configuration>
-					<url>jdbc:mysql://localhost:3306/biblioteca?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</url>
-					<user>root</user>
-					<password>admin2020#TI</password>
+					<url>jdbc:postgresql://db:5432/biblioteca</url>
+					<user>postgres</user>
+					<password>pgadmin#2345@</password>
 					<locations>
 						<location>classpath:db/migration</location>
 					</locations>

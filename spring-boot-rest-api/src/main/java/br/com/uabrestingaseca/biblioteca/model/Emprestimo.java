@@ -3,6 +3,10 @@ package br.com.uabrestingaseca.biblioteca.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,6 +15,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "emprestimo")
 public class Emprestimo implements Serializable {
@@ -52,102 +60,9 @@ public class Emprestimo implements Serializable {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate prazo;
 
-    public Emprestimo() {
-    }
-
+    @Deprecated
     public Emprestimo(Integer id) {
         this.id = id;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
-    }
-
-    public Exemplar getExemplar() {
-        return exemplar;
-    }
-
-    public void setExemplar(Exemplar exemplar) {
-        this.exemplar = exemplar;
-    }
-
-    public Integer getExemplarNumRegistro() {
-        return exemplarNumRegistro;
-    }
-
-    public void setExemplarNumRegistro(Integer exemplarNumRegistro) {
-        this.exemplarNumRegistro = exemplarNumRegistro;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public int getNumRenovacoes() {
-        return numRenovacoes;
-    }
-
-    public void setNumRenovacoes(int numRenovacoes) {
-        this.numRenovacoes = numRenovacoes;
-    }
-
-    public LocalDateTime getDataHoraDevolucao() {
-        return dataHoraDevolucao;
-    }
-
-    public void setDataHoraDevolucao(LocalDateTime dataHoraDevolucao) {
-        this.dataHoraDevolucao = dataHoraDevolucao;
-    }
-
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
-    }
-
-    public void setPrazo(LocalDate prazo){
-        this.prazo = prazo;
-    }
-
-    public LocalDate getPrazo(){
-        return prazo;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Emprestimo that = (Emprestimo) o;
-        return numRenovacoes == that.numRenovacoes &&
-                Objects.equals(id, that.id) &&
-                Objects.equals(dataHora, that.dataHora) &&
-                Objects.equals(exemplar, that.exemplar) &&
-                Objects.equals(exemplarNumRegistro, that.exemplarNumRegistro) &&
-                Objects.equals(usuario, that.usuario) &&
-                Objects.equals(dataHoraDevolucao, that.dataHoraDevolucao) &&
-                Objects.equals(prazo, that.prazo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dataHora, exemplar, exemplarNumRegistro, usuario, numRenovacoes, dataHoraDevolucao, prazo);
-    }
 }

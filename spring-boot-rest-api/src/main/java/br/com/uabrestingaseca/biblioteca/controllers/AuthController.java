@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,7 +43,11 @@ public class AuthController {
     public ResponseEntity<?> signIn(@RequestBody Usuario credenciais){
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(credenciais.getEmail(), credenciais.getSenha());
-        authenticationManager.authenticate(authentication);
+        try {
+            authenticationManager.authenticate(authentication);
+        }catch(BadCredentialsException e){
+            throw new ModelValidationException(e.getMessage());
+        }
         Usuario usuario = service.findUserByEmail(authentication.getName());
         usuario.setGerente(usuario.getRoles().contains("GERENTE"));
         if (credenciais.getNome() != null && usuario.getEmail().compareTo(credenciais.getNome())!= 0)

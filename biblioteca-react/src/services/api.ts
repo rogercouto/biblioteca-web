@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 export default class Api{
 
     private static startApi(){
-        return axios.create({baseURL: 'http://localhost:8080/'});
+        return axios.create({baseURL: 'https://rc-biblioteca-api.herokuapp.com/:8080/'});
     }
 
     private static async getConfig() : Promise<{ headers: any }>{

@@ -1,11 +1,20 @@
 package br.com.uabrestingaseca.biblioteca.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "parametro")
 public class Parametro {
@@ -20,36 +29,4 @@ public class Parametro {
 
     private Boolean editavel;
 
-    public Parametro() {
-    }
-
-    public Parametro(String chave, String valor, Boolean editavel) {
-        this.chave = chave;
-        this.valor = valor;
-        this.editavel = editavel;
-    }
-
-    public String getChave() {
-        return chave;
-    }
-
-    public void setChave(String chave) {
-        this.chave = chave;
-    }
-
-    public String getValor() {
-        return valor;
-    }
-
-    public void setValor(String valor) {
-        this.valor = valor;
-    }
-
-    public Boolean getEditavel() {
-        return editavel;
-    }
-
-    public void setEditavel(Boolean editavel) {
-        this.editavel = editavel;
-    }
 }

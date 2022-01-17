@@ -3,6 +3,10 @@ package br.com.uabrestingaseca.biblioteca.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +21,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name="usuario")
 public class Usuario implements UserDetails {
@@ -51,7 +59,6 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     public List<Permissao> permissoes;
 
-
     @Transient
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Boolean gerente = false;
@@ -60,59 +67,9 @@ public class Usuario implements UserDetails {
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     private Boolean admin = false;
 
-    public Usuario() {
-    }
-
+    @Deprecated
     public Usuario(Integer id) {
         this.id = id;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    public String getNumTel() {
-        return numTel;
-    }
-
-    public void setNumTel(String numTel) {
-        this.numTel = numTel;
-    }
-
-    public Boolean isAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
     }
 
     public List<Permissao> getPermissoes() {
@@ -175,42 +132,6 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     public boolean isEnabled() {
         return ativo;
-    }
-
-    public Boolean isGerente() {
-        return gerente;
-    }
-
-    public void setGerente(Boolean gerente) {
-        this.gerente = gerente;
-    }
-
-    public Boolean isAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Usuario usuario = (Usuario) o;
-        return gerente == usuario.gerente &&
-                Objects.equals(id, usuario.id) &&
-                Objects.equals(nome, usuario.nome) &&
-                Objects.equals(email, usuario.email) &&
-                Objects.equals(senha, usuario.senha) &&
-                Objects.equals(numTel, usuario.numTel) &&
-                Objects.equals(ativo, usuario.ativo) &&
-                Objects.equals(permissoes, usuario.permissoes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, nome, email, senha, ativo, permissoes);
     }
 
     public boolean onlyIdSet(){

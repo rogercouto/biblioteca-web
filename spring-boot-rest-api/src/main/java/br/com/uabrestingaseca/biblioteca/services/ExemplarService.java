@@ -26,7 +26,7 @@ public class ExemplarService {
     private Exemplar setLivroIdAndBaixa(Exemplar e){
         if (e.getLivro() != null)
             e.setLivroId(e.getLivro().getId());
-        if (!e.getDisponivel()){
+        if (!e.isDisponivel()){
             Baixa b = baixaService.findBaixaFromExemplar(e);
             b.setExemplar(null);
             e.setBaixa(b);

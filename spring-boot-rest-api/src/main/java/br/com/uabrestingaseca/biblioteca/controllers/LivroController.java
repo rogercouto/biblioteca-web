@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class LivroController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Recupera uma lista de livros")
     public ResponseEntity<List<Livro>> index(
-        @RequestParam(value="page", defaultValue = "0") int page,
-        @RequestParam(value="limit", defaultValue = "10") int limit,
-        @RequestParam(value="find", defaultValue = "") String find
+            @RequestParam(value="page", defaultValue = "0") int page,
+            @RequestParam(value="limit", defaultValue = "10") int limit,
+            @RequestParam(value="find", defaultValue = "") String find
     ){
         Pageable pageable = PageRequest.of(page, limit);
         Page<Livro> livros = (find.isBlank()) ?
@@ -78,6 +79,20 @@ public class LivroController {
                     String.format("Livro com id=%d não encontrado",id));
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/fixNomesAutores")
+    @Transient
+    public ResponseEntity<?> fixNomesAutores(){
+        List<Livro> livros = service.findAll();
+        livros.forEach(l->{
+            l.getNomesAutores();
+            if (l.getAnoPublicacao() != null && (l.getAnoPublicacao() < 0 || l.getAnoPublicacao() > 2100)){
+                l.setAnoPublicacao(null);
+            }
+            service.saveLivroOnly(l);
+        });
+        return  ResponseEntity.ok().build();
     }
 
 }

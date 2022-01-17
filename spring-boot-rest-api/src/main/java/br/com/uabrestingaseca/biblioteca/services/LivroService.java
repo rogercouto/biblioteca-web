@@ -49,13 +49,17 @@ public class LivroService {
         return repository.findByAssunto(assunto, pageable);
     }
 
+    public List<Livro> findAll(){
+        return repository.findAll();
+    }
+
     public Livro findById(Integer id){
         Optional<Livro> livro = repository.findById(id);
         return livro.orElse(null);
     }
 
     private void saveEditora(Livro livro){
-        if (!livro.getEditora().onlyIdSet()){
+        if (livro.getEditora() != null && !livro.getEditora().onlyIdSet()){
             Editora editora = editoraService.findFirstByNome(livro.getEditora().getNome());
             if (editora == null) {
                 editora = editoraService.save(livro.getEditora());
@@ -233,6 +237,11 @@ public class LivroService {
         exemplarService.saveExemplares(exemplares, savedLivro, messageIfError);
         return savedLivro;
     }
+
+    public Livro saveLivroOnly(final Livro livro){
+        return repository.save(livro);
+    }
+
 
     @Transactional
     public boolean delete(int id){

@@ -113,11 +113,11 @@ public class EmprestimoService {
                 errors.add(String.format(
                         "Exemplar com número de registro = %d não existe",
                         emprestimo.getExemplar().getNumRegistro()));
-            }else if(exemplar.getFixo()){
+            }else if(exemplar.isFixo()){
                 errors.add("Exemplar não pode ser reservado/emprestado");
-            }else if (!exemplar.getDisponivel()){
+            }else if (!exemplar.isDisponivel()){
                 errors.add("Exemplar indisponível");
-            }else if (exemplar.getEmprestado()){
+            }else if (exemplar.isEmprestado()){
                 errors.add("Exemplar já emprestimodo");
             }
         }

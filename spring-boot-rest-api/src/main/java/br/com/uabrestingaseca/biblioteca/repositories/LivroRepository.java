@@ -13,7 +13,10 @@ public interface LivroRepository extends JpaRepository<Livro, Integer> {
 
     @Query("SELECT l FROM Livro l WHERE " +
             "LOWER(l.titulo) like LOWER(CONCAT('%',TRIM(:text),'%')) or " +
-            "LOWER(l.resumo) like LOWER(CONCAT('%',TRIM(:text),'%'))")
+            "LOWER(l.resumo) like LOWER(CONCAT('%',TRIM(:text),'%')) or "+
+            "LOWER(l.nomesAutores) like LOWER(CONCAT('%',TRIM(:text),'%')) or "+
+            "LOWER(l.editora.nome) like LOWER(CONCAT('%',TRIM(:text),'%')) or "+
+            "LOWER(l.assunto.descricao) like LOWER(CONCAT('%',TRIM(:text),'%'))")
     Page<Livro> findByText(@Param("text") String text, Pageable pageable);
 
     @Query("SELECT l FROM Livro l WHERE l.assunto = :assunto")

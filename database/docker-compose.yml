@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  teste-postgres-compose:
+    build: .
+    environment:
+      POSTGRES_PASSWORD: "pgadmin#2345@"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    
